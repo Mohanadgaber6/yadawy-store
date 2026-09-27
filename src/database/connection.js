@@ -7,9 +7,28 @@ let db = null;
 function getDb() {
     if (db) return db;
 
-    const dbPath = path.resolve(process.env.DB_PATH || './data/yadawy.db');
-    const dbDir = path.dirname(dbPath);
+    const isVercel = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+    let dbPath = process.env.DB_PATH;
 
+    if (!dbPath) {
+        if (isVercel) {
+            dbPath = '/tmp/yadawy.db';
+            const bundledDb = path.join(__dirname, '..', '..', 'data', 'yadawy.db');
+            if (!fs.existsSync(dbPath) && fs.existsSync(bundledDb)) {
+                try {
+                    fs.copyFileSync(bundledDb, dbPath);
+                } catch (e) {
+                    console.warn('Could not copy bundled DB:', e.message);
+                }
+            }
+        } else {
+            dbPath = path.resolve('./data/yadawy.db');
+        }
+    } else {
+        dbPath = path.resolve(dbPath);
+    }
+
+    const dbDir = path.dirname(dbPath);
     if (!fs.existsSync(dbDir)) {
         fs.mkdirSync(dbDir, { recursive: true });
     }
@@ -17,7 +36,9 @@ function getDb() {
     db = new Database(dbPath);
 
     // Enable WAL mode for better concurrent read performance
-    db.pragma('journal_mode = WAL');
+    if (!isVercel) {
+        db.pragma('journal_mode = WAL');
+    }
     db.pragma('foreign_keys = ON');
     db.pragma('busy_timeout = 5000');
 

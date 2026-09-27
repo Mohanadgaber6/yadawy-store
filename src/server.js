@@ -118,12 +118,9 @@ app.use((err, req, res, next) => {
 });
 
 // ===== INITIALIZE & START =====
-async function startServer() {
+async function ensureDatabase() {
     try {
         const db = getDb();
-        console.log('✅ Database connected');
-        
-        // Auto-initialize DB schema and default seed data if needed
         const tableCheck = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='admins'").get();
         if (!tableCheck) {
             console.log('⚡ First run detected: initializing database schema and seed data...');
@@ -131,11 +128,14 @@ async function startServer() {
             await initDatabase();
         }
     } catch (err) {
-        console.error('❌ Database initialization error:', err.message);
+        console.error('❌ Database check error:', err.message);
     }
+}
 
-    app.listen(PORT, () => {
-        console.log(`
+if (!process.env.VERCEL) {
+    ensureDatabase().then(() => {
+        app.listen(PORT, () => {
+            console.log(`
 ╔══════════════════════════════════════════╗
 ║     يدوى — Yadawy E-Commerce Server     ║
 ╠══════════════════════════════════════════╣
@@ -143,10 +143,11 @@ async function startServer() {
 ║  Admin:   http://localhost:${PORT}/admin     ║
 ║  API:     http://localhost:${PORT}/api       ║
 ╚══════════════════════════════════════════╝
-        `);
+            `);
+        });
     });
+} else {
+    ensureDatabase().catch(err => console.error('Vercel init error:', err));
 }
-
-startServer();
 
 module.exports = app;
