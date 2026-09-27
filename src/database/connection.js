@@ -42,9 +42,18 @@ function getDb() {
     db.pragma('foreign_keys = ON');
     db.pragma('busy_timeout = 5000');
 
-    // Ensure database tables and initial seed exist synchronously
+    // Ensure database tables and authentic catalog exist synchronously
     const hasTables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='admins'").get();
-    if (!hasTables) {
+    let hasAuthenticCatalog = false;
+    if (hasTables) {
+        try {
+            const checkProd = db.prepare("SELECT COUNT(*) as c FROM products WHERE name LIKE 'Antique Rugs%'").get();
+            hasAuthenticCatalog = checkProd && checkProd.c > 0;
+        } catch (e) {
+            hasAuthenticCatalog = false;
+        }
+    }
+    if (!hasTables || !hasAuthenticCatalog) {
         const { initDatabaseSync } = require('./init');
         initDatabaseSync(db);
     }

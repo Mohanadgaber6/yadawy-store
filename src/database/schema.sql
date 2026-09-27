@@ -424,6 +424,31 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS shipping_settings (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    cost REAL NOT NULL DEFAULT 100,
+    currency TEXT NOT NULL DEFAULT 'EGP',
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS deletion_requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    token TEXT NOT NULL UNIQUE,
+    item_type TEXT NOT NULL,
+    item_id INTEGER NOT NULL,
+    item_name TEXT,
+    item_details TEXT,
+    item_image TEXT,
+    requested_by_id INTEGER,
+    requested_by_email TEXT,
+    requested_by_name TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    requested_at TEXT NOT NULL DEFAULT (datetime('now')),
+    resolved_at TEXT,
+    resolved_by TEXT,
+    rejection_reason TEXT
+);
+
 -- ============================================================
 -- INDEXES
 -- ============================================================

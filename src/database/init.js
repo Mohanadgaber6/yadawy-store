@@ -6,12 +6,20 @@ const { getDb, closeDb } = require('./connection');
 
 function initDatabaseSync(databaseInstance) {
     const db = databaseInstance || getDb();
-    console.log('🗄️ Initializing Yadawy database synchronously...');
+    console.log('🗄️ Initializing Yadawy database with authentic catalog...');
 
     // Read and execute schema
     const schemaPath = path.join(__dirname, 'schema.sql');
     const schema = fs.readFileSync(schemaPath, 'utf-8');
     db.exec(schema);
+
+    // Read and execute authentic catalog seed
+    const seedPath = path.join(__dirname, 'authentic_seed.sql');
+    if (fs.existsSync(seedPath)) {
+        const seedSql = fs.readFileSync(seedPath, 'utf-8');
+        db.exec(seedSql);
+        console.log('✅ Authentic catalog seeded successfully');
+    }
 
     // Seed admin user
     const adminExists = db.prepare('SELECT id FROM admins LIMIT 1').get();
