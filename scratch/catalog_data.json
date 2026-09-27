@@ -1,0 +1,1497 @@
+[
+  {
+    "id": 1,
+    "name": "Carpets",
+    "slug": "carpets",
+    "categories": [
+      {
+        "id": 1,
+        "section_id": 1,
+        "name": "Antique Rugs",
+        "slug": "antique-rugs",
+        "description": "Authentic antique handwoven rugs curated for timeless elegance.",
+        "products": [
+          {
+            "id": 1,
+            "name": "Antique Rugs #2",
+            "slug": "antique-rugs-2",
+            "category_id": 1,
+            "section_id": 1,
+            "folder_number": "2",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_1_0.webp",
+                "thumbnail_path": "/uploads/products/prod_1_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_1_0.mp4",
+              "/uploads/products/vid_1_1.mp4"
+            ],
+            "short_description": "Authentic handwoven antique rugs piece #2.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique rugs piece #2 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 2,
+            "name": "Antique Rugs #33",
+            "slug": "antique-rugs-33",
+            "category_id": 1,
+            "section_id": 1,
+            "folder_number": "33",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_2_0.webp",
+                "thumbnail_path": "/uploads/products/prod_2_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_2_1.webp",
+                "thumbnail_path": "/uploads/products/prod_2_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_2_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique rugs piece #33.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique rugs piece #33 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 3,
+            "name": "Antique Rugs #34",
+            "slug": "antique-rugs-34",
+            "category_id": 1,
+            "section_id": 1,
+            "folder_number": "34",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_3_0.webp",
+                "thumbnail_path": "/uploads/products/prod_3_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_3_1.webp",
+                "thumbnail_path": "/uploads/products/prod_3_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_3_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique rugs piece #34.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique rugs piece #34 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 4,
+            "name": "Antique Rugs #37",
+            "slug": "antique-rugs-37",
+            "category_id": 1,
+            "section_id": 1,
+            "folder_number": "37",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_4_0.webp",
+                "thumbnail_path": "/uploads/products/prod_4_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_4_0.mp4",
+              "/uploads/products/vid_4_1.mp4"
+            ],
+            "short_description": "Authentic handwoven antique rugs piece #37.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique rugs piece #37 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 5,
+            "name": "Antique Rugs #38",
+            "slug": "antique-rugs-38",
+            "category_id": 1,
+            "section_id": 1,
+            "folder_number": "38",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_5_0.webp",
+                "thumbnail_path": "/uploads/products/prod_5_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_5_1.webp",
+                "thumbnail_path": "/uploads/products/prod_5_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_5_2.webp",
+                "thumbnail_path": "/uploads/products/prod_5_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_5_3.webp",
+                "thumbnail_path": "/uploads/products/prod_5_3_thumb.webp",
+                "display_order": 3,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_5_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique rugs piece #38.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique rugs piece #38 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 6,
+            "name": "Antique Rugs #39",
+            "slug": "antique-rugs-39",
+            "category_id": 1,
+            "section_id": 1,
+            "folder_number": "39",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_6_0.webp",
+                "thumbnail_path": "/uploads/products/prod_6_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_6_1.webp",
+                "thumbnail_path": "/uploads/products/prod_6_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [],
+            "short_description": "Authentic handwoven antique rugs piece #39.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique rugs piece #39 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 7,
+            "name": "Antique Rugs #47",
+            "slug": "antique-rugs-47",
+            "category_id": 1,
+            "section_id": 1,
+            "folder_number": "47",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_7_0.webp",
+                "thumbnail_path": "/uploads/products/prod_7_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_7_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique rugs piece #47.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique rugs piece #47 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "section_id": 1,
+        "name": "Handmade Rugs - New",
+        "slug": "handmade-rugs-new",
+        "description": "Modern artisanal handwoven rugs crafted by master weavers.",
+        "products": [
+          {
+            "id": 8,
+            "name": "Handmade Rugs - New #32",
+            "slug": "handmade-rugs-new-32",
+            "category_id": 2,
+            "section_id": 1,
+            "folder_number": "32",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_8_0.webp",
+                "thumbnail_path": "/uploads/products/prod_8_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_8_1.webp",
+                "thumbnail_path": "/uploads/products/prod_8_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_8_2.webp",
+                "thumbnail_path": "/uploads/products/prod_8_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_8_3.webp",
+                "thumbnail_path": "/uploads/products/prod_8_3_thumb.webp",
+                "display_order": 3,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_8_0.mp4"
+            ],
+            "short_description": "Authentic handwoven handmade rugs - new piece #32.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique handmade rugs - new piece #32 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 9,
+            "name": "Handmade Rugs - New #35",
+            "slug": "handmade-rugs-new-35",
+            "category_id": 2,
+            "section_id": 1,
+            "folder_number": "35",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_9_0.webp",
+                "thumbnail_path": "/uploads/products/prod_9_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_9_1.webp",
+                "thumbnail_path": "/uploads/products/prod_9_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_9_2.webp",
+                "thumbnail_path": "/uploads/products/prod_9_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_9_0.mp4"
+            ],
+            "short_description": "Authentic handwoven handmade rugs - new piece #35.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique handmade rugs - new piece #35 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 10,
+            "name": "Handmade Rugs - New #36",
+            "slug": "handmade-rugs-new-36",
+            "category_id": 2,
+            "section_id": 1,
+            "folder_number": "36",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_10_0.webp",
+                "thumbnail_path": "/uploads/products/prod_10_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_10_1.webp",
+                "thumbnail_path": "/uploads/products/prod_10_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_10_0.mp4"
+            ],
+            "short_description": "Authentic handwoven handmade rugs - new piece #36.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique handmade rugs - new piece #36 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Kilims",
+    "slug": "kilims",
+    "categories": [
+      {
+        "id": 3,
+        "section_id": 2,
+        "name": "Antique Kilims",
+        "slug": "antique-kilims",
+        "description": "Rare, historic flatwoven kilims preserving cultural heritage.",
+        "products": [
+          {
+            "id": 11,
+            "name": "Antique Kilims #3",
+            "slug": "antique-kilims-3",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "3",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_11_0.webp",
+                "thumbnail_path": "/uploads/products/prod_11_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_11_0.mp4",
+              "/uploads/products/vid_11_1.mp4",
+              "/uploads/products/vid_11_2.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #3.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #3 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 12,
+            "name": "Antique Kilims #4",
+            "slug": "antique-kilims-4",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "4",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_12_0.webp",
+                "thumbnail_path": "/uploads/products/prod_12_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_12_1.webp",
+                "thumbnail_path": "/uploads/products/prod_12_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_12_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #4.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #4 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 13,
+            "name": "Antique Kilims #5",
+            "slug": "antique-kilims-5",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "5",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_13_0.webp",
+                "thumbnail_path": "/uploads/products/prod_13_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_13_0.mp4",
+              "/uploads/products/vid_13_1.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #5.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #5 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 14,
+            "name": "Antique Kilims #6",
+            "slug": "antique-kilims-6",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "6",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_14_0.webp",
+                "thumbnail_path": "/uploads/products/prod_14_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_14_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #6.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #6 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 15,
+            "name": "Antique Kilims #9",
+            "slug": "antique-kilims-9",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "9",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_15_0.webp",
+                "thumbnail_path": "/uploads/products/prod_15_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_15_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #9.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #9 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 16,
+            "name": "Antique Kilims #10",
+            "slug": "antique-kilims-10",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "10",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_16_0.webp",
+                "thumbnail_path": "/uploads/products/prod_16_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_16_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #10.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #10 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 17,
+            "name": "Antique Kilims #11",
+            "slug": "antique-kilims-11",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "11",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_17_0.webp",
+                "thumbnail_path": "/uploads/products/prod_17_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_17_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #11.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #11 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 18,
+            "name": "Antique Kilims #15",
+            "slug": "antique-kilims-15",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "15",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_18_0.webp",
+                "thumbnail_path": "/uploads/products/prod_18_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_18_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #15.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #15 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 19,
+            "name": "Antique Kilims #19",
+            "slug": "antique-kilims-19",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "19",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_19_0.webp",
+                "thumbnail_path": "/uploads/products/prod_19_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_19_1.webp",
+                "thumbnail_path": "/uploads/products/prod_19_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_19_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #19.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #19 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 20,
+            "name": "Antique Kilims #20",
+            "slug": "antique-kilims-20",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "20",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_20_0.webp",
+                "thumbnail_path": "/uploads/products/prod_20_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_20_1.webp",
+                "thumbnail_path": "/uploads/products/prod_20_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_20_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #20.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #20 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 21,
+            "name": "Antique Kilims #27",
+            "slug": "antique-kilims-27",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "27",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_21_0.webp",
+                "thumbnail_path": "/uploads/products/prod_21_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_21_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #27.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #27 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 22,
+            "name": "Antique Kilims #28",
+            "slug": "antique-kilims-28",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "28",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_22_0.webp",
+                "thumbnail_path": "/uploads/products/prod_22_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_22_1.webp",
+                "thumbnail_path": "/uploads/products/prod_22_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_22_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #28.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #28 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 23,
+            "name": "Antique Kilims #29",
+            "slug": "antique-kilims-29",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "29",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_23_0.webp",
+                "thumbnail_path": "/uploads/products/prod_23_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_23_1.webp",
+                "thumbnail_path": "/uploads/products/prod_23_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [],
+            "short_description": "Authentic handwoven antique kilims piece #29.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #29 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 24,
+            "name": "Antique Kilims #43",
+            "slug": "antique-kilims-43",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "43",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_24_0.webp",
+                "thumbnail_path": "/uploads/products/prod_24_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_24_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #43.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #43 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 25,
+            "name": "Antique Kilims #44",
+            "slug": "antique-kilims-44",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "44",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_25_0.webp",
+                "thumbnail_path": "/uploads/products/prod_25_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_25_1.webp",
+                "thumbnail_path": "/uploads/products/prod_25_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_25_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #44.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #44 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 26,
+            "name": "Antique Kilims #53",
+            "slug": "antique-kilims-53",
+            "category_id": 3,
+            "section_id": 2,
+            "folder_number": "53",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_26_0.webp",
+                "thumbnail_path": "/uploads/products/prod_26_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_26_1.webp",
+                "thumbnail_path": "/uploads/products/prod_26_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_26_2.webp",
+                "thumbnail_path": "/uploads/products/prod_26_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_26_3.webp",
+                "thumbnail_path": "/uploads/products/prod_26_3_thumb.webp",
+                "display_order": 3,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_26_0.mp4"
+            ],
+            "short_description": "Authentic handwoven antique kilims piece #53.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique antique kilims piece #53 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "section_id": 2,
+        "name": "Tableaux / Wall Hangings",
+        "slug": "tableaux-wall-hangings",
+        "description": "Artistic handwoven wall hangings and decorative kilim tableaux.",
+        "products": [
+          {
+            "id": 27,
+            "name": "Tableaux / Wall Hangings #52",
+            "slug": "tableaux-wall-hangings-52",
+            "category_id": 4,
+            "section_id": 2,
+            "folder_number": "52",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_27_0.webp",
+                "thumbnail_path": "/uploads/products/prod_27_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_27_1.webp",
+                "thumbnail_path": "/uploads/products/prod_27_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_27_2.webp",
+                "thumbnail_path": "/uploads/products/prod_27_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_27_3.webp",
+                "thumbnail_path": "/uploads/products/prod_27_3_thumb.webp",
+                "display_order": 3,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_27_4.webp",
+                "thumbnail_path": "/uploads/products/prod_27_4_thumb.webp",
+                "display_order": 4,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_27_0.mp4",
+              "/uploads/products/vid_27_1.mp4"
+            ],
+            "short_description": "Authentic handwoven tableaux / wall hangings piece #52.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique tableaux / wall hangings piece #52 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "section_id": 2,
+        "name": "Fine Wool Kilim",
+        "slug": "fine-wool-kilim",
+        "description": "Exquisite fine wool flatweaves with intricate geometric patterns.",
+        "products": [
+          {
+            "id": 28,
+            "name": "Fine Wool Kilim #12",
+            "slug": "fine-wool-kilim-12",
+            "category_id": 5,
+            "section_id": 2,
+            "folder_number": "12",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_28_0.webp",
+                "thumbnail_path": "/uploads/products/prod_28_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_28_0.mp4"
+            ],
+            "short_description": "Authentic handwoven fine wool kilim piece #12.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique fine wool kilim piece #12 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 29,
+            "name": "Fine Wool Kilim #13",
+            "slug": "fine-wool-kilim-13",
+            "category_id": 5,
+            "section_id": 2,
+            "folder_number": "13",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_29_0.webp",
+                "thumbnail_path": "/uploads/products/prod_29_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_29_0.mp4"
+            ],
+            "short_description": "Authentic handwoven fine wool kilim piece #13.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique fine wool kilim piece #13 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 30,
+            "name": "Fine Wool Kilim #18",
+            "slug": "fine-wool-kilim-18",
+            "category_id": 5,
+            "section_id": 2,
+            "folder_number": "18",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_30_0.webp",
+                "thumbnail_path": "/uploads/products/prod_30_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_30_1.webp",
+                "thumbnail_path": "/uploads/products/prod_30_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_30_0.mp4"
+            ],
+            "short_description": "Authentic handwoven fine wool kilim piece #18.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique fine wool kilim piece #18 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 31,
+            "name": "Fine Wool Kilim #23",
+            "slug": "fine-wool-kilim-23",
+            "category_id": 5,
+            "section_id": 2,
+            "folder_number": "23",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_31_0.webp",
+                "thumbnail_path": "/uploads/products/prod_31_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_31_1.webp",
+                "thumbnail_path": "/uploads/products/prod_31_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_31_0.mp4"
+            ],
+            "short_description": "Authentic handwoven fine wool kilim piece #23.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique fine wool kilim piece #23 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 32,
+            "name": "Fine Wool Kilim #24",
+            "slug": "fine-wool-kilim-24",
+            "category_id": 5,
+            "section_id": 2,
+            "folder_number": "24",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_32_0.webp",
+                "thumbnail_path": "/uploads/products/prod_32_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_32_1.webp",
+                "thumbnail_path": "/uploads/products/prod_32_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_32_0.mp4"
+            ],
+            "short_description": "Authentic handwoven fine wool kilim piece #24.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique fine wool kilim piece #24 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "section_id": 2,
+        "name": "Patterned Wool Kilim",
+        "slug": "patterned-wool-kilim",
+        "description": "Richly patterned 100% natural wool flatweaves.",
+        "products": [
+          {
+            "id": 33,
+            "name": "Patterned Wool Kilim #42",
+            "slug": "patterned-wool-kilim-42",
+            "category_id": 6,
+            "section_id": 2,
+            "folder_number": "42",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_33_0.webp",
+                "thumbnail_path": "/uploads/products/prod_33_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_33_1.webp",
+                "thumbnail_path": "/uploads/products/prod_33_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_33_2.webp",
+                "thumbnail_path": "/uploads/products/prod_33_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_33_0.mp4"
+            ],
+            "short_description": "Authentic handwoven patterned wool kilim piece #42.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique patterned wool kilim piece #42 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "section_id": 2,
+        "name": "New Zealand Wool Kilim",
+        "slug": "new-zealand-wool-kilim",
+        "description": "Ultra-soft premium New Zealand wool flatweaves with lasting durability.",
+        "products": [
+          {
+            "id": 34,
+            "name": "New Zealand Wool Kilim #1",
+            "slug": "new-zealand-wool-kilim-1",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "1",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_34_0.webp",
+                "thumbnail_path": "/uploads/products/prod_34_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_34_1.webp",
+                "thumbnail_path": "/uploads/products/prod_34_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_34_2.webp",
+                "thumbnail_path": "/uploads/products/prod_34_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_34_0.mp4",
+              "/uploads/products/vid_34_1.mp4",
+              "/uploads/products/vid_34_2.mp4",
+              "/uploads/products/vid_34_3.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #1.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #1 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 35,
+            "name": "New Zealand Wool Kilim #8",
+            "slug": "new-zealand-wool-kilim-8",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "8",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_35_0.webp",
+                "thumbnail_path": "/uploads/products/prod_35_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_35_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #8.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #8 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 36,
+            "name": "New Zealand Wool Kilim #14",
+            "slug": "new-zealand-wool-kilim-14",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "14",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_36_0.webp",
+                "thumbnail_path": "/uploads/products/prod_36_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_36_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #14.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #14 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 37,
+            "name": "New Zealand Wool Kilim #16",
+            "slug": "new-zealand-wool-kilim-16",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "16",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_37_0.webp",
+                "thumbnail_path": "/uploads/products/prod_37_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_37_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #16.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #16 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 38,
+            "name": "New Zealand Wool Kilim #17",
+            "slug": "new-zealand-wool-kilim-17",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "17",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_38_0.webp",
+                "thumbnail_path": "/uploads/products/prod_38_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_38_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #17.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #17 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 39,
+            "name": "New Zealand Wool Kilim #21",
+            "slug": "new-zealand-wool-kilim-21",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "21",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_39_0.webp",
+                "thumbnail_path": "/uploads/products/prod_39_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_39_1.webp",
+                "thumbnail_path": "/uploads/products/prod_39_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_39_2.webp",
+                "thumbnail_path": "/uploads/products/prod_39_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_39_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #21.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #21 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 40,
+            "name": "New Zealand Wool Kilim #22",
+            "slug": "new-zealand-wool-kilim-22",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "22",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_40_0.webp",
+                "thumbnail_path": "/uploads/products/prod_40_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_40_1.webp",
+                "thumbnail_path": "/uploads/products/prod_40_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_40_2.webp",
+                "thumbnail_path": "/uploads/products/prod_40_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_40_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #22.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #22 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 41,
+            "name": "New Zealand Wool Kilim #25",
+            "slug": "new-zealand-wool-kilim-25",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "25",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_41_0.webp",
+                "thumbnail_path": "/uploads/products/prod_41_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_41_1.webp",
+                "thumbnail_path": "/uploads/products/prod_41_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_41_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #25.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #25 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 42,
+            "name": "New Zealand Wool Kilim #26",
+            "slug": "new-zealand-wool-kilim-26",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "26",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_42_0.webp",
+                "thumbnail_path": "/uploads/products/prod_42_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_42_1.webp",
+                "thumbnail_path": "/uploads/products/prod_42_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_42_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #26.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #26 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 43,
+            "name": "New Zealand Wool Kilim #40",
+            "slug": "new-zealand-wool-kilim-40",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "40",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_43_0.webp",
+                "thumbnail_path": "/uploads/products/prod_43_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_43_1.webp",
+                "thumbnail_path": "/uploads/products/prod_43_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_43_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #40.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #40 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 44,
+            "name": "New Zealand Wool Kilim #41",
+            "slug": "new-zealand-wool-kilim-41",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "41",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_44_0.webp",
+                "thumbnail_path": "/uploads/products/prod_44_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_44_1.webp",
+                "thumbnail_path": "/uploads/products/prod_44_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_44_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #41.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #41 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 45,
+            "name": "New Zealand Wool Kilim #45",
+            "slug": "new-zealand-wool-kilim-45",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "45",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_45_0.webp",
+                "thumbnail_path": "/uploads/products/prod_45_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_45_1.webp",
+                "thumbnail_path": "/uploads/products/prod_45_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_45_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #45.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #45 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 46,
+            "name": "New Zealand Wool Kilim #46",
+            "slug": "new-zealand-wool-kilim-46",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "46",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_46_0.webp",
+                "thumbnail_path": "/uploads/products/prod_46_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_46_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #46.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #46 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 47,
+            "name": "New Zealand Wool Kilim #48",
+            "slug": "new-zealand-wool-kilim-48",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "48",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_47_0.webp",
+                "thumbnail_path": "/uploads/products/prod_47_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_47_1.webp",
+                "thumbnail_path": "/uploads/products/prod_47_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_47_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #48.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #48 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 48,
+            "name": "New Zealand Wool Kilim #49",
+            "slug": "new-zealand-wool-kilim-49",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "49",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_48_0.webp",
+                "thumbnail_path": "/uploads/products/prod_48_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_48_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #49.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #49 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 49,
+            "name": "New Zealand Wool Kilim #50",
+            "slug": "new-zealand-wool-kilim-50",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "50",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_49_0.webp",
+                "thumbnail_path": "/uploads/products/prod_49_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_49_1.webp",
+                "thumbnail_path": "/uploads/products/prod_49_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_49_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #50.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #50 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 50,
+            "name": "New Zealand Wool Kilim #51",
+            "slug": "new-zealand-wool-kilim-51",
+            "category_id": 7,
+            "section_id": 2,
+            "folder_number": "51",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_50_0.webp",
+                "thumbnail_path": "/uploads/products/prod_50_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_50_1.webp",
+                "thumbnail_path": "/uploads/products/prod_50_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              },
+              {
+                "image_path": "/uploads/products/prod_50_2.webp",
+                "thumbnail_path": "/uploads/products/prod_50_2_thumb.webp",
+                "display_order": 2,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_50_0.mp4"
+            ],
+            "short_description": "Authentic handwoven new zealand wool kilim piece #51.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique new zealand wool kilim piece #51 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "section_id": 2,
+        "name": "Regular Cotton Kilim",
+        "slug": "regular-cotton-kilim",
+        "description": "Lightweight, breathable pure cotton kilim rugs for versatile spaces.",
+        "products": [
+          {
+            "id": 51,
+            "name": "Regular Cotton Kilim #30",
+            "slug": "regular-cotton-kilim-30",
+            "category_id": 8,
+            "section_id": 2,
+            "folder_number": "30",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_51_0.webp",
+                "thumbnail_path": "/uploads/products/prod_51_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_51_1.webp",
+                "thumbnail_path": "/uploads/products/prod_51_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_51_0.mp4"
+            ],
+            "short_description": "Authentic handwoven regular cotton kilim piece #30.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique regular cotton kilim piece #30 showcases master artistry, natural fibers, and timeless design."
+          },
+          {
+            "id": 52,
+            "name": "Regular Cotton Kilim #31",
+            "slug": "regular-cotton-kilim-31",
+            "category_id": 8,
+            "section_id": 2,
+            "folder_number": "31",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_52_0.webp",
+                "thumbnail_path": "/uploads/products/prod_52_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              },
+              {
+                "image_path": "/uploads/products/prod_52_1.webp",
+                "thumbnail_path": "/uploads/products/prod_52_1_thumb.webp",
+                "display_order": 1,
+                "is_primary": 0
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_52_0.mp4"
+            ],
+            "short_description": "Authentic handwoven regular cotton kilim piece #31.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique regular cotton kilim piece #31 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "section_id": 2,
+        "name": "Patterned Cotton & Wool Kilim",
+        "slug": "patterned-cotton-wool-kilim",
+        "description": "Master blend of crisp natural cotton and lustrous wool in artistic patterns.",
+        "products": [
+          {
+            "id": 53,
+            "name": "Patterned Cotton & Wool Kilim #7",
+            "slug": "patterned-cotton-wool-kilim-7",
+            "category_id": 9,
+            "section_id": 2,
+            "folder_number": "7",
+            "images": [
+              {
+                "image_path": "/uploads/products/prod_53_0.webp",
+                "thumbnail_path": "/uploads/products/prod_53_0_thumb.webp",
+                "display_order": 0,
+                "is_primary": 1
+              }
+            ],
+            "videos": [
+              "/uploads/products/vid_53_0.mp4"
+            ],
+            "short_description": "Authentic handwoven patterned cotton & wool kilim piece #7.",
+            "full_description": "Handcrafted with authentic heritage techniques, this unique patterned cotton & wool kilim piece #7 showcases master artistry, natural fibers, and timeless design."
+          }
+        ]
+      }
+    ]
+  }
+]
