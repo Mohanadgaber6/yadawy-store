@@ -1,7 +1,10 @@
 node_modules/
 .env
-data/
-uploads/
+uploads/gdrive_raw/
+uploads/**/*.mp4
+uploads/*.mp4
+uploads/videos/
+scratch/
 *.log
 .DS_Store
 Thumbs.db
