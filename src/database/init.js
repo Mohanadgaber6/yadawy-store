@@ -4,29 +4,26 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const { getDb, closeDb } = require('./connection');
 
-async function initDatabase() {
-    console.log('🗄️  Initializing Yadawy database...');
-
-    const db = getDb();
+function initDatabaseSync(databaseInstance) {
+    const db = databaseInstance || getDb();
+    console.log('🗄️ Initializing Yadawy database synchronously...');
 
     // Read and execute schema
     const schemaPath = path.join(__dirname, 'schema.sql');
     const schema = fs.readFileSync(schemaPath, 'utf-8');
     db.exec(schema);
-    console.log('✅ Schema created successfully');
 
     // Seed admin user
     const adminExists = db.prepare('SELECT id FROM admins LIMIT 1').get();
     if (!adminExists) {
         const email = process.env.ADMIN_EMAIL || 'admin@yadawy.com';
-        const password = process.env.ADMIN_PASSWORD || 'ChangeMe123!';
-        const hash = await bcrypt.hash(password, 12);
+        const password = process.env.ADMIN_PASSWORD || 'YadawyAdmin2024!';
+        const hash = bcrypt.hashSync(password, 10);
 
         db.prepare(`
             INSERT INTO admins (username, email, password_hash, role)
             VALUES (?, ?, ?, ?)
         `).run('admin', email, hash, 'superadmin');
-        console.log(`✅ Admin user created: ${email}`);
     }
 
     // Seed categories
@@ -43,7 +40,6 @@ async function initDatabase() {
         for (const cat of categories) {
             stmt.run(cat.name, cat.slug, cat.description, cat.order);
         }
-        console.log('✅ Categories seeded');
     }
 
     // Seed collections
@@ -59,7 +55,6 @@ async function initDatabase() {
         for (const col of collections) {
             stmt.run(col.name, col.slug, col.description, col.order);
         }
-        console.log('✅ Collections seeded');
     }
 
     // Seed product types
@@ -77,7 +72,6 @@ async function initDatabase() {
         for (const type of types) {
             stmt.run(type.name, type.slug);
         }
-        console.log('✅ Product types seeded');
     }
 
     // Seed sizes
@@ -97,7 +91,6 @@ async function initDatabase() {
         for (const size of sizes) {
             stmt.run(size.name, size.width, size.height, size.unit, size.order);
         }
-        console.log('✅ Sizes seeded');
     }
 
     // Seed navigation
@@ -114,7 +107,6 @@ async function initDatabase() {
         for (const nav of navItems) {
             stmt.run(nav.label, nav.url, nav.order, nav.location);
         }
-        console.log('✅ Navigation seeded');
     }
 
     // Seed homepage sections
@@ -197,7 +189,6 @@ async function initDatabase() {
             stmt.run(s.key, s.type, s.title || null, s.subtitle || null, s.content || null,
                 s.link_text || null, s.link_url || null, s.product_source || null, s.max_products || null, s.order);
         }
-        console.log('✅ Homepage sections seeded');
     }
 
     // Seed site settings
@@ -227,17 +218,178 @@ async function initDatabase() {
         for (const s of settings) {
             stmt.run(s.key, s.value, s.type);
         }
-        console.log('✅ Site settings seeded');
     }
 
-    console.log('🎉 Database initialization complete!');
+    // Seed shipping_settings
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS shipping_settings (
+            id INTEGER PRIMARY KEY DEFAULT 1,
+            cost REAL NOT NULL DEFAULT 100,
+            currency TEXT NOT NULL DEFAULT 'EGP',
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+        INSERT OR IGNORE INTO shipping_settings (id, cost, currency) VALUES (1, 100, 'EGP');
+    `);
+
+    // Seed sample products
+    const existingProdCount = db.prepare('SELECT COUNT(*) as c FROM products').get().c;
+    if (existingProdCount === 0) {
+        const catMap = Object.fromEntries(db.prepare('SELECT id, slug FROM categories').all().map(c => [c.slug, c.id]));
+        const colMap = Object.fromEntries(db.prepare('SELECT id, slug FROM collections').all().map(c => [c.slug, c.id]));
+        const typeMap = Object.fromEntries(db.prepare('SELECT id, slug FROM product_types').all().map(t => [t.slug, t.id]));
+        const allSizes = db.prepare('SELECT id, name FROM sizes').all();
+
+        const sampleProducts = [
+            {
+                name: 'Siwa Oasis Handwoven Kilim',
+                slug: 'siwa-oasis-handwoven-kilim',
+                sku: 'YDW-SIW-001',
+                price: 3450,
+                sale_price: 2950,
+                inventory_qty: 14,
+                category_id: catMap['traditional'],
+                collection_id: colMap['heritage-collection'],
+                type_id: typeMap['wool-kilim'],
+                short_description: 'An authentic Siwa oasis geometric motif woven with natural unbleached wool and earthy terracotta dyes.',
+                full_description: 'Crafted with master weavers in the Siwa oasis, this piece carries ancestral Berber symbols of protection and harmony. Woven from 100% locally sourced unbleached wool on traditional horizontal pit looms.',
+                material: '100% Egyptian Wool & Organic Cotton Warp',
+                color: 'Terracotta, Burgundy, Cream',
+                dimensions: '120 × 180 cm',
+                weight: '3.8 kg',
+                care_instructions: 'Vacuum gently without beater brush. Spot clean with mild soap and cold water.',
+                is_featured: 1,
+                is_best_seller: 1,
+                is_new_arrival: 0,
+                is_on_sale: 1,
+                status: 'active',
+                images: [
+                    'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1200&q=80',
+                    'https://images.unsplash.com/photo-1579656381226-5fc0f0100c3b?auto=format&fit=crop&w=1200&q=80'
+                ]
+            },
+            {
+                name: 'Fowwa Artisan Flatweave Kilim',
+                slug: 'fowwa-artisan-flatweave-kilim',
+                sku: 'YDW-FOW-002',
+                price: 2800,
+                sale_price: null,
+                inventory_qty: 8,
+                category_id: catMap['traditional'],
+                collection_id: colMap['heritage-collection'],
+                type_id: typeMap['cotton-kilim'],
+                short_description: 'Traditional Egyptian flatweave with timeless diamond grid patterns, handcrafted in historic Fowwa.',
+                full_description: 'Fowwa on the Nile delta has been Egypt’s premier weaving capital for over five centuries. This lightweight yet resilient flatweave features rhythmic diamond lozenges.',
+                material: '100% Egyptian Combed Cotton',
+                color: 'Deep Maroon, Warm Ivory, Mustard Gold',
+                dimensions: '100 × 150 cm',
+                weight: '2.5 kg',
+                care_instructions: 'Machine washable on cold delicate cycle. Hang to air dry flat.',
+                is_featured: 1,
+                is_best_seller: 1,
+                is_new_arrival: 0,
+                is_on_sale: 0,
+                status: 'active',
+                images: [
+                    'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=1200&q=80',
+                    'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1200&q=80'
+                ]
+            },
+            {
+                name: 'Nubian Sunset Wool Kilim',
+                slug: 'nubian-sunset-wool-kilim',
+                sku: 'YDW-NUB-003',
+                price: 4200,
+                sale_price: 3750,
+                inventory_qty: 12,
+                category_id: catMap['contemporary'],
+                collection_id: colMap['modern-artisan'],
+                type_id: typeMap['wool-kilim'],
+                short_description: 'Striking gradient colorways echoing the sunset over Lake Nasser and the Golden Nile.',
+                full_description: 'A contemporary dialogue between modern minimalist interiors and traditional Nubian dye masters. Featuring sunset hues transitioning from deep pomegranate to soft ochre.',
+                material: '80% Highland Wool, 20% Organic Cotton',
+                color: 'Pomegranate, Ochre, Dune Beige',
+                dimensions: '150 × 200 cm',
+                weight: '4.5 kg',
+                care_instructions: 'Professional rug cleaning recommended. Blot spills immediately.',
+                is_featured: 1,
+                is_best_seller: 0,
+                is_new_arrival: 1,
+                is_on_sale: 1,
+                status: 'active',
+                images: [
+                    'https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?auto=format&fit=crop&w=1200&q=80',
+                    'https://images.unsplash.com/photo-1579656381226-5fc0f0100c3b?auto=format&fit=crop&w=1200&q=80'
+                ]
+            },
+            {
+                name: 'Dakhla Geometric Flatweave',
+                slug: 'dakhla-geometric-flatweave',
+                sku: 'YDW-DAK-006',
+                price: 3100,
+                sale_price: 2650,
+                inventory_qty: 11,
+                category_id: catMap['geometric'],
+                collection_id: colMap['modern-artisan'],
+                type_id: typeMap['flatweave'],
+                short_description: 'Crisp Scandinavian-inspired geometry harmonized with historic Egyptian desert motifs.',
+                full_description: 'Minimalist lines meet ancestral weaving technique. Clean chevrons and staggered stepped pyramids created with double-interlocked weft.',
+                material: '100% Pure Egyptian Cotton',
+                color: 'Charcoal Grey, Off-White, Camel',
+                dimensions: '120 × 180 cm',
+                weight: '3.0 kg',
+                care_instructions: 'Vacuum regularly. Gentle machine wash cold with delicate detergent.',
+                is_featured: 1,
+                is_best_seller: 1,
+                is_new_arrival: 1,
+                is_on_sale: 1,
+                status: 'active',
+                images: [
+                    'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1200&q=80',
+                    'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=1200&q=80'
+                ]
+            }
+        ];
+
+        const insertProductStmt = db.prepare(`
+            INSERT INTO products (name, slug, sku, price, sale_price, inventory_qty, category_id, collection_id, type_id, short_description, full_description, material, color, dimensions, weight, care_instructions, is_featured, is_best_seller, is_new_arrival, is_on_sale, status)
+            VALUES (@name, @slug, @sku, @price, @sale_price, @inventory_qty, @category_id, @collection_id, @type_id, @short_description, @full_description, @material, @color, @dimensions, @weight, @care_instructions, @is_featured, @is_best_seller, @is_new_arrival, @is_on_sale, @status)
+        `);
+
+        const insertImageStmt = db.prepare(`
+            INSERT INTO product_images (product_id, image_path, is_primary, display_order)
+            VALUES (?, ?, ?, ?)
+        `);
+
+        const insertSizeStmt = db.prepare(`
+            INSERT INTO product_sizes (product_id, size_name, is_available)
+            VALUES (?, ?, 1)
+        `);
+
+        for (const p of sampleProducts) {
+            const result = insertProductStmt.run(p);
+            const productId = result.lastInsertRowid;
+
+            if (p.images && p.images.length > 0) {
+                p.images.forEach((img, idx) => {
+                    insertImageStmt.run(productId, img, idx === 0 ? 1 : 0, idx + 1);
+                });
+            }
+
+            allSizes.slice(0, 4).forEach(s => {
+                insertSizeStmt.run(productId, s.name);
+            });
+        }
+    }
+
+    console.log('🎉 Database sync initialization complete!');
+}
+
+async function initDatabase() {
+    initDatabaseSync();
 }
 
 if (require.main === module) {
-    initDatabase().then(() => closeDb()).catch(err => {
-        console.error('❌ Database initialization failed:', err);
-        process.exit(1);
-    });
+    initDatabaseSync();
 }
 
-module.exports = { initDatabase };
+module.exports = { initDatabase, initDatabaseSync };

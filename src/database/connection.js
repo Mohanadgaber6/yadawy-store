@@ -42,6 +42,13 @@ function getDb() {
     db.pragma('foreign_keys = ON');
     db.pragma('busy_timeout = 5000');
 
+    // Ensure database tables and initial seed exist synchronously
+    const hasTables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='admins'").get();
+    if (!hasTables) {
+        const { initDatabaseSync } = require('./init');
+        initDatabaseSync(db);
+    }
+
     // Ensure deletion_requests table exists for email approval workflow
     db.exec(`
         CREATE TABLE IF NOT EXISTS deletion_requests (

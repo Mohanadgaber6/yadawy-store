@@ -17,10 +17,24 @@ CREATE TABLE IF NOT EXISTS admins (
 );
 
 -- ============================================================
+-- SECTIONS
+-- ============================================================
+CREATE TABLE IF NOT EXISTS sections (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    description TEXT,
+    display_order INTEGER NOT NULL DEFAULT 0,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ============================================================
 -- CATEGORIES
 -- ============================================================
 CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    section_id INTEGER,
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     description TEXT,
@@ -30,7 +44,8 @@ CREATE TABLE IF NOT EXISTS categories (
     seo_title TEXT,
     seo_description TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE SET NULL
 );
 
 -- ============================================================
@@ -76,6 +91,7 @@ CREATE TABLE IF NOT EXISTS products (
     price REAL NOT NULL CHECK(price >= 0),
     sale_price REAL CHECK(sale_price IS NULL OR sale_price >= 0),
     sku TEXT UNIQUE,
+    section_id INTEGER,
     category_id INTEGER,
     collection_id INTEGER,
     type_id INTEGER,
@@ -98,6 +114,7 @@ CREATE TABLE IF NOT EXISTS products (
     seo_keywords TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE SET NULL,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
     FOREIGN KEY (collection_id) REFERENCES collections(id) ON DELETE SET NULL,
     FOREIGN KEY (type_id) REFERENCES product_types(id) ON DELETE SET NULL
