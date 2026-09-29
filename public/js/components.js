@@ -93,7 +93,11 @@ function renderHeader() {
 
     return `
         <div class="announcement-bar" id="announcement-bar">
-            <span>HANDMADE EGYPTIAN KILIMS &amp; RUGS • 1-YEAR WARRANTY • CASH ON DELIVERY ACROSS EGYPT</span>
+            <span class="announcement-item">HANDMADE EGYPTIAN KILIMS &amp; RUGS</span>
+            <span class="announcement-sep">•</span>
+            <span class="announcement-item">1&#8209;YEAR WARRANTY</span>
+            <span class="announcement-sep">•</span>
+            <span class="announcement-item">CASH ON DELIVERY ACROSS EGYPT</span>
         </div>
         <header class="site-header">
             <div class="header-top">
@@ -241,8 +245,8 @@ function renderFloatingWhatsApp() {
     return `
         <a href="https://wa.me/201039555155" target="_blank" rel="noopener" class="floating-whatsapp-btn" id="floating-whatsapp" aria-label="Chat with Yadawy on WhatsApp">
             <div class="whatsapp-badge-tooltip">Chat with us on WhatsApp</div>
-            <div class="whatsapp-icon-circle" style="background:#25D366; display:flex; align-items:center; justify-content:center; width:54px; height:54px; border-radius:50%; box-shadow:0 6px 20px rgba(37,211,102,0.35);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="#FFFFFF">
+            <div class="whatsapp-icon-circle">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF">
                     <path d="M17.472 14.382c-.301-.15-1.782-.88-2.059-.981-.277-.101-.478-.15-.679.15-.201.3-.778.981-.954 1.182-.175.201-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.896-.799-1.501-1.786-1.677-2.087-.175-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.175.201-.301.301-.502.101-.201.05-.377-.025-.527-.075-.15-.679-1.637-.93-2.246-.244-.593-.493-.513-.679-.522-.175-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.03-1.054 2.512 0 1.482 1.079 2.912 1.23 3.113.15.201 2.124 3.243 5.145 4.549.719.311 1.28.497 1.718.636.722.23 1.378.198 1.898.12.579-.087 1.782-.728 2.033-1.431.251-.703.251-1.305.176-1.431-.076-.126-.277-.201-.578-.351zM12.04 2C6.518 2 2.037 6.48 2.037 12c0 1.84.498 3.567 1.365 5.053L2 22l5.105-1.339C8.536 21.464 10.24 21.96 12.04 21.96c5.522 0 10.003-4.48 10.003-10S17.562 2 12.04 2zm0 18.234c-1.573 0-3.08-.43-4.394-1.229l-.315-.19-3.264.856.871-3.181-.207-.33c-.88-1.399-1.354-3.018-1.354-4.693 0-4.664 3.795-8.459 8.459-8.459 2.259 0 4.383.88 5.981 2.478 1.598 1.598 2.478 3.722 2.478 5.981 0 4.664-3.795 8.459-8.459 8.459z"/>
                 </svg>
             </div>
@@ -424,7 +428,7 @@ function renderCollectionCard(collection) {
             <div class="collection-card-overlay">
                 <span class="collection-card-pretitle">COLLECTION</span>
                 <h3 class="collection-card-name">${collection.name}</h3>
-                <span class="collection-card-count">EXPLORE ${collection.name} →</span>
+                <span class="collection-card-count">EXPLORE ${collection.name}&nbsp;→</span>
             </div>
         </div>
     `;
