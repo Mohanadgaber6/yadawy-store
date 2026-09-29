@@ -92,20 +92,13 @@ function renderHeader() {
     const isGuidesActive = hash.includes('/kilim-guide') || hash.includes('/size-guide') || hash.includes('/care-guide') || hash.includes('/faqs');
 
     return `
-        <div class="announcement-bar" id="announcement-bar">
-            <span class="announcement-item">HANDMADE EGYPTIAN KILIMS &amp; RUGS</span>
-            <span class="announcement-sep">•</span>
-            <span class="announcement-item">1&#8209;YEAR WARRANTY</span>
-            <span class="announcement-sep">•</span>
-            <span class="announcement-item">CASH ON DELIVERY ACROSS EGYPT</span>
-        </div>
         <header class="site-header">
             <div class="header-top">
                 <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open Navigation Menu">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
                 <a href="#/" class="header-logo" aria-label="YADAWY Home">
-                    <img src="/images/logo-light.png" alt="YADAWY — Handwoven Rugs &amp; Kilim" class="header-logo-image">
+                    <img src="/images/logo-light.png?v=14" alt="YADAWY — Handwoven Rugs &amp; Kilim" class="header-logo-image">
                 </a>
                 <div class="header-actions">
                     <button class="header-action-btn" onclick="toggleSearch()" aria-label="Search Catalog">
@@ -160,7 +153,7 @@ function renderHeader() {
         <!-- Mobile Drawer Menu -->
         <div class="mobile-menu" id="mobile-menu">
             <div class="mobile-menu-header">
-                <img src="/images/logo-light.png" alt="YADAWY" class="mobile-logo-image">
+                <img src="/images/logo-light.png?v=14" alt="YADAWY" class="mobile-logo-image">
                 <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close Navigation Menu">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
@@ -267,7 +260,7 @@ function renderFooter() {
                     <!-- Column 1: Brand & Craftsmanship -->
                     <div class="footer-col footer-col-brand">
                         <a href="#/" class="footer-logo-link" aria-label="Yadawy Home">
-                            <img src="/images/logo-dark.png" alt="YADAWY — يدوي" class="footer-logo-image" onerror="this.onerror=null; this.src='/images/logo.png';">
+                            <img src="/images/logo-dark.png?v=14" alt="YADAWY — يدوي" class="footer-logo-image" onerror="this.onerror=null; this.src='/images/logo.png?v=14';">
                         </a>
                         <p class="footer-brand-tagline">"Yadawy.. A Piece That Tells a Story."</p>
                         <p class="footer-brand-text">

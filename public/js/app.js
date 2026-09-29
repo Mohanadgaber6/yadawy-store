@@ -59,7 +59,7 @@ async function initApp() {
         console.error('App initialization error:', err);
         document.getElementById('app').innerHTML = `
             <div style="text-align:center;padding:100px 20px;font-family:var(--font-brand)">
-                <img src="/images/logo.png" alt="YADAWY" style="height:64px;width:auto;margin:0 auto 20px;display:block;">
+                <img src="/images/logo.png?v=14" alt="YADAWY" style="height:64px;width:auto;margin:0 auto 20px;display:block;">
                 <h1 style="color:var(--color-maroon);letter-spacing:4px;">YADAWY</h1>
                 <p style="margin-top:16px;color:var(--color-text-secondary);font-family:var(--font-sans)">Unable to load store. Please check your connection and refresh.</p>
             </div>
