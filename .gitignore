@@ -6,5 +6,7 @@ uploads/*.mp4
 uploads/videos/
 scratch/
 *.log
+*.db-shm
+*.db-wal
 .DS_Store
 Thumbs.db

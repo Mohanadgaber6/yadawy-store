@@ -98,7 +98,8 @@ function renderHeader() {
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
                 <a href="#/" class="header-logo" aria-label="YADAWY Home">
-                    <img src="/images/logo-light.png?v=14" alt="YADAWY — Handwoven Rugs &amp; Kilim" class="header-logo-image">
+                    <img src="/images/logo-light.png?v=15" alt="YADAWY — Handwoven Rugs &amp; Kilim" class="header-logo-image">
+                    <span class="header-logo-tagline" dir="rtl" lang="ar">امتداد الشركة الإيرانية</span>
                 </a>
                 <div class="header-actions">
                     <button class="header-action-btn" onclick="toggleSearch()" aria-label="Search Catalog">
@@ -153,7 +154,10 @@ function renderHeader() {
         <!-- Mobile Drawer Menu -->
         <div class="mobile-menu" id="mobile-menu">
             <div class="mobile-menu-header">
-                <img src="/images/logo-light.png?v=14" alt="YADAWY" class="mobile-logo-image">
+                <a href="#/" class="mobile-logo-wrap" onclick="toggleMobileMenu()" aria-label="YADAWY Home">
+                    <img src="/images/logo-light.png?v=15" alt="YADAWY" class="mobile-logo-image">
+                    <span class="mobile-logo-tagline" dir="rtl" lang="ar">امتداد الشركة الإيرانية</span>
+                </a>
                 <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close Navigation Menu">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
@@ -161,25 +165,27 @@ function renderHeader() {
             <div class="mobile-nav-links">
                 <div class="mobile-nav-group">
                     <a href="#/shop" class="mobile-nav-link" onclick="toggleMobileMenu()">ALL PRODUCTS</a>
-                    <div class="mobile-sub-links" style="padding-left:16px; display:flex; flex-direction:column; gap:8px; margin:8px 0 16px;">
-                        <a href="#/shop" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:rgba(255,255,255,0.7); font-size:13px; text-decoration:none;">All Products</a>
-                        <a href="#/shop?section=carpets" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:var(--color-gold-light); font-size:13px; text-decoration:none;">Carpets &amp; Rugs</a>
-                        <a href="#/shop?section=kilims" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:var(--color-gold-light); font-size:13px; text-decoration:none;">Kilims &amp; Flatweaves</a>
+                    <div class="mobile-sub-links">
+                        <a href="#/shop" class="mobile-sub-link" onclick="toggleMobileMenu()">All Products</a>
+                        <a href="#/shop?section=carpets" class="mobile-sub-link" onclick="toggleMobileMenu()">Carpets &amp; Rugs</a>
+                        <a href="#/shop?section=kilims" class="mobile-sub-link" onclick="toggleMobileMenu()">Kilims &amp; Flatweaves</a>
                     </div>
                 </div>
                 <div class="mobile-nav-group">
-                    <span class="mobile-nav-link" style="opacity:0.6;font-size:11px;letter-spacing:2px">GUIDES &amp; POLICIES</span>
-                    <div class="mobile-sub-links" style="padding-left:16px; display:flex; flex-direction:column; gap:8px; margin:8px 0 16px;">
-                        <a href="#/kilim-guide" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:rgba(255,255,255,0.85); font-size:13px; text-decoration:none;">What Is a Kilim?</a>
-                        <a href="#/size-guide" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:rgba(255,255,255,0.85); font-size:13px; text-decoration:none;">Size Guide</a>
-                        <a href="#/care-guide" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:rgba(255,255,255,0.85); font-size:13px; text-decoration:none;">Kilim Care Guide</a>
-                        <a href="#/faqs" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:rgba(255,255,255,0.85); font-size:13px; text-decoration:none;">FAQs</a>
-                        <a href="#/return-policy" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:rgba(255,255,255,0.85); font-size:13px; text-decoration:none;">Return &amp; Refund Policy</a>
-                        <a href="#/shipping-policy" class="mobile-sub-link" onclick="toggleMobileMenu()" style="color:rgba(255,255,255,0.85); font-size:13px; text-decoration:none;">Shipping Policy</a>
+                    <span class="mobile-nav-group-title">GUIDES &amp; POLICIES</span>
+                    <div class="mobile-sub-links">
+                        <a href="#/kilim-guide" class="mobile-sub-link" onclick="toggleMobileMenu()">What Is a Kilim?</a>
+                        <a href="#/size-guide" class="mobile-sub-link" onclick="toggleMobileMenu()">Size Guide</a>
+                        <a href="#/care-guide" class="mobile-sub-link" onclick="toggleMobileMenu()">Kilim Care Guide</a>
+                        <a href="#/faqs" class="mobile-sub-link" onclick="toggleMobileMenu()">FAQs</a>
+                        <a href="#/return-policy" class="mobile-sub-link" onclick="toggleMobileMenu()">Return &amp; Refund Policy</a>
+                        <a href="#/shipping-policy" class="mobile-sub-link" onclick="toggleMobileMenu()">Shipping Policy</a>
                     </div>
                 </div>
-                <a href="#/about" class="mobile-nav-link" onclick="toggleMobileMenu()">OUR STORY</a>
-                <a href="#/contact" class="mobile-nav-link" onclick="toggleMobileMenu()">CONTACT</a>
+                <div class="mobile-nav-group mobile-nav-group-simple">
+                    <a href="#/about" class="mobile-nav-link" onclick="toggleMobileMenu()">OUR STORY</a>
+                    <a href="#/contact" class="mobile-nav-link" onclick="toggleMobileMenu()">CONTACT</a>
+                </div>
             </div>
             <div class="mobile-menu-footer">
                 <p class="mobile-tagline">Yadawy.. A Piece That Tells a Story.</p>
@@ -260,7 +266,8 @@ function renderFooter() {
                     <!-- Column 1: Brand & Craftsmanship -->
                     <div class="footer-col footer-col-brand">
                         <a href="#/" class="footer-logo-link" aria-label="Yadawy Home">
-                            <img src="/images/logo-dark.png?v=14" alt="YADAWY — يدوي" class="footer-logo-image" onerror="this.onerror=null; this.src='/images/logo.png?v=14';">
+                            <img src="/images/logo-dark.png?v=15" alt="YADAWY — يدوي" class="footer-logo-image" onerror="this.onerror=null; this.src='/images/logo.png?v=15';">
+                            <span class="footer-logo-tagline" dir="rtl" lang="ar">امتداد الشركة الإيرانية</span>
                         </a>
                         <p class="footer-brand-tagline">"Yadawy.. A Piece That Tells a Story."</p>
                         <p class="footer-brand-text">
@@ -376,8 +383,11 @@ function renderProductCard(product) {
     const hasSecondary = product.secondary_image;
     const isOnSale = product.is_on_sale && product.sale_price;
 
+    const targetUrl = product.custom_link || `/product/${product.slug}`;
+    const btnText = product.button_text || 'VIEW DETAILS';
+
     return `
-        <div class="product-card" onclick="navigateTo('/product/${product.slug}')">
+        <div class="product-card" onclick="navigateTo('${targetUrl}')">
             <div class="product-card-image-wrap">
                 ${hasImage
                     ? `<img src="${imgSrc(product.primary_image)}" class="product-card-image" alt="${product.name}" loading="lazy">`
@@ -389,8 +399,8 @@ function renderProductCard(product) {
                 ${product.is_best_seller ? '<div class="product-card-badge best-seller">BEST SELLER</div>' : ''}
                 ${product.inventory_qty <= 0 ? '<div class="product-card-badge out-of-stock">SOLD OUT</div>' : ''}
                 <div class="product-card-actions">
-                    <button class="product-card-add-btn" onclick="event.stopPropagation(); navigateTo('/product/${product.slug}')">
-                        VIEW DETAILS
+                    <button class="product-card-add-btn" onclick="event.stopPropagation(); navigateTo('${targetUrl}')">
+                        ${btnText}
                     </button>
                 </div>
             </div>

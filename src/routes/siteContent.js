@@ -109,7 +109,132 @@ router.get('/navigation', (req, res) => {
     }
 });
 
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const heroUploadDir = path.resolve(process.env.UPLOAD_DIR || './uploads');
+const heroStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const isVideo = file.mimetype.startsWith('video/');
+        const subDir = isVideo ? 'videos' : 'hero';
+        const dest = path.join(heroUploadDir, subDir);
+        if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+        cb(null, dest);
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const safeName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}${ext}`;
+        cb(null, safeName);
+    }
+});
+
+const uploadHero = multer({
+    storage: heroStorage,
+    limits: {
+        fileSize: 100 * 1024 * 1024 // 100MB
+    },
+    fileFilter: (req, file, cb) => {
+        const allowed = [
+            'image/jpeg', 'image/png', 'image/webp', 'image/avif',
+            'video/mp4', 'video/webm', 'video/ogg'
+        ];
+        if (allowed.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only JPG, PNG, WEBP, AVIF images and MP4, WEBM videos are allowed.'));
+        }
+    }
+});
+
 // ===== ADMIN =====
+
+// Dedicated Hero Section API
+router.get('/admin/hero', requireAdmin, (req, res) => {
+    try {
+        const db = getDb();
+        const hero = db.prepare("SELECT * FROM homepage_sections WHERE section_key = 'hero' OR section_type = 'hero' LIMIT 1").get();
+        if (!hero) return res.status(404).json({ error: 'Hero section not found' });
+        res.json({ hero });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch hero section' });
+    }
+});
+
+router.put('/admin/hero', requireAdmin, uploadHero.fields([{ name: 'image', maxCount: 1 }, { name: 'video', maxCount: 1 }]), async (req, res) => {
+    try {
+        const db = getDb();
+        const existing = db.prepare("SELECT * FROM homepage_sections WHERE section_key = 'hero' OR section_type = 'hero' LIMIT 1").get();
+        if (!existing) return res.status(404).json({ error: 'Hero section not found' });
+
+        const data = req.body;
+        let imagePath = existing.image;
+        let videoPath = existing.video;
+
+        if (req.files?.image?.[0]) {
+            imagePath = `/uploads/hero/${req.files.image[0].filename}`;
+        } else if (data.remove_image === 'true' || data.image === '') {
+            imagePath = null;
+        } else if (data.image !== undefined) {
+            imagePath = data.image || null;
+        }
+
+        if (req.files?.video?.[0]) {
+            videoPath = `/uploads/videos/${req.files.video[0].filename}`;
+        } else if (data.remove_video === 'true' || data.video === '') {
+            videoPath = null;
+        } else if (data.video !== undefined) {
+            videoPath = data.video || null;
+        }
+
+        // Parse & merge metadata (overlay_opacity, show_video)
+        let meta = {};
+        try {
+            meta = existing.metadata ? JSON.parse(existing.metadata) : {};
+        } catch (e) { meta = {}; }
+
+        if (data.metadata) {
+            try {
+                const parsed = typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata;
+                meta = { ...meta, ...parsed };
+            } catch (e) {}
+        }
+        if (data.overlay_opacity !== undefined) {
+            meta.overlay_opacity = parseFloat(data.overlay_opacity);
+        }
+        if (data.show_video !== undefined) {
+            meta.show_video = (data.show_video === 'true' || data.show_video === true || data.show_video === '1' || data.show_video === 1);
+        }
+
+        db.prepare(`
+            UPDATE homepage_sections SET
+                title = ?,
+                subtitle = ?,
+                image = ?,
+                video = ?,
+                link_text = ?,
+                link_url = ?,
+                metadata = ?,
+                updated_at = datetime('now')
+            WHERE id = ?
+        `).run(
+            data.title !== undefined ? data.title : existing.title,
+            data.subtitle !== undefined ? data.subtitle : existing.subtitle,
+            imagePath,
+            videoPath,
+            data.link_text !== undefined ? data.link_text : existing.link_text,
+            data.link_url !== undefined ? data.link_url : existing.link_url,
+            JSON.stringify(meta),
+            existing.id
+        );
+
+        const updated = db.prepare('SELECT * FROM homepage_sections WHERE id = ?').get(existing.id);
+        res.json({ success: true, hero: updated, message: 'Hero section updated successfully' });
+    } catch (err) {
+        console.error('Error updating hero:', err);
+        res.status(500).json({ error: err.message || 'Failed to update hero section' });
+    }
+});
 
 // Homepage sections CRUD
 router.get('/admin/sections', requireAdmin, (req, res) => {
@@ -119,7 +244,7 @@ router.get('/admin/sections', requireAdmin, (req, res) => {
     } catch (err) { res.status(500).json({ error: 'Failed to fetch sections' }); }
 });
 
-router.put('/admin/sections/:id', requireAdmin, setUploadDir('hero'), uploadImages.single('image'), handleUploadError, async (req, res) => {
+router.put('/admin/sections/:id', requireAdmin, uploadHero.fields([{ name: 'image', maxCount: 1 }, { name: 'video', maxCount: 1 }]), async (req, res) => {
     try {
         const id = parseInt(req.params.id);
         const db = getDb();
@@ -128,10 +253,37 @@ router.put('/admin/sections/:id', requireAdmin, setUploadDir('hero'), uploadImag
 
         const data = req.body;
         let imagePath = existing.image;
-        if (req.file) {
-            if (existing.image) deleteUploadedFile(existing.image);
-            const processed = await processImage(req.file.path, 'hero');
-            imagePath = processed.imagePath;
+        let videoPath = existing.video;
+
+        if (req.files?.image?.[0]) {
+            imagePath = `/uploads/hero/${req.files.image[0].filename}`;
+        } else if (data.remove_image === 'true' || data.image === '') {
+            imagePath = null;
+        } else if (data.image !== undefined) {
+            imagePath = data.image || null;
+        }
+
+        if (req.files?.video?.[0]) {
+            videoPath = `/uploads/videos/${req.files.video[0].filename}`;
+        } else if (data.remove_video === 'true' || data.video === '') {
+            videoPath = null;
+        } else if (data.video !== undefined) {
+            videoPath = data.video || null;
+        }
+
+        let meta = existing.metadata;
+        if (data.metadata || data.overlay_opacity !== undefined || data.show_video !== undefined) {
+            let m = {};
+            try { m = existing.metadata ? JSON.parse(existing.metadata) : {}; } catch (e) {}
+            if (data.metadata) {
+                try {
+                    const parsed = typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata;
+                    m = { ...m, ...parsed };
+                } catch (e) {}
+            }
+            if (data.overlay_opacity !== undefined) m.overlay_opacity = parseFloat(data.overlay_opacity);
+            if (data.show_video !== undefined) m.show_video = (data.show_video === 'true' || data.show_video === true || data.show_video === '1' || data.show_video === 1);
+            meta = JSON.stringify(m);
         }
 
         db.prepare(`
@@ -143,7 +295,7 @@ router.put('/admin/sections/:id', requireAdmin, setUploadDir('hero'), uploadImag
             data.subtitle !== undefined ? data.subtitle : existing.subtitle,
             data.content !== undefined ? data.content : existing.content,
             imagePath,
-            data.video !== undefined ? data.video : existing.video,
+            videoPath,
             data.link_text !== undefined ? data.link_text : existing.link_text,
             data.link_url !== undefined ? data.link_url : existing.link_url,
             data.product_source !== undefined ? data.product_source : existing.product_source,
@@ -151,11 +303,12 @@ router.put('/admin/sections/:id', requireAdmin, setUploadDir('hero'), uploadImag
             data.max_products !== undefined ? parseInt(data.max_products) : existing.max_products,
             data.display_order !== undefined ? parseInt(data.display_order) : existing.display_order,
             data.is_active !== undefined ? (data.is_active === 'true' || data.is_active === true ? 1 : 0) : existing.is_active,
-            data.metadata !== undefined ? data.metadata : existing.metadata,
+            meta,
             id
         );
 
-        res.json({ success: true });
+        const updated = db.prepare('SELECT * FROM homepage_sections WHERE id = ?').get(id);
+        res.json({ success: true, section: updated });
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'Failed to update section' });

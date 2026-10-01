@@ -14,16 +14,27 @@ async function renderHomePage() {
         for (const section of sections) {
             switch (section.section_type) {
                 case 'hero':
+                    let heroMeta = {};
+                    try {
+                        heroMeta = typeof section.metadata === 'string' ? JSON.parse(section.metadata) : (section.metadata || {});
+                    } catch (e) { heroMeta = {}; }
+
+                    const overlayOpacity = heroMeta.overlay_opacity !== undefined ? Number(heroMeta.overlay_opacity) : 0.8;
+                    const showVideo = Boolean(heroMeta.show_video && section.video);
+                    const linkTarget = section.link_url ? (section.link_url.startsWith('#') || section.link_url.startsWith('http') ? section.link_url : `#${section.link_url}`) : '#/shop';
+
                     html += `
                         <section class="hero">
-                            ${section.image
-                                ? `<img src="${imgSrc(section.image)}" class="hero-image" alt="Hero">`
-                                : '<div class="hero-image" style="background:linear-gradient(135deg,var(--color-maroon),var(--color-maroon-dark))"></div>'}
-                            <div class="hero-overlay"></div>
+                            ${showVideo
+                                ? `<video class="hero-image" autoplay muted loop playsinline src="${section.video}"></video>`
+                                : (section.image
+                                    ? `<img src="${imgSrc(section.image)}" class="hero-image" alt="Hero">`
+                                    : '<div class="hero-image" style="background:linear-gradient(135deg,var(--color-maroon),var(--color-maroon-dark))"></div>')}
+                            <div class="hero-overlay" style="opacity: ${overlayOpacity};"></div>
                             <div class="hero-content">
                                 <h1 class="hero-title">${section.title || ''}</h1>
                                 <p class="hero-subtitle">${section.subtitle || ''}</p>
-                                ${section.link_text ? `<a href="#${section.link_url || '/shop'}" class="hero-cta">${section.link_text}</a>` : ''}
+                                ${section.link_text ? `<a href="${linkTarget}" class="hero-cta">${section.link_text}</a>` : ''}
                             </div>
                         </section>
                     `;

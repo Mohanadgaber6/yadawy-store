@@ -57,8 +57,16 @@ function ensureTables() {
         if (!columns.includes('preferences')) {
             db.prepare("ALTER TABLE admins ADD COLUMN preferences TEXT").run();
         }
+
+        const prodCols = db.prepare("PRAGMA table_info(products)").all().map(c => c.name);
+        if (!prodCols.includes('button_text')) {
+            db.prepare("ALTER TABLE products ADD COLUMN button_text TEXT DEFAULT 'VIEW PIECE'").run();
+        }
+        if (!prodCols.includes('custom_link')) {
+            db.prepare("ALTER TABLE products ADD COLUMN custom_link TEXT").run();
+        }
     } catch (e) {
-        console.warn('Note on admins columns:', e.message);
+        console.warn('Note on table migrations:', e.message);
     }
 
     console.log('✅ Audit logs, Media, and Contact Submissions tables verified.');

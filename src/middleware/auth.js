@@ -39,6 +39,25 @@ function requireAdmin(req, res, next) {
     }
 }
 
+function isSuperAdminUser(admin) {
+    if (!admin) return false;
+    const primaryEmail = (process.env.ADMIN_EMAIL || 'admin@yadawy.com').toLowerCase();
+    return (
+        admin.role === 'superadmin' ||
+        String(admin.email).toLowerCase() === primaryEmail ||
+        admin.id === 1
+    );
+}
+
+function requireSuperAdmin(req, res, next) {
+    requireAdmin(req, res, () => {
+        if (!isSuperAdminUser(req.admin)) {
+            return res.status(403).json({ error: 'Access denied. Super administrator privileges required.' });
+        }
+        next();
+    });
+}
+
 function optionalAdmin(req, res, next) {
     try {
         let token = req.cookies?.admin_token;
@@ -53,4 +72,4 @@ function optionalAdmin(req, res, next) {
     next();
 }
 
-module.exports = { generateToken, requireAdmin, optionalAdmin, JWT_SECRET };
+module.exports = { generateToken, requireAdmin, requireSuperAdmin, isSuperAdminUser, optionalAdmin, JWT_SECRET };

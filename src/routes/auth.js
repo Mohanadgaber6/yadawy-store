@@ -49,13 +49,20 @@ router.post('/login', loginLimiter, async (req, res) => {
             maxAge: 8 * 60 * 60 * 1000 // 8 hours
         });
 
+        const isSuperAdmin = (
+            admin.role === 'superadmin' ||
+            String(admin.email).toLowerCase() === (process.env.ADMIN_EMAIL || 'admin@yadawy.com').toLowerCase() ||
+            admin.id === 1
+        );
+
         res.json({
             success: true,
             admin: {
                 id: admin.id,
                 username: admin.username,
                 email: admin.email,
-                role: admin.role
+                role: admin.role,
+                is_superadmin: isSuperAdmin
             }
         });
     } catch (err) {
@@ -88,7 +95,12 @@ router.get('/me', (req, res) => {
         if (!admin) {
             return res.status(401).json({ error: 'Not authenticated' });
         }
-        res.json({ admin });
+        const isSuperAdmin = (
+            admin.role === 'superadmin' ||
+            String(admin.email).toLowerCase() === (process.env.ADMIN_EMAIL || 'admin@yadawy.com').toLowerCase() ||
+            admin.id === 1
+        );
+        res.json({ admin: { ...admin, is_superadmin: isSuperAdmin } });
     } catch (err) {
         res.status(401).json({ error: 'Not authenticated' });
     }

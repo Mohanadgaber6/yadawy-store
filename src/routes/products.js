@@ -461,8 +461,9 @@ router.post('/admin', requireAdmin, (req, res) => {
             INSERT INTO products (name, slug, short_description, full_description, handwoven_details, where_to_place,
                 price, sale_price, sku, category_id, collection_id, type_id, section_id, material, color, dimensions, weight,
                 inventory_qty, is_in_stock, status, is_featured, is_best_seller, is_new_arrival, is_on_sale,
-                care_instructions, shipping_info, specifications, seo_title, seo_description, seo_keywords)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                care_instructions, shipping_info, specifications, seo_title, seo_description, seo_keywords,
+                button_text, custom_link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
             sanitize(data.name), slug,
             data.short_description !== undefined && data.short_description !== null ? sanitizeRichText(data.short_description) : defaultDesc,
@@ -490,7 +491,9 @@ router.post('/admin', requireAdmin, (req, res) => {
             data.specifications || null,
             data.seo_title || null,
             data.seo_description || null,
-            data.seo_keywords || null
+            data.seo_keywords || null,
+            data.button_text ? sanitize(data.button_text) : 'VIEW DETAILS',
+            data.custom_link ? sanitize(data.custom_link) : null
         );
 
         const newId = result.lastInsertRowid;
@@ -570,6 +573,7 @@ router.put('/admin/:id', requireAdmin, (req, res) => {
                 is_featured = ?, is_best_seller = ?, is_new_arrival = ?, is_on_sale = ?,
                 care_instructions = ?, shipping_info = ?, specifications = ?,
                 seo_title = ?, seo_description = ?, seo_keywords = ?,
+                button_text = ?, custom_link = ?,
                 updated_at = datetime('now')
             WHERE id = ?
         `).run(
@@ -602,6 +606,8 @@ router.put('/admin/:id', requireAdmin, (req, res) => {
             data.seo_title !== undefined ? data.seo_title : existing.seo_title,
             data.seo_description !== undefined ? data.seo_description : existing.seo_description,
             data.seo_keywords !== undefined ? data.seo_keywords : existing.seo_keywords,
+            data.button_text !== undefined ? sanitize(data.button_text) : existing.button_text,
+            data.custom_link !== undefined ? sanitize(data.custom_link) : existing.custom_link,
             id
         );
 

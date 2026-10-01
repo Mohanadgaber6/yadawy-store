@@ -53,6 +53,7 @@ const AdminPages = {
                     <div class="admin-login-header">
                         <div class="admin-login-logo">
                             <img src="/admin/images/logo-light.png" alt="YADAWY" class="admin-login-logo-img">
+                            <span class="admin-logo-tagline" dir="rtl" lang="ar">امتداد الشركة الإيرانية</span>
                         </div>
                         <h1 class="admin-login-title">YADAWY</h1>
                         <p class="admin-login-subtitle">Admin Store Control Center</p>
@@ -190,9 +191,9 @@ const AdminPages = {
         return `
             <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
                 <div>
-                    <h1 class="admin-page-title" style="font-size:22px; font-weight:700; color:var(--adm-maroon); font-family:var(--adm-font-brand); letter-spacing:1px; margin-bottom:6px;">Products</h1>
+                    <h1 class="admin-page-title" style="font-size:22px; font-weight:700; color:var(--adm-maroon); font-family:var(--adm-font-brand); letter-spacing:1px; margin-bottom:6px;">Products Management</h1>
                     <p class="admin-page-subtitle" style="color:var(--adm-text-secondary); font-size:13px;">
-                        Complete control over all products displayed on the public website. Any changes appear live immediately.
+                        Complete control over all products displayed on the public website. Add, edit, delete, and manage device image uploads.
                     </p>
                 </div>
                 <div>
@@ -475,6 +476,19 @@ const AdminPages = {
                                 <label for="prod-short-desc">Short Summary / Description</label>
                                 <textarea id="prod-short-desc" rows="3" placeholder="A modern take on traditional kilim craftsmanship, featuring geometric motifs in warm tones...">${this.escapeHtml(p.short_description || '')}</textarea>
                                 <span style="font-size:11.5px; color:var(--adm-text-muted);">Lead summary displayed on catalog cards and top of product page.</span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="prod-button-text">Product Button Text</label>
+                                    <input type="text" id="prod-button-text" value="${this.escapeHtml(p.button_text || 'VIEW DETAILS')}" placeholder="e.g. VIEW DETAILS or BUY NOW">
+                                    <span style="font-size:11.5px; color:var(--adm-text-muted);">Text shown on the product card button across the storefront.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="prod-custom-link">Product Link / Custom URL (Optional)</label>
+                                    <input type="text" id="prod-custom-link" value="${this.escapeHtml(p.custom_link || '')}" placeholder="Leave blank for default product page">
+                                    <span style="font-size:11.5px; color:var(--adm-text-muted);">Optional custom redirect link (e.g. /shop, or leave blank).</span>
+                                </div>
                             </div>
                         </div>
 
@@ -1249,12 +1263,17 @@ const AdminPages = {
     // ========================================================
     // 7. ACCOUNT SETTINGS (REDESIGNED & PROFESSIONAL)
     // ========================================================
-    account(user = {}, adminUsers = []) {
+    account(user = {}, adminUsers = [], isSuperAdmin = false) {
         const username = user.username || 'Admin';
         const email = user.email || '';
         const phone = user.phone || '';
         const role = user.role || 'admin';
-        const isSuper = role === 'superadmin' || role === 'admin';
+        const isSuper = isSuperAdmin || (user && (
+            user.is_superadmin === true ||
+            user.role === 'superadmin' ||
+            String(user.email).toLowerCase() === 'admin@yadawy.com' ||
+            user.id === 1
+        ));
         const initials = username.substring(0, 2).toUpperCase() || 'AD';
         const createdDate = this.formatDate(user.created_at);
         const lastLogin = user.last_login_at ? this.formatDate(user.last_login_at) : 'Current Session';
@@ -1262,10 +1281,12 @@ const AdminPages = {
         return `
             <div class="admin-page-header" style="margin-bottom:24px;">
                 <h1 class="admin-page-title" style="font-size:22px; font-weight:700; color:var(--adm-maroon); font-family:var(--adm-font-brand); letter-spacing:1px; margin-bottom:6px;">
-                    Account &amp; Admin Management
+                    ${isSuper ? 'Account &amp; Admin Management' : 'My Account &amp; Profile'}
                 </h1>
                 <p class="admin-page-subtitle" style="color:var(--adm-text-secondary); font-size:13px;">
-                    Manage your administrator profile, security credentials, and system admin accounts with full store access.
+                    ${isSuper 
+                        ? 'Manage your administrator profile, security credentials, and system admin accounts with full store access.' 
+                        : 'Manage your personal profile information and security credentials.'}
                 </p>
             </div>
 
@@ -1277,7 +1298,7 @@ const AdminPages = {
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             <span>My Profile Information</span>
                         </div>
-                        <span class="role-badge ${isSuper ? 'role-superadmin' : 'role-manager'}">${this.escapeHtml(role.toUpperCase())}</span>
+                        <span class="role-badge ${isSuper ? 'role-superadmin' : 'role-manager'}">${this.escapeHtml(isSuper ? 'SUPERADMIN' : role.toUpperCase())}</span>
                     </div>
 
                     <div class="account-avatar-section">
@@ -1285,7 +1306,7 @@ const AdminPages = {
                         <div class="account-avatar-info">
                             <div class="account-avatar-name">${this.escapeHtml(username)}</div>
                             <div class="account-avatar-role">
-                                <span>✦</span> Verified Administrator
+                                <span>✦</span> ${isSuper ? 'Primary Super Administrator' : 'Verified Administrator'}
                             </div>
                             <div style="font-size:11.5px; color:var(--adm-text-muted); margin-top:3px;">
                                 Account active since ${createdDate}
@@ -1386,7 +1407,8 @@ const AdminPages = {
                     </form>
                 </div>
 
-                <!-- 3. Admin Account Management Section (Full Width) -->
+                ${isSuper ? `
+                <!-- 3. Admin Account Management Section (Super Admin Only) -->
                 <div class="account-card" style="grid-column: 1 / -1;">
                     <div class="account-card-header" style="border-bottom: 1px solid var(--adm-border); padding-bottom: 14px; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
                         <div>
@@ -1399,7 +1421,7 @@ const AdminPages = {
                             </p>
                         </div>
                         <span class="role-badge role-superadmin" style="display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:4px 10px;">
-                            <span>🔐</span> Full Access Control
+                            <span>🔐</span> Primary Admin Only
                         </span>
                     </div>
 
@@ -1475,14 +1497,14 @@ const AdminPages = {
                                                         <div style="font-size:11.5px; color:var(--adm-text-muted); font-family:monospace;">${this.escapeHtml(adm.email)}</div>
                                                     </td>
                                                     <td>
-                                                        <span class="role-badge role-superadmin" style="font-size:10px; padding:2px 7px;">FULL ACCESS</span>
+                                                        <span class="role-badge ${adm.role === 'superadmin' ? 'role-superadmin' : 'role-manager'}" style="font-size:10px; padding:2px 7px;">${this.escapeHtml(adm.role === 'superadmin' ? 'PRIMARY ADMIN' : 'ADMINISTRATOR')}</span>
                                                     </td>
                                                     <td style="font-size:11.5px; color:var(--adm-text-secondary);">
                                                         ${this.formatDate(adm.created_at)}
                                                     </td>
                                                     <td style="text-align:right;">
                                                         ${isMe ? `
-                                                            <span style="font-size:11px; color:var(--adm-text-muted); font-style:italic;">Current Account</span>
+                                                             <span style="font-size:11px; color:var(--adm-text-muted); font-style:italic;">Current Account</span>
                                                         ` : `
                                                             <button type="button" class="btn btn-outline btn-sm" style="color:var(--adm-error); border-color:#FECACA; padding:4px 8px; font-size:11px;" onclick="AdminApp.handleDeleteAdminUser(${adm.id}, '${this.escapeHtml(adm.email)}')">
                                                                 🗑 Delete
@@ -1498,6 +1520,8 @@ const AdminPages = {
                         </div>
                     </div>
                 </div>
+                ` : ''}
+            </div>
             </div>
         `;
     },
@@ -2157,6 +2181,179 @@ const AdminPages = {
 
                     <div style="font-size:12px; color:var(--adm-text-secondary); line-height:1.5;">
                         This updated fee is automatically included in customer checkout totals, invoice breakdowns, admin order details, and official email receipts.
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    // ========================================================
+    // 7. HERO SECTION MANAGEMENT
+    // ========================================================
+    heroManagement(hero = {}) {
+        let meta = {};
+        try {
+            meta = typeof hero.metadata === 'string' ? JSON.parse(hero.metadata) : (hero.metadata || {});
+        } catch (e) { meta = {}; }
+
+        const title = hero.title || 'The Art of Handwoven Rugs';
+        const subtitle = hero.subtitle || 'Curated masterpieces woven with tradition, designed for modern living';
+        const image = hero.image || '';
+        const overlayOpacity = meta.overlay_opacity !== undefined ? Number(meta.overlay_opacity) : 0.8;
+
+        return `
+            <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+                <div>
+                    <h1 class="admin-page-title" style="font-size:24px; font-weight:700; color:var(--adm-maroon); font-family:var(--adm-font-brand); letter-spacing:1px; margin-bottom:4px;">
+                        Hero Section Management
+                    </h1>
+                    <p class="admin-page-subtitle" style="color:var(--adm-text-secondary); font-size:13px;">
+                        Manage the homepage hero background image, headings, and dark luxury overlay in real time.
+                    </p>
+                </div>
+                <div class="btn-group">
+                    <a href="/#/" target="_blank" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:6px;">
+                        <span>View Live Storefront</span> ↗
+                    </a>
+                    <button type="button" class="btn btn-primary" onclick="AdminApp.saveHeroSection()" id="hero-save-top-btn" style="padding:10px 24px; font-size:13px; font-weight:700;">
+                        Save Hero Changes
+                    </button>
+                </div>
+            </div>
+
+            <!-- LIVE REAL-TIME HERO PREVIEW CARD -->
+            <div class="admin-card" style="margin-bottom:28px; padding:24px; background:#FFFFFF; border:1px solid var(--adm-border); border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#28a745;"></span>
+                        <h3 style="font-size:15px; font-weight:700; color:var(--adm-maroon); margin:0; text-transform:uppercase; letter-spacing:1px;">
+                            Live Hero Visual Preview
+                        </h3>
+                    </div>
+                    <span style="font-size:12px; color:var(--adm-text-muted);">Simulates real-time appearance on the website</span>
+                </div>
+
+                <!-- Simulation Viewport -->
+                <div id="hero-preview-container" style="position:relative; height:340px; border-radius:6px; overflow:hidden; background:var(--adm-maroon); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(0,0,0,0.18);">
+                    <!-- Background Image Element -->
+                    <img id="hero-preview-img" src="${image || ''}" alt="Hero Preview" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:${image ? 'block' : 'none'}; opacity:0.65;">
+
+                    <!-- Background Fallback Gradient -->
+                    <div id="hero-preview-gradient" style="position:absolute; inset:0; background:linear-gradient(135deg,var(--adm-maroon),var(--adm-maroon-dark)); display:${!image ? 'block' : 'none'};"></div>
+
+                    <!-- Adjustable Dark Overlay Layer -->
+                    <div id="hero-preview-overlay" style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(24, 4, 7, 0.72) 0%, rgba(35, 6, 12, 0.78) 50%, rgba(24, 4, 7, 0.90) 100%); opacity:${overlayOpacity}; transition:opacity 0.2s ease;"></div>
+
+                    <!-- Hero Content Container -->
+                    <div style="position:relative; z-index:2; text-align:center; padding:20px; max-width:650px; color:#FAF7F2;">
+                        <h2 id="hero-preview-title" style="font-family:'Cormorant Garamond', Georgia, serif; font-size:32px; font-weight:400; line-height:1.2; margin-bottom:10px; text-shadow:0 2px 14px rgba(0,0,0,0.6); color:#FAF7F2;">
+                            ${this.escapeHtml(title)}
+                        </h2>
+                        <p id="hero-preview-subtitle" style="font-family:'Inter', sans-serif; font-size:12px; font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-bottom:0; opacity:0.95; line-height:1.6; color:#FAF7F2;">
+                            ${this.escapeHtml(subtitle)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-COLUMN SETTINGS GRID -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+                <!-- LEFT COLUMN: Background Image -->
+                <div>
+                    <!-- Card 1: Background Image Management -->
+                    <div class="admin-card" style="padding:24px; margin-bottom:24px;">
+                        <h3 style="font-size:16px; font-weight:700; color:var(--adm-maroon); margin-bottom:16px; border-bottom:1px solid var(--adm-border); padding-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            1. Background Image Management
+                        </h3>
+
+                        <!-- Image File Upload Zone -->
+                        <div class="image-upload-zone" onclick="document.getElementById('hero-image-file-input').click()" style="padding:24px; text-align:center; border:2px dashed var(--adm-border); border-radius:6px; cursor:pointer; background:#FAF7F2; margin-bottom:16px; transition:border-color 0.2s ease;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--adm-maroon); margin-bottom:8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            <div style="font-weight:700; color:var(--adm-maroon); font-size:14px;">Upload Image from Device</div>
+                            <div style="font-size:12px; color:var(--adm-text-muted); margin-top:4px;">Supports JPG, PNG, WebP, AVIF from Computer or Mobile</div>
+                            <input type="file" id="hero-image-file-input" accept="image/*" onchange="AdminApp.handleHeroImageFileSelect(event)" style="display:none;">
+                        </div>
+
+                        <!-- Current Image Status & Actions -->
+                        <div style="background:#FFFFFF; border:1px solid var(--adm-border); border-radius:6px; padding:14px; display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div id="hero-img-thumb" style="width:60px; height:45px; border-radius:4px; overflow:hidden; background:#29050C; border:1px solid var(--adm-border); flex-shrink:0;">
+                                    ${image ? `<img src="${image}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#A89F91; font-size:10px;">None</div>`}
+                                </div>
+                                <div>
+                                    <div style="font-weight:600; font-size:13px; color:var(--adm-text);" id="hero-img-label">${image ? 'Background image active' : 'No image selected'}</div>
+                                    <div style="font-size:11px; color:var(--adm-text-muted);" id="hero-img-sublabel">${image ? image.split('/').pop() : 'Default luxury gradient is used'}</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('hero-image-file-input').click()">
+                                    Replace
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="AdminApp.removeHeroImage()" id="hero-delete-img-btn" ${!image ? 'disabled' : ''}>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Overlay Opacity Slider -->
+                        <div class="form-group" style="margin-bottom:8px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <label for="hero-overlay-range" style="font-weight:700; font-size:13px; color:var(--adm-maroon); margin:0;">
+                                    Dark Overlay Opacity
+                                </label>
+                                <span id="hero-overlay-val" style="font-weight:700; font-size:13px; background:var(--adm-maroon); color:var(--adm-gold); padding:2px 8px; border-radius:10px;">
+                                    ${Math.round(overlayOpacity * 100)}%
+                                </span>
+                            </div>
+                            <input type="range" id="hero-overlay-range" min="0" max="1" step="0.05" value="${overlayOpacity}" oninput="AdminApp.onHeroOverlayInput(this.value)" style="width:100%; accent-color:var(--adm-maroon); cursor:pointer;">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--adm-text-muted); margin-top:4px;">
+                                <span>0% (Transparent)</span>
+                                <span>50% (Balanced)</span>
+                                <span>100% (Solid Dark)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Text Content & Save -->
+                <div>
+                    <!-- Card 2: Hero Content Editor -->
+                    <div class="admin-card" style="padding:24px; margin-bottom:24px;">
+                        <h3 style="font-size:16px; font-weight:700; color:var(--adm-maroon); margin-bottom:18px; border-bottom:1px solid var(--adm-border); padding-bottom:10px; display:flex; align-items:center; gap:8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            2. Hero Text Headings
+                        </h3>
+
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label for="hero-title-input" style="font-weight:700; font-size:13px; color:var(--adm-maroon);">
+                                Main Heading <span style="color:var(--adm-error);">*</span>
+                            </label>
+                            <input type="text" id="hero-title-input" value="${this.escapeHtml(title)}" placeholder="e.g. The Art of Handwoven Rugs" oninput="AdminApp.onHeroTitleInput(this.value)" style="font-size:15px; font-weight:600; width:100%; padding:10px 14px; border:1px solid var(--adm-border); border-radius:4px;" required>
+                            <span style="font-size:11.5px; color:var(--adm-text-muted); margin-top:4px; display:block;">
+                                Primary hero headline displayed in elegant serif font.
+                            </span>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom:8px;">
+                            <label for="hero-subtitle-input" style="font-weight:700; font-size:13px; color:var(--adm-maroon);">
+                                Subtitle Text
+                            </label>
+                            <textarea id="hero-subtitle-input" rows="3" placeholder="e.g. Curated masterpieces woven with tradition, designed for modern living" oninput="AdminApp.onHeroSubtitleInput(this.value)" style="font-size:13px; width:100%; padding:10px 14px; border:1px solid var(--adm-border); border-radius:4px; line-height:1.5;">${this.escapeHtml(subtitle)}</textarea>
+                            <span style="font-size:11.5px; color:var(--adm-text-muted); margin-top:4px; display:block;">
+                                Secondary description displayed below the main heading.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Save & Apply -->
+                    <div class="admin-card" style="padding:24px;">
+                        <button type="button" class="btn btn-primary btn-block" onclick="AdminApp.saveHeroSection()" id="hero-save-bottom-btn" style="width:100%; justify-content:center; padding:14px; font-size:14px; font-weight:700; letter-spacing:0.5px;">
+                            Save Hero Changes
+                        </button>
+                        <p style="font-size:12px; color:var(--adm-text-muted); text-align:center; margin-top:12px;">
+                            Changes will immediately update the live homepage hero section for all visitors.
+                        </p>
                     </div>
                 </div>
             </div>

@@ -1,13 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { getDb } = require('../database/connection');
-const { requireAdmin } = require('../middleware/auth');
+const { requireAdmin, requireSuperAdmin } = require('../middleware/auth');
 const { recordAudit } = require('../middleware/audit');
 
 const router = express.Router();
 
-// GET /api/admin/users
-router.get('/users', requireAdmin, (req, res) => {
+// GET /api/admin/users (Super Admin only)
+router.get('/users', requireSuperAdmin, (req, res) => {
     try {
         const db = getDb();
         const users = db.prepare(`
@@ -23,8 +23,8 @@ router.get('/users', requireAdmin, (req, res) => {
     }
 });
 
-// POST /api/admin/users
-router.post('/users', requireAdmin, async (req, res) => {
+// POST /api/admin/users (Super Admin only)
+router.post('/users', requireSuperAdmin, async (req, res) => {
     try {
         const { username, email, password, role = 'admin', is_active = 1 } = req.body;
 
@@ -63,8 +63,8 @@ router.post('/users', requireAdmin, async (req, res) => {
     }
 });
 
-// PUT /api/admin/users/:id
-router.put('/users/:id', requireAdmin, async (req, res) => {
+// PUT /api/admin/users/:id (Super Admin only)
+router.put('/users/:id', requireSuperAdmin, async (req, res) => {
     try {
         const { username, email, role, password, is_active } = req.body;
         const db = getDb();
@@ -96,8 +96,8 @@ router.put('/users/:id', requireAdmin, async (req, res) => {
     }
 });
 
-// PATCH /api/admin/users/:id/status
-router.patch('/users/:id/status', requireAdmin, (req, res) => {
+// PATCH /api/admin/users/:id/status (Super Admin only)
+router.patch('/users/:id/status', requireSuperAdmin, (req, res) => {
     try {
         const { is_active } = req.body;
         const targetId = parseInt(req.params.id);
@@ -124,8 +124,8 @@ router.patch('/users/:id/status', requireAdmin, (req, res) => {
     }
 });
 
-// DELETE /api/admin/users/:id
-router.delete('/users/:id', requireAdmin, (req, res) => {
+// DELETE /api/admin/users/:id (Super Admin only)
+router.delete('/users/:id', requireSuperAdmin, (req, res) => {
     try {
         const targetId = parseInt(req.params.id);
         const db = getDb();

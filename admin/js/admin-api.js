@@ -160,6 +160,10 @@ const AdminAPI = {
     changePassword(data) { return this.post('/auth/change-password', data); },
     updateProfile(data) { return this.put('/auth/profile', data); },
 
+    // Hero Section
+    getHeroSection() { return this.get('/site/admin/hero'); },
+    updateHeroSection(fd) { return this.uploadPut('/site/admin/hero', fd); },
+
     // Site Content
     getHomepageSections() { return this.get('/site/admin/sections'); },
     updateSection(id, fd) { return this.uploadPut(`/site/admin/sections/${id}`, fd); },

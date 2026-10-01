@@ -7,6 +7,12 @@ const AdminApp = {
     currentRoute: '',
     cachedSections: [],
     cachedCategories: [],
+    currentHero: null,
+    stagedHeroImageFile: null,
+    stagedHeroRemoveImage: false,
+    stagedHeroVideoFile: null,
+    stagedHeroRemoveVideo: false,
+    stagedNewProductImages: [],
 
     async init() {
         window.addEventListener('hashchange', () => this.handleRoute());
@@ -84,6 +90,13 @@ const AdminApp = {
         const app = document.getElementById('admin-app');
         if (!app) return;
 
+        const isSuperAdmin = Boolean(
+            this.currentUser?.is_superadmin || 
+            this.currentUser?.role === 'superadmin' || 
+            this.currentUser?.email === 'admin@yadawy.com' ||
+            this.currentUser?.id === 1
+        );
+
         app.innerHTML = `
             <div class="admin-layout">
                 <!-- Sidebar (Strictly 5 navigation items + logout) -->
@@ -91,6 +104,7 @@ const AdminApp = {
                     <div class="admin-brand">
                         <a href="#/categories" class="admin-logo" style="text-decoration:none;">
                             <img src="/admin/images/logo.png" alt="YADAWY" class="admin-sidebar-logo-img">
+                            <span class="admin-sidebar-tagline" dir="rtl" lang="ar">امتداد الشركة الإيرانية</span>
                         </a>
                         <span class="admin-badge-tag">ADMIN</span>
                     </div>
@@ -98,16 +112,22 @@ const AdminApp = {
                     <nav class="admin-nav">
                         <div class="admin-nav-group-title">STORE MANAGEMENT</div>
                         
-                        <!-- 1. Sections & Categories -->
+                        <!-- Hero Section Management -->
+                        <a href="#/hero" class="admin-nav-item ${activeNav === 'hero' ? 'active' : ''}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            <span>Hero Section</span>
+                        </a>
+
+                        <!-- Products Management -->
+                        <a href="#/products" class="admin-nav-item ${activeNav === 'products' ? 'active' : ''}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                            <span>Products Management</span>
+                        </a>
+
+                        <!-- Sections & Categories -->
                         <a href="#/categories" class="admin-nav-item ${activeNav === 'categories' ? 'active' : ''}">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                             <span>Sections &amp; Categories</span>
-                        </a>
-
-                        <!-- 2. Products -->
-                        <a href="#/products" class="admin-nav-item ${activeNav === 'products' ? 'active' : ''}">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                            <span>Products</span>
                         </a>
 
                         <!-- 3. Orders -->
@@ -145,7 +165,7 @@ const AdminApp = {
                         <!-- 6. Admin & Account -->
                         <a href="#/account" class="admin-nav-item ${activeNav === 'account' ? 'active' : ''}">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                            <span>Admin &amp; Account</span>
+                            <span>${isSuperAdmin ? 'Admin &amp; Account' : 'My Account'}</span>
                         </a>
 
                         <!-- 7. Logout item -->
@@ -237,6 +257,11 @@ const AdminApp = {
         } catch (e) {}
 
         switch (route) {
+            case 'hero':
+            case 'hero-section':
+                await this.renderHeroView();
+                break;
+
             case 'categories':
             case 'sections':
                 await this.renderCategoriesView();
@@ -744,6 +769,8 @@ const AdminApp = {
         const weight = document.getElementById('prod-weight')?.value?.trim();
         const inventoryQty = document.getElementById('prod-inventory')?.value || 1;
         const videoUrl = document.getElementById('prod-video-url')?.value?.trim();
+        const buttonText = document.getElementById('prod-button-text')?.value?.trim() || 'VIEW PIECE';
+        const customLink = document.getElementById('prod-custom-link')?.value?.trim() || null;
 
         if (!name) {
             adminToast('Product Name is required', 'error');
@@ -794,7 +821,9 @@ const AdminApp = {
             weight: weight || null,
             inventory_qty: Number(inventoryQty) || 1,
             sizes,
-            video_url: videoUrl !== undefined ? videoUrl : null
+            video_url: videoUrl !== undefined ? videoUrl : null,
+            button_text: buttonText,
+            custom_link: customLink
         };
 
         const topBtn = document.getElementById('save-product-top-btn');
@@ -813,6 +842,19 @@ const AdminApp = {
                 const res = await AdminAPI.createProduct(data);
                 targetProductId = res.id;
                 adminToast('Product created successfully!');
+
+                if (this.stagedNewProductImages && this.stagedNewProductImages.length > 0) {
+                    try {
+                        const imgFd = new FormData();
+                        for (let i = 0; i < this.stagedNewProductImages.length; i++) {
+                            imgFd.append('images', this.stagedNewProductImages[i]);
+                        }
+                        await AdminAPI.uploadProductImages(targetProductId, imgFd);
+                        this.stagedNewProductImages = [];
+                    } catch (uploadErr) {
+                        console.error('Failed to upload staged images:', uploadErr);
+                    }
+                }
             }
 
             window.location.hash = `#/products/edit/${targetProductId}`;
@@ -830,7 +872,17 @@ const AdminApp = {
         if (!files || files.length === 0) return;
 
         if (!id) {
-            adminToast('Please save the product details first before uploading images', 'info');
+            this.stagedNewProductImages = Array.from(files);
+            const gallery = document.getElementById('product-images-gallery');
+            if (gallery) {
+                gallery.innerHTML = this.stagedNewProductImages.map(file => `
+                    <div class="product-image-card" style="border:2px dashed var(--adm-gold); position:relative; min-height:100px;">
+                        <img src="${URL.createObjectURL(file)}" alt="Staged Image" style="width:100%; height:100%; object-fit:cover;">
+                        <div class="primary-indicator-badge" style="background:var(--adm-maroon);">STAGED FROM DEVICE</div>
+                    </div>
+                `).join('');
+            }
+            adminToast(`${files.length} image(s) selected from device. They will be uploaded automatically when you save the product!`, 'info');
             return;
         }
 
@@ -1102,17 +1154,30 @@ const AdminApp = {
 
     // ========================================================
     // ========================================================
-    // VIEW 6: ACCOUNT & ADMIN ACCESS MANAGEMENT
-    // ========================================================
     async renderAccountView() {
         try {
-            const [me, usersRes] = await Promise.all([
-                AdminAPI.me(),
-                AdminAPI.getAdminUsers()
-            ]);
+            const me = await AdminAPI.me();
             this.currentUser = me.admin;
-            const adminUsers = usersRes.users || [];
-            const html = AdminPages.account(this.currentUser, adminUsers);
+            const isSuperAdmin = Boolean(
+                this.currentUser && (
+                    this.currentUser.is_superadmin === true ||
+                    this.currentUser.role === 'superadmin' ||
+                    String(this.currentUser.email).toLowerCase() === 'admin@yadawy.com' ||
+                    this.currentUser.id === 1
+                )
+            );
+
+            let adminUsers = [];
+            if (isSuperAdmin) {
+                try {
+                    const usersRes = await AdminAPI.getAdminUsers();
+                    adminUsers = usersRes.users || [];
+                } catch (e) {
+                    console.error('Failed to load admin users:', e);
+                }
+            }
+
+            const html = AdminPages.account(this.currentUser, adminUsers, isSuperAdmin);
             this.renderLayout(html, 'account');
         } catch (err) {
             this.renderLayout(`<div style="color:var(--adm-error); padding:20px;">Failed to load account settings: ${this.escapeHtml(err.message)}</div>`, 'account');
@@ -1573,6 +1638,292 @@ const AdminApp = {
                 btn.disabled = false;
                 btn.innerHTML = '<span>💾</span><span>Save Shipping Settings</span>';
             }
+        }
+    },
+
+    // ========================================================
+    // VIEW: HERO SECTION MANAGEMENT
+    // ========================================================
+    async renderHeroView() {
+        try {
+            const res = await AdminAPI.getHeroSection();
+            this.currentHero = res.hero || {};
+            this.stagedHeroImageFile = null;
+            this.stagedHeroRemoveImage = false;
+            this.stagedHeroVideoFile = null;
+            this.stagedHeroRemoveVideo = false;
+
+            const html = AdminPages.heroManagement(this.currentHero);
+            this.renderLayout(html, 'hero');
+        } catch (err) {
+            console.error('Error loading hero section:', err);
+            this.renderLayout(`<div style="color:var(--adm-error); padding:20px;">Failed to load hero section: ${this.escapeHtml(err.message)}</div>`, 'hero');
+        }
+    },
+
+    onHeroTitleInput(val) {
+        const el = document.getElementById('hero-preview-title');
+        if (el) el.textContent = val || 'The Art of Handwoven Rugs';
+    },
+
+    onHeroSubtitleInput(val) {
+        const el = document.getElementById('hero-preview-subtitle');
+        if (el) el.textContent = val || 'Curated masterpieces woven with tradition, designed for modern living';
+    },
+
+    onHeroBtnTextInput(val) {
+        const el = document.getElementById('hero-preview-btn');
+        if (el) el.textContent = val || 'EXPLORE COLLECTION';
+    },
+
+    onHeroOverlayInput(val) {
+        const badge = document.getElementById('hero-overlay-val');
+        if (badge) badge.textContent = `${Math.round(val * 100)}%`;
+        const overlay = document.getElementById('hero-preview-overlay');
+        if (overlay) overlay.style.opacity = val;
+    },
+
+    onHeroVideoToggle(checked) {
+        const imgEl = document.getElementById('hero-preview-img');
+        const vidEl = document.getElementById('hero-preview-video');
+        const gradEl = document.getElementById('hero-preview-gradient');
+
+        const hasVideo = vidEl && vidEl.getAttribute('src');
+        const hasImage = imgEl && imgEl.getAttribute('src');
+
+        if (checked && hasVideo) {
+            if (vidEl) { vidEl.style.display = 'block'; vidEl.play().catch(()=>{}); }
+            if (imgEl) imgEl.style.display = 'none';
+            if (gradEl) gradEl.style.display = 'none';
+        } else if (hasImage) {
+            if (vidEl) { vidEl.pause(); vidEl.style.display = 'none'; }
+            if (imgEl) imgEl.style.display = 'block';
+            if (gradEl) gradEl.style.display = 'none';
+        } else {
+            if (vidEl) { vidEl.pause(); vidEl.style.display = 'none'; }
+            if (imgEl) imgEl.style.display = 'none';
+            if (gradEl) gradEl.style.display = 'block';
+        }
+    },
+
+    handleHeroImageFileSelect(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            adminToast('Please select a valid image file (JPG, PNG, WebP, AVIF)', 'error');
+            return;
+        }
+
+        this.stagedHeroImageFile = file;
+        this.stagedHeroRemoveImage = false;
+
+        const previewUrl = URL.createObjectURL(file);
+
+        // Update visual preview banner
+        const previewImg = document.getElementById('hero-preview-img');
+        if (previewImg) {
+            previewImg.src = previewUrl;
+            const isVideoActive = document.getElementById('hero-show-video-toggle')?.checked;
+            const vidEl = document.getElementById('hero-preview-video');
+            const hasVideo = vidEl && vidEl.getAttribute('src');
+
+            if (!isVideoActive || !hasVideo) {
+                previewImg.style.display = 'block';
+                const grad = document.getElementById('hero-preview-gradient');
+                if (grad) grad.style.display = 'none';
+            }
+        }
+
+        // Update thumbnail in card
+        const thumb = document.getElementById('hero-img-thumb');
+        if (thumb) {
+            thumb.innerHTML = `<img src="${previewUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+        }
+
+        const label = document.getElementById('hero-img-label');
+        if (label) label.textContent = 'New image ready to save';
+
+        const sublabel = document.getElementById('hero-img-sublabel');
+        if (sublabel) sublabel.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+
+        const delBtn = document.getElementById('hero-delete-img-btn');
+        if (delBtn) delBtn.disabled = false;
+
+        adminToast('New background image selected from device. Click "Save Hero Changes" to apply.', 'info');
+    },
+
+    removeHeroImage() {
+        this.stagedHeroImageFile = null;
+        this.stagedHeroRemoveImage = true;
+
+        const fileInput = document.getElementById('hero-image-file-input');
+        if (fileInput) fileInput.value = '';
+
+        const previewImg = document.getElementById('hero-preview-img');
+        if (previewImg) {
+            previewImg.removeAttribute('src');
+            previewImg.style.display = 'none';
+        }
+
+        const thumb = document.getElementById('hero-img-thumb');
+        if (thumb) {
+            thumb.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#A89F91; font-size:10px;">None</div>`;
+        }
+
+        const label = document.getElementById('hero-img-label');
+        if (label) label.textContent = 'No image selected';
+
+        const sublabel = document.getElementById('hero-img-sublabel');
+        if (sublabel) sublabel.textContent = 'Default luxury gradient will be used';
+
+        const delBtn = document.getElementById('hero-delete-img-btn');
+        if (delBtn) delBtn.disabled = true;
+
+        const isVideoActive = document.getElementById('hero-show-video-toggle')?.checked;
+        const vidEl = document.getElementById('hero-preview-video');
+        const hasVideo = vidEl && vidEl.getAttribute('src');
+
+        if (!isVideoActive || !hasVideo) {
+            const grad = document.getElementById('hero-preview-gradient');
+            if (grad) grad.style.display = 'block';
+        }
+
+        adminToast('Background image marked for removal. Click "Save Hero Changes" to apply.', 'info');
+    },
+
+    handleHeroVideoFileSelect(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const validTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+        if (!validTypes.includes(file.type)) {
+            adminToast('Please upload an MP4 or WebM video file.', 'error');
+            return;
+        }
+
+        if (file.size > 100 * 1024 * 1024) {
+            adminToast('Video file size must be under 100MB.', 'error');
+            return;
+        }
+
+        this.stagedHeroVideoFile = file;
+        this.stagedHeroRemoveVideo = false;
+
+        const previewUrl = URL.createObjectURL(file);
+
+        // Update in-card player preview
+        const cardVideoWrap = document.getElementById('hero-card-video-wrap');
+        const cardVideo = document.getElementById('hero-card-video-player');
+        if (cardVideoWrap && cardVideo) {
+            cardVideoWrap.style.display = 'block';
+            cardVideo.src = previewUrl;
+            cardVideo.load();
+        }
+
+        // Update live hero visual banner preview
+        const previewVideo = document.getElementById('hero-preview-video');
+        if (previewVideo) {
+            previewVideo.src = previewUrl;
+            previewVideo.load();
+        }
+
+        // Auto-enable video toggle
+        const toggle = document.getElementById('hero-show-video-toggle');
+        if (toggle) {
+            toggle.checked = true;
+            this.onHeroVideoToggle(true);
+        }
+
+        const label = document.getElementById('hero-video-label');
+        if (label) label.textContent = 'New video ready to save';
+
+        const sublabel = document.getElementById('hero-video-sublabel');
+        if (sublabel) sublabel.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+
+        const delBtn = document.getElementById('hero-delete-video-btn');
+        if (delBtn) delBtn.disabled = false;
+
+        adminToast('New video selected from device. Click "Save Hero Changes" to upload & apply.', 'info');
+    },
+
+    removeHeroVideo() {
+        this.stagedHeroVideoFile = null;
+        this.stagedHeroRemoveVideo = true;
+
+        const fileInput = document.getElementById('hero-video-file-input');
+        if (fileInput) fileInput.value = '';
+
+        const cardVideoWrap = document.getElementById('hero-card-video-wrap');
+        const cardVideo = document.getElementById('hero-card-video-player');
+        if (cardVideo) {
+            cardVideo.pause();
+            cardVideo.removeAttribute('src');
+        }
+        if (cardVideoWrap) cardVideoWrap.style.display = 'none';
+
+        const previewVideo = document.getElementById('hero-preview-video');
+        if (previewVideo) {
+            previewVideo.pause();
+            previewVideo.removeAttribute('src');
+            previewVideo.style.display = 'none';
+        }
+
+        const toggle = document.getElementById('hero-show-video-toggle');
+        if (toggle) {
+            toggle.checked = false;
+            this.onHeroVideoToggle(false);
+        }
+
+        const label = document.getElementById('hero-video-label');
+        if (label) label.textContent = 'No video attached';
+
+        const sublabel = document.getElementById('hero-video-sublabel');
+        if (sublabel) sublabel.textContent = 'Upload direct MP4/WebM from device';
+
+        const delBtn = document.getElementById('hero-delete-video-btn');
+        if (delBtn) delBtn.disabled = true;
+
+        adminToast('Video background marked for removal. Click "Save Hero Changes" to apply.', 'info');
+    },
+
+    async saveHeroSection() {
+        const title = document.getElementById('hero-title-input')?.value?.trim();
+        const subtitle = document.getElementById('hero-subtitle-input')?.value?.trim() || '';
+        const overlayOpacity = document.getElementById('hero-overlay-range')?.value || '0.80';
+
+        if (!title) {
+            adminToast('Hero Main Heading is required', 'error');
+            document.getElementById('hero-title-input')?.focus();
+            return;
+        }
+
+        const topBtn = document.getElementById('hero-save-top-btn');
+        const botBtn = document.getElementById('hero-save-bottom-btn');
+
+        try {
+            if (topBtn) { topBtn.disabled = true; topBtn.textContent = 'Saving...'; }
+            if (botBtn) { botBtn.disabled = true; botBtn.textContent = 'Saving Hero...'; }
+
+            const fd = new FormData();
+            fd.append('title', title);
+            fd.append('subtitle', subtitle);
+            fd.append('overlay_opacity', overlayOpacity);
+
+            if (this.stagedHeroImageFile) {
+                fd.append('image', this.stagedHeroImageFile);
+            } else if (this.stagedHeroRemoveImage) {
+                fd.append('remove_image', 'true');
+            }
+
+            await AdminAPI.updateHeroSection(fd);
+            adminToast('Hero section updated successfully! Live website updated.');
+            await this.renderHeroView();
+        } catch (err) {
+            console.error('Failed to save hero:', err);
+            adminToast(err.message || 'Failed to save hero section', 'error');
+            if (topBtn) { topBtn.disabled = false; topBtn.textContent = 'Save Hero Changes'; }
+            if (botBtn) { botBtn.disabled = false; botBtn.textContent = 'Save Hero Changes'; }
         }
     }
 };
