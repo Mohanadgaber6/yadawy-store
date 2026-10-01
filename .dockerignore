@@ -1,0 +1,8 @@
+node_modules
+.git
+scratch
+*.log
+.DS_Store
+Thumbs.db
+data/*.db-shm
+data/*.db-wal
