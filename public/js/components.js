@@ -478,13 +478,29 @@ function renderProductCardSkeleton(count = 4) {
 }
 
 function navigateTo(path) {
-    window.location.hash = path;
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const menu = document.getElementById('mobile-menu');
+    if (menu && menu.classList.contains('open')) {
+        menu.classList.remove('open');
+    }
+    if (window.location.hash === '#' + path) {
+        // Force re-render if clicking link to current route
+        if (typeof handleRoute === 'function') handleRoute();
+    } else {
+        window.location.hash = path;
+    }
 }
 
-function toggleMobileMenu() {
+function toggleMobileMenu(forceClose) {
     const menu = document.getElementById('mobile-menu');
     if (menu) {
-        menu.classList.toggle('open');
+        if (forceClose === true) {
+            menu.classList.remove('open');
+        } else {
+            menu.classList.toggle('open');
+        }
     }
 }
 

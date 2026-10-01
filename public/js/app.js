@@ -156,9 +156,21 @@ async function handleRoute() {
         }
 
         content.innerHTML = html;
+
+        // Force instant scroll to top on page transition
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+
+        requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+        });
     } catch (err) {
         console.error('Route error:', err);
         content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><h2 class="empty-state-title">Something went wrong</h2><p class="empty-state-text">Please try again</p></div>';
+        window.scrollTo(0, 0);
     }
 }
 
