@@ -200,7 +200,7 @@ function renderHeader() {
                     </a>
                     <a href="tel:01225910140" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
                         ${SVG_ICONS.phone}
-                        <span>0122 591 0140</span>
+                        <span>0122 591 0140 <small style="opacity:0.8; font-size:11px; margin-left:4px;">(Phone Only)</small></span>
                     </a>
                     <a href="tel:035427565" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
                         ${SVG_ICONS.phone}
@@ -318,7 +318,7 @@ function renderFooter() {
                                 <div class="footer-contact-phones" style="display:flex; flex-direction:column; gap:4px;">
                                     <a href="tel:01069005565" class="footer-contact-link">0106 900 5565</a>
                                     <a href="tel:01039555155" class="footer-contact-link">0103 955 5155</a>
-                                    <a href="tel:01225910140" class="footer-contact-link">0122 591 0140</a>
+                                    <a href="tel:01225910140" class="footer-contact-link">0122 591 0140 <span style="font-size:11px; opacity:0.75;">(Phone Only)</span></a>
                                 </div>
                             </div>
                             <div class="footer-contact-row" style="display:flex; align-items:center; gap:10px; margin-top:10px;">

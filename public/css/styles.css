@@ -2908,6 +2908,19 @@ ul, ol { list-style: none; }
     color: #FFFFFF;
 }
 
+.channel-phone-badge {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--color-maroon, #3A0813);
+    text-decoration: none;
+    background: #F4EBE1;
+    border: 1px solid rgba(197, 168, 128, 0.4);
+    padding: 4px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+}
+
 .contact-social-pills {
     display: flex;
     gap: 12px;

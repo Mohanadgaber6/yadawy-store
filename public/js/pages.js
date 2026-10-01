@@ -1541,6 +1541,7 @@ function renderContactPage() {
                             </div>
                             <div class="channel-item">
                                 <a href="tel:01225910140" class="channel-phone-link">0122 591 0140</a>
+                                <span class="channel-phone-badge">Phone Only</span>
                             </div>
                         </div>
                     </div>
