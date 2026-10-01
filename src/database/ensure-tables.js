@@ -65,6 +65,12 @@ function ensureTables() {
         if (!prodCols.includes('custom_link')) {
             db.prepare("ALTER TABLE products ADD COLUMN custom_link TEXT").run();
         }
+
+        // Sync default contact numbers order
+        db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?)").run('contact_phone', '01069005565', 'text');
+        db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?)").run('contact_phone_2', '01039555155', 'text');
+        db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?)").run('contact_phone_3', '01225910140', 'text');
+        db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?)").run('contact_whatsapp', '201069005565', 'text');
     } catch (e) {
         console.warn('Note on table migrations:', e.message);
     }

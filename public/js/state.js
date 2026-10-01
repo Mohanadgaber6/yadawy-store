@@ -7,16 +7,16 @@ const YADAWY_CONFIG = {
     tagline: 'A Piece That Tells a Story.',
     taglineAr: 'يدوي.. قطعة تروي حكاية',
     phone: {
-        display: '+20 10 39555155',
-        raw: '01039555155',
-        intl: '201039555155',
-        formatted: '+20 10 39555155',
-        telUrl: 'tel:+201039555155'
+        display: '+20 10 69005565',
+        raw: '01069005565',
+        intl: '201069005565',
+        formatted: '0106 900 5565',
+        telUrl: 'tel:+201069005565'
     },
     primaryWhatsapp: {
-        number: '201039555155',
-        display: '+20 10 39555155',
-        url: 'https://wa.me/201039555155'
+        number: '201069005565',
+        display: '0106 900 5565',
+        url: 'https://wa.me/201069005565'
     },
     social: {
         instagram: 'https://www.instagram.com/yadawy0/',

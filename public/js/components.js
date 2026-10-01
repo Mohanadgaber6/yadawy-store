@@ -190,17 +190,17 @@ function renderHeader() {
             <div class="mobile-menu-footer">
                 <p class="mobile-tagline">Yadawy.. A Piece That Tells a Story.</p>
                 <div class="mobile-contact-list">
-                    <a href="tel:01225910140" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
+                    <a href="tel:01069005565" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
                         ${SVG_ICONS.phone}
-                        <span>0122 591 0140</span>
+                        <span>0106 900 5565</span>
                     </a>
                     <a href="tel:01039555155" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
                         ${SVG_ICONS.phone}
                         <span>0103 955 5155</span>
                     </a>
-                    <a href="tel:01069005565" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
+                    <a href="tel:01225910140" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
                         ${SVG_ICONS.phone}
-                        <span>0106 900 5565</span>
+                        <span>0122 591 0140</span>
                     </a>
                     <a href="tel:035427565" class="mobile-contact-item" style="display:flex; align-items:center; gap:8px;">
                         ${SVG_ICONS.phone}
@@ -242,7 +242,7 @@ function renderHeader() {
 // ============================================================
 function renderFloatingWhatsApp() {
     return `
-        <a href="https://wa.me/201039555155" target="_blank" rel="noopener" class="floating-whatsapp-btn" id="floating-whatsapp" aria-label="Chat with Yadawy on WhatsApp">
+        <a href="https://wa.me/201069005565" target="_blank" rel="noopener" class="floating-whatsapp-btn" id="floating-whatsapp" aria-label="Chat with Yadawy on WhatsApp">
             <div class="whatsapp-badge-tooltip">Chat with us on WhatsApp</div>
             <div class="whatsapp-icon-circle">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -316,9 +316,9 @@ function renderFooter() {
                             <div class="footer-contact-row" style="display:flex; align-items:flex-start; gap:10px; margin-bottom:8px;">
                                 <span style="color:var(--color-maroon); margin-top:2px;">${SVG_ICONS.phone}</span>
                                 <div class="footer-contact-phones" style="display:flex; flex-direction:column; gap:4px;">
-                                    <a href="tel:01225910140" class="footer-contact-link">0122 591 0140</a>
-                                    <a href="tel:01039555155" class="footer-contact-link">0103 955 5155</a>
                                     <a href="tel:01069005565" class="footer-contact-link">0106 900 5565</a>
+                                    <a href="tel:01039555155" class="footer-contact-link">0103 955 5155</a>
+                                    <a href="tel:01225910140" class="footer-contact-link">0122 591 0140</a>
                                 </div>
                             </div>
                             <div class="footer-contact-row" style="display:flex; align-items:center; gap:10px; margin-top:10px;">

@@ -1532,16 +1532,15 @@ function renderContactPage() {
                         </div>
                         <div class="channel-links-group">
                             <div class="channel-item">
-                                <a href="tel:01225910140" class="channel-phone-link">0122 591 0140</a>
-                                <a href="https://wa.me/201225910140" target="_blank" rel="noopener" class="channel-wa-badge">WhatsApp Chat →</a>
+                                <a href="tel:01069005565" class="channel-phone-link">0106 900 5565</a>
+                                <a href="https://wa.me/201069005565" target="_blank" rel="noopener" class="channel-wa-badge">WhatsApp Chat →</a>
                             </div>
                             <div class="channel-item">
                                 <a href="tel:01039555155" class="channel-phone-link">0103 955 5155</a>
                                 <a href="https://wa.me/201039555155" target="_blank" rel="noopener" class="channel-wa-badge">WhatsApp Chat →</a>
                             </div>
                             <div class="channel-item">
-                                <a href="tel:01069005565" class="channel-phone-link">0106 900 5565</a>
-                                <a href="https://wa.me/201069005565" target="_blank" rel="noopener" class="channel-wa-badge">WhatsApp Chat →</a>
+                                <a href="tel:01225910140" class="channel-phone-link">0122 591 0140</a>
                             </div>
                         </div>
                     </div>
@@ -1775,7 +1774,7 @@ function renderReturnPolicyPage() {
                     <h3 class="policy-contact-title">Need Help with a Return?</h3>
                     <p class="policy-contact-desc">Our client care team is ready to assist you:</p>
                     <div class="policy-contact-numbers">
-                        <a href="tel:+201039555155" style="font-weight:700; color:var(--color-maroon);">+20 10 39555155</a>
+                        <a href="tel:+201069005565" style="font-weight:700; color:var(--color-maroon);">+20 10 69005565</a>
                     </div>
                     <div class="policy-contact-landline">Landline: <a href="tel:035427565">03 542 7565</a></div>
                     <p class="policy-tagline">Yadawy.. A Piece That Tells a Story.</p>
@@ -1836,7 +1835,7 @@ function renderShippingPolicyPage() {
                 <div class="policy-contact-box">
                     <h3 class="policy-contact-title">Need Help with Your Shipment?</h3>
                     <div class="policy-contact-numbers">
-                        <a href="tel:+201039555155" style="font-weight:700; color:var(--color-maroon);">+20 10 39555155</a>
+                        <a href="tel:+201069005565" style="font-weight:700; color:var(--color-maroon);">+20 10 69005565</a>
                     </div>
                     <div class="policy-contact-landline">Landline: <a href="tel:035427565">03 542 7565</a></div>
                     <p class="policy-tagline">Yadawy.. A Piece That Tells a Story.</p>
@@ -2011,7 +2010,7 @@ function renderFaqPage() {
                 <h3 class="policy-contact-title">Still Have Questions?</h3>
                 <p class="policy-contact-desc">Can't find the answer you're looking for? Our team is here to help:</p>
                 <div class="policy-contact-numbers">
-                    <a href="tel:+201039555155" style="font-weight:700; color:var(--color-maroon);">+20 10 39555155</a>
+                    <a href="tel:+201069005565" style="font-weight:700; color:var(--color-maroon);">+20 10 69005565</a>
                 </div>
                 <div class="policy-contact-landline">Landline: <a href="tel:035427565">03 542 7565</a></div>
                 <p class="policy-tagline">Yadawy.. A Piece That Tells a Story.</p>
@@ -2279,7 +2278,7 @@ function renderCareGuidePage() {
                 <div class="policy-contact-box" style="margin-top:40px">
                     <h3 class="policy-contact-title">Book a Professional Rug Cleaning</h3>
                     <div class="policy-contact-numbers">
-                        <a href="tel:+201039555155" style="font-weight:700; color:var(--color-maroon);">+20 10 39555155</a>
+                        <a href="tel:+201069005565" style="font-weight:700; color:var(--color-maroon);">+20 10 69005565</a>
                     </div>
                     <div class="policy-contact-landline">Landline: <a href="tel:035427565">03 542 7565</a></div>
                     <p class="policy-tagline">Yadawy.. A Piece That Tells a Story.</p>
@@ -2380,7 +2379,7 @@ function renderPrivacyPolicyPage() {
                 <div class="policy-contact-box">
                     <h3 class="policy-contact-title">Contact Us Regarding Privacy</h3>
                     <div class="policy-contact-numbers">
-                        <a href="tel:+201039555155" style="font-weight:700; color:var(--color-maroon);">+20 10 39555155</a>
+                        <a href="tel:+201069005565" style="font-weight:700; color:var(--color-maroon);">+20 10 69005565</a>
                     </div>
                     <div class="policy-contact-landline">Landline: <a href="tel:035427565">03 542 7565</a></div>
                     <p class="policy-tagline">Yadawy.. A Piece That Tells a Story.</p>
@@ -2479,7 +2478,7 @@ function renderTermsPage() {
                 <div class="policy-contact-box">
                     <h3 class="policy-contact-title">Contact Us Regarding Terms</h3>
                     <div class="policy-contact-numbers">
-                        <a href="tel:+201039555155" style="font-weight:700; color:var(--color-maroon);">+20 10 39555155</a>
+                        <a href="tel:+201069005565" style="font-weight:700; color:var(--color-maroon);">+20 10 69005565</a>
                     </div>
                     <div class="policy-contact-landline">Landline: <a href="tel:035427565">03 542 7565</a></div>
                     <p class="policy-tagline">Yadawy.. A Piece That Tells a Story.</p>
