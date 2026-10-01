@@ -61,6 +61,18 @@ app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(cookieParser());
 
 // ===== STATIC FILES =====
+const staticOptions = {
+    etag: true,
+    dotfiles: 'deny',
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+        }
+    }
+};
+
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
     maxAge: '1d',
     etag: true,
@@ -70,14 +82,10 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
 
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin'), {
     index: 'index.html',
-    dotfiles: 'deny'
+    ...staticOptions
 }));
 
-app.use(express.static(path.join(__dirname, '..', 'public'), {
-    maxAge: '1h',
-    etag: true,
-    dotfiles: 'deny'
-}));
+app.use(express.static(path.join(__dirname, '..', 'public'), staticOptions));
 
 // ===== API ROUTES =====
 app.use('/api/auth', apiLimiter, require('./routes/auth'));
