@@ -635,9 +635,13 @@ function renderCartPage() {
 
     return `
         <div class="cart-page">
-            <h1 style="font-family:var(--font-serif);font-size:28px;margin-bottom:32px">Shopping Cart</h1>
+            <div class="page-header-centered">
+                <span class="page-header-badge">SHOPPING BAG</span>
+                <h1 class="page-main-title">Shopping Cart</h1>
+                <p class="page-main-subtitle">Review your selected authentic handwoven pieces</p>
+            </div>
             <div class="cart-layout">
-                <div>
+                <div class="cart-items-column">
                     <div class="cart-items-header">
                         <span>Product</span><span>Size</span><span>Quantity</span><span>Total</span><span></span>
                     </div>
@@ -645,24 +649,27 @@ function renderCartPage() {
                         <div class="cart-item">
                             <div class="cart-item-info">
                                 ${item.image
-                                    ? `<img src="${imgSrc(item.image)}" class="cart-item-image" alt="${item.name}">`
+                                    ? `<img src="${imgSrc(item.image)}" class="cart-item-image" alt="${escapeHtml(item.name)}">`
                                     : `<div class="cart-item-image" style="background:var(--color-cream-dark)"></div>`}
-                                <div>
-                                    <div class="cart-item-name">${item.name}</div>
-                                    <div class="cart-item-meta">${item.type_name || ''}</div>
-                                    <div class="cart-item-meta">${Store.formatPrice(item.price)}</div>
+                                <div class="cart-item-details">
+                                    <div class="cart-item-name">${escapeHtml(item.name)}</div>
+                                    <div class="cart-item-meta">${escapeHtml(item.type_name || '')}</div>
+                                    <div class="cart-item-price-unit">${Store.formatPrice(item.price)}</div>
                                 </div>
                             </div>
-                            <div>${item.size || '—'}</div>
-                            <div>
+                            <div class="cart-cell cart-cell-size"><span class="cart-cell-label">Size:</span><span>${escapeHtml(item.size || 'Standard')}</span></div>
+                            <div class="cart-cell cart-cell-qty">
+                                <span class="cart-cell-label">Quantity:</span>
                                 <div class="quantity-controls" style="display:inline-flex">
-                                    <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity - 1})">−</button>
+                                    <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity - 1})" aria-label="Decrease quantity">−</button>
                                     <div class="quantity-value" style="display:flex;align-items:center;justify-content:center">${item.quantity}</div>
-                                    <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity + 1})">+</button>
+                                    <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity + 1})" aria-label="Increase quantity">+</button>
                                 </div>
                             </div>
-                            <div style="font-weight:600">${Store.formatPrice(item.price * item.quantity)}</div>
-                            <button class="cart-item-remove" onclick="removeCartItem(${i})" aria-label="Remove">✕</button>
+                            <div class="cart-cell cart-cell-total"><span class="cart-cell-label">Total:</span><span class="cart-item-total-price">${Store.formatPrice(item.price * item.quantity)}</span></div>
+                            <div class="cart-cell cart-cell-remove">
+                                <button class="cart-item-remove" onclick="removeCartItem(${i})" aria-label="Remove item">✕</button>
+                            </div>
                         </div>
                     `).join('')}
                 </div>
@@ -692,7 +699,7 @@ function renderCartPage() {
                     </div>
                     <div id="coupon-msg" style="font-size:12px;margin-bottom:16px"></div>
 
-                    <a href="#/checkout" class="checkout-btn" style="display:block;text-align:center">CHECKOUT</a>
+                    <a href="#/checkout" class="checkout-btn" style="display:block;text-align:center">PROCEED TO CHECKOUT</a>
                 </div>
             </div>
         </div>
@@ -808,7 +815,11 @@ function renderCheckoutPage() {
 
     return `
         <div class="checkout-page">
-            <h1 style="font-family:var(--font-serif);font-size:28px;margin-bottom:32px">Checkout</h1>
+            <div class="page-header-centered">
+                <span class="page-header-badge">SECURE ORDER</span>
+                <h1 class="page-main-title">Checkout</h1>
+                <p class="page-main-subtitle">Complete your details for cash on delivery across Egypt</p>
+            </div>
             <div class="checkout-layout">
                 <div>
                     <form id="checkout-form" onsubmit="handleCheckout(event)">
@@ -1038,17 +1049,17 @@ function renderAboutPage() {
                             </div>
                             <div class="story-film-controls">
                                 <button type="button" id="story-sound-btn" class="story-film-btn" onclick="toggleStoryVideoSound(event, this)" aria-label="Toggle Sound">
-                                    <span class="btn-icon">MUTE</span>
+                                    <span class="btn-icon">${SVG_ICONS.soundOff || ''}</span>
                                     <span class="btn-text">UNMUTE SOUND</span>
                                 </button>
                                 <button type="button" id="story-play-btn" class="story-film-btn paused" onclick="toggleStoryVideoPlay(event, this)" aria-label="Toggle Playback">
-                                    <span class="btn-icon">▶</span>
+                                    <span class="btn-icon">${SVG_ICONS.play || '▶'}</span>
                                     <span class="btn-text">PLAY</span>
                                 </button>
                             </div>
                         </div>
                         <div id="story-sound-prompt" class="story-sound-prompt" onclick="enableStoryVideoSound(event)">
-                            <span class="prompt-icon">PLAY</span>
+                            <span class="prompt-icon">${SVG_ICONS.soundOn || '🔊'}</span>
                             <span class="prompt-text">PLAY WITH SOUND</span>
                         </div>
                     </div>
@@ -1360,8 +1371,8 @@ window.initStoryBrandVideo = function() {
                         if (soundBtn) {
                             const icon = soundBtn.querySelector('.btn-icon');
                             const text = soundBtn.querySelector('.btn-text');
-                            if (icon) icon.textContent = 'SOUND ON';
-                            if (text) text.textContent = 'SOUND ON';
+                            if (icon) icon.innerHTML = SVG_ICONS.soundOn;
+                            if (text) text.textContent = 'MUTE';
                             soundBtn.classList.add('active');
                         }
                         if (soundPrompt) soundPrompt.style.display = 'none';
@@ -1372,7 +1383,7 @@ window.initStoryBrandVideo = function() {
                             if (soundBtn) {
                                 const icon = soundBtn.querySelector('.btn-icon');
                                 const text = soundBtn.querySelector('.btn-text');
-                                if (icon) icon.textContent = 'MUTE';
+                                if (icon) icon.innerHTML = SVG_ICONS.soundOff;
                                 if (text) text.textContent = 'UNMUTE SOUND';
                                 soundBtn.classList.remove('active');
                             }
@@ -1399,7 +1410,7 @@ window.initStoryBrandVideo = function() {
                 if (playBtn) {
                     const icon = playBtn.querySelector('.btn-icon');
                     const text = playBtn.querySelector('.btn-text');
-                    if (icon) icon.textContent = '⏸';
+                    if (icon) icon.innerHTML = SVG_ICONS.pause;
                     if (text) text.textContent = 'PAUSE';
                     playBtn.classList.remove('paused');
                 }
@@ -1409,7 +1420,7 @@ window.initStoryBrandVideo = function() {
                 if (playBtn) {
                     const icon = playBtn.querySelector('.btn-icon');
                     const text = playBtn.querySelector('.btn-text');
-                    if (icon) icon.textContent = '▶';
+                    if (icon) icon.innerHTML = SVG_ICONS.play;
                     if (text) text.textContent = 'PLAY';
                     playBtn.classList.add('paused');
                 }
@@ -1435,8 +1446,10 @@ window.enableStoryVideoSound = function(e) {
     if (video.paused) video.play().catch(() => {});
 
     if (soundBtn) {
-        soundBtn.querySelector('.btn-icon').textContent = 'SOUND ON';
-        soundBtn.querySelector('.btn-text').textContent = 'SOUND ON';
+        const icon = soundBtn.querySelector('.btn-icon');
+        const text = soundBtn.querySelector('.btn-text');
+        if (icon) icon.innerHTML = SVG_ICONS.soundOn;
+        if (text) text.textContent = 'MUTE';
         soundBtn.classList.add('active');
     }
     if (soundPrompt) soundPrompt.style.display = 'none';
@@ -1455,16 +1468,20 @@ window.toggleStoryVideoSound = function(e, btn) {
         video.muted = false;
         video.volume = 1.0;
         if (btn) {
-            btn.querySelector('.btn-icon').textContent = 'SOUND ON';
-            btn.querySelector('.btn-text').textContent = 'SOUND ON';
+            const icon = btn.querySelector('.btn-icon');
+            const text = btn.querySelector('.btn-text');
+            if (icon) icon.innerHTML = SVG_ICONS.soundOn;
+            if (text) text.textContent = 'MUTE';
             btn.classList.add('active');
         }
         if (soundPrompt) soundPrompt.style.display = 'none';
     } else {
         video.muted = true;
         if (btn) {
-            btn.querySelector('.btn-icon').textContent = 'MUTE';
-            btn.querySelector('.btn-text').textContent = 'UNMUTE SOUND';
+            const icon = btn.querySelector('.btn-icon');
+            const text = btn.querySelector('.btn-text');
+            if (icon) icon.innerHTML = SVG_ICONS.soundOff;
+            if (text) text.textContent = 'UNMUTE SOUND';
             btn.classList.remove('active');
         }
     }
@@ -1481,15 +1498,19 @@ window.toggleStoryVideoPlay = function(e, btn) {
     if (video.paused) {
         video.play().catch(() => {});
         if (btn) {
-            btn.querySelector('.btn-icon').textContent = '⏸';
-            btn.querySelector('.btn-text').textContent = 'PAUSE';
+            const icon = btn.querySelector('.btn-icon');
+            const text = btn.querySelector('.btn-text');
+            if (icon) icon.innerHTML = SVG_ICONS.pause;
+            if (text) text.textContent = 'PAUSE';
             btn.classList.remove('paused');
         }
     } else {
         video.pause();
         if (btn) {
-            btn.querySelector('.btn-icon').textContent = '▶';
-            btn.querySelector('.btn-text').textContent = 'PLAY';
+            const icon = btn.querySelector('.btn-icon');
+            const text = btn.querySelector('.btn-text');
+            if (icon) icon.innerHTML = SVG_ICONS.play;
+            if (text) text.textContent = 'PLAY';
             btn.classList.add('paused');
         }
     }
