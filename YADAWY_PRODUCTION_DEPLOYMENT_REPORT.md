@@ -5,7 +5,7 @@
 **Target Production URL:** [https://yadawy-store-production.up.railway.app/](https://yadawy-store-production.up.railway.app/)  
 **Deployment Infrastructure:** Railway Cloud Application Platform  
 **Target Repository & Branch:** `https://github.com/Mohanadgaber6/yadawy-store.git` (`main`)  
-**Deployed Commit Revision:** `c20a1f2` (`c20a1f2f819446d32fceb380362f6b8b209d7df9`)  
+**Deployed Commit Revision:** `f00e58c` (Latest: Complete removal of top announcement bar above logo)  
 **Rollback Reference Commit:** `1581452` (`158145204d87a4605d54305ed6478339c70f503a`)  
 **Deliverable Document:** `YADAWY_PRODUCTION_DEPLOYMENT_REPORT.md`  
 
