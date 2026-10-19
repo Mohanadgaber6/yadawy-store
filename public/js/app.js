@@ -52,7 +52,6 @@ function initAppShell() {
     const app = document.getElementById('app');
     if (!app) return;
     app.innerHTML = `
-        ${renderAnnouncementBar()}
         ${renderHeader(Store.navigation)}
         <main id="page-content"></main>
         ${renderFooter()}
@@ -84,20 +83,10 @@ async function handleRoute() {
     }
     document.body.classList.remove('menu-open');
 
-    // Manage Announcement Bar: Homepage ONLY, absent on all internal pages
-    const isHome = path === '/' || path === '' || path === '/home';
+    // Ensure Announcement Bar is completely removed from all pages
     const existingBar = document.getElementById('announcement-bar');
-    if (isHome) {
-        if (!existingBar) {
-            const header = document.querySelector('.site-header');
-            if (header) {
-                header.insertAdjacentHTML('beforebegin', renderAnnouncementBar());
-            }
-        }
-    } else {
-        if (existingBar) {
-            existingBar.remove();
-        }
+    if (existingBar) {
+        existingBar.remove();
     }
 
     document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {

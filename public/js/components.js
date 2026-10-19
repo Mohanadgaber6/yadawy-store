@@ -93,16 +93,7 @@ function isHomePageRoute() {
 window.isHomePageRoute = isHomePageRoute;
 
 function renderAnnouncementBar() {
-    if (!isHomePageRoute()) return '';
-    return `
-        <div class="announcement-bar" id="announcement-bar">
-            <div class="announcement-inner">
-                <span class="announcement-diamond">✦</span>
-                <span class="announcement-text" dir="rtl" lang="ar">امتداد الشركة الإيرانية</span>
-                <span class="announcement-diamond">✦</span>
-            </div>
-        </div>
-    `;
+    return '';
 }
 window.renderAnnouncementBar = renderAnnouncementBar;
 
