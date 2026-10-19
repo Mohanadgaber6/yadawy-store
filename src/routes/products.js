@@ -25,10 +25,26 @@ router.get('/', (req, res) => {
             params.push(term, term, term);
         }
 
-        // Section filter
+        // Section filter (handles carpets, kilims, or 5 sections)
         if (req.query.section) {
-            where.push('(s.slug = ? OR s.id = ?)');
-            params.push(req.query.section, isNaN(req.query.section) ? -1 : parseInt(req.query.section));
+            const sec = req.query.section.toLowerCase();
+            if (sec === 'carpets') {
+                where.push('(s.slug = ? OR s.id = 1 OR p.section_id = 1)');
+                params.push('carpets');
+            } else if (sec === 'kilims') {
+                where.push('(s.slug = ? OR s.id = 2 OR p.section_id = 2)');
+                params.push('kilims');
+            } else if (sec === 'new-arrivals' || sec === 'new_arrivals') {
+                where.push('p.is_new_arrival = 1');
+            } else if (sec === 'best-sellers' || sec === 'best_sellers') {
+                where.push('p.is_best_seller = 1');
+            } else if (sec === 'customize' || sec === 'customizable') {
+                where.push('p.is_customizable = 1');
+            } else {
+                where.push('(s.slug = ? OR s.id = ? OR p.section_id = ?)');
+                const sNum = isNaN(req.query.section) ? -1 : parseInt(req.query.section);
+                params.push(req.query.section, sNum, sNum);
+            }
         }
 
         // Category filter
@@ -37,10 +53,19 @@ router.get('/', (req, res) => {
             params.push(req.query.category);
         }
 
-        // Collection filter
+        // Collection filter (handles dynamic collections: new-arrivals, best-sellers, customize, or slug)
         if (req.query.collection) {
-            where.push('col.slug = ?');
-            params.push(req.query.collection);
+            const col = req.query.collection.toLowerCase();
+            if (col === 'new-arrivals' || col === 'new_arrivals') {
+                where.push('p.is_new_arrival = 1');
+            } else if (col === 'best-sellers' || col === 'best_sellers') {
+                where.push('p.is_best_seller = 1');
+            } else if (col === 'customize' || col === 'customizable') {
+                where.push('p.is_customizable = 1');
+            } else {
+                where.push('col.slug = ?');
+                params.push(req.query.collection);
+            }
         }
 
         // Type filter
@@ -65,13 +90,18 @@ router.get('/', (req, res) => {
         }
 
         // Best sellers
-        if (req.query.best_seller === '1') {
+        if (req.query.best_seller === '1' || req.query.best_sellers === '1') {
             where.push('p.is_best_seller = 1');
         }
 
         // New arrivals
-        if (req.query.new_arrival === '1') {
+        if (req.query.new_arrival === '1' || req.query.new_arrivals === '1') {
             where.push('p.is_new_arrival = 1');
+        }
+
+        // Customizable
+        if (req.query.customizable === '1' || req.query.is_customizable === '1') {
+            where.push('p.is_customizable = 1');
         }
 
         // On sale
@@ -324,11 +354,51 @@ router.get('/admin/list', requireAdmin, (req, res) => {
             params.push(term, term, term);
         }
 
-        // Section filter
+        // Section / Collection filter (supports 5 product sections)
         if (req.query.section) {
-            where.push('(s.slug = ? OR s.id = ? OR p.section_id = ?)');
-            const sVal = isNaN(req.query.section) ? -1 : parseInt(req.query.section);
-            params.push(req.query.section, sVal, sVal);
+            const sec = req.query.section.toLowerCase();
+            if (sec === 'carpets') {
+                where.push('(s.slug = ? OR s.id = 1 OR p.section_id = 1)');
+                params.push('carpets');
+            } else if (sec === 'kilims') {
+                where.push('(s.slug = ? OR s.id = 2 OR p.section_id = 2)');
+                params.push('kilims');
+            } else if (sec === 'new-arrivals' || sec === 'new_arrivals') {
+                where.push('p.is_new_arrival = 1');
+            } else if (sec === 'best-sellers' || sec === 'best_sellers') {
+                where.push('p.is_best_seller = 1');
+            } else if (sec === 'customize' || sec === 'customizable') {
+                where.push('p.is_customizable = 1');
+            } else {
+                where.push('(s.slug = ? OR s.id = ? OR p.section_id = ?)');
+                const sVal = isNaN(req.query.section) ? -1 : parseInt(req.query.section);
+                params.push(req.query.section, sVal, sVal);
+            }
+        }
+
+        if (req.query.collection) {
+            const col = req.query.collection.toLowerCase();
+            if (col === 'new-arrivals' || col === 'new_arrivals') {
+                where.push('p.is_new_arrival = 1');
+            } else if (col === 'best-sellers' || col === 'best_sellers') {
+                where.push('p.is_best_seller = 1');
+            } else if (col === 'customize' || col === 'customizable') {
+                where.push('p.is_customizable = 1');
+            } else {
+                where.push('(col.slug = ? OR col.id = ?)');
+                const colVal = isNaN(req.query.collection) ? -1 : parseInt(req.query.collection);
+                params.push(req.query.collection, colVal);
+            }
+        }
+
+        if (req.query.new_arrival === '1') {
+            where.push('p.is_new_arrival = 1');
+        }
+        if (req.query.best_seller === '1') {
+            where.push('p.is_best_seller = 1');
+        }
+        if (req.query.customizable === '1' || req.query.is_customizable === '1') {
+            where.push('p.is_customizable = 1');
         }
 
         // Category filter
@@ -399,6 +469,60 @@ router.get('/admin/list', requireAdmin, (req, res) => {
     }
 });
 
+// GET /api/admin/products/section-counts — dynamic counts for all 5 sections
+router.get('/admin/section-counts', requireAdmin, (req, res) => {
+    try {
+        const db = getDb();
+        const total = db.prepare('SELECT COUNT(*) as c FROM products').get().c;
+        const carpets = db.prepare('SELECT COUNT(*) as c FROM products WHERE section_id = 1').get().c;
+        const kilims = db.prepare('SELECT COUNT(*) as c FROM products WHERE section_id = 2').get().c;
+        const new_arrivals = db.prepare('SELECT COUNT(*) as c FROM products WHERE is_new_arrival = 1').get().c;
+        const best_sellers = db.prepare('SELECT COUNT(*) as c FROM products WHERE is_best_seller = 1').get().c;
+        const customize = db.prepare('SELECT COUNT(*) as c FROM products WHERE is_customizable = 1').get().c;
+
+        res.json({
+            success: true,
+            counts: {
+                total,
+                carpets,
+                kilims,
+                new_arrivals,
+                best_sellers,
+                customize
+            }
+        });
+    } catch (err) {
+        console.error('Section counts error:', err);
+        res.status(500).json({ error: 'Failed to fetch section counts' });
+    }
+});
+
+// PATCH /api/admin/products/:id/flags — quick toggle for collection flags & availability
+router.patch('/admin/:id/flags', requireAdmin, (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) return res.status(400).json({ error: 'Invalid product ID' });
+
+        const db = getDb();
+        const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
+        if (!existing) return res.status(404).json({ error: 'Product not found' });
+
+        const { flag, value } = req.body;
+        const allowedFlags = ['is_new_arrival', 'is_best_seller', 'is_customizable', 'is_featured', 'is_in_stock'];
+        if (!allowedFlags.includes(flag)) {
+            return res.status(400).json({ error: 'Invalid flag specified' });
+        }
+
+        const intVal = value ? 1 : 0;
+        db.prepare(`UPDATE products SET ${flag} = ?, updated_at = datetime('now') WHERE id = ?`).run(intVal, id);
+
+        res.json({ success: true, id, flag, value: intVal });
+    } catch (err) {
+        console.error('Flag update error:', err);
+        res.status(500).json({ error: 'Failed to update product flag' });
+    }
+});
+
 // GET /api/admin/products/:id
 router.get('/admin/:id', requireAdmin, (req, res) => {
     try {
@@ -460,10 +584,10 @@ router.post('/admin', requireAdmin, (req, res) => {
         const result = db.prepare(`
             INSERT INTO products (name, slug, short_description, full_description, handwoven_details, where_to_place,
                 price, sale_price, sku, category_id, collection_id, type_id, section_id, material, color, dimensions, weight,
-                inventory_qty, is_in_stock, status, is_featured, is_best_seller, is_new_arrival, is_on_sale,
+                inventory_qty, is_in_stock, status, is_featured, is_best_seller, is_new_arrival, is_on_sale, is_customizable,
                 care_instructions, shipping_info, specifications, seo_title, seo_description, seo_keywords,
                 button_text, custom_link)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
             sanitize(data.name), slug,
             data.short_description !== undefined && data.short_description !== null ? sanitizeRichText(data.short_description) : defaultDesc,
@@ -486,6 +610,7 @@ router.post('/admin', requireAdmin, (req, res) => {
             data.is_best_seller ? 1 : 0,
             data.is_new_arrival ? 1 : 0,
             data.is_on_sale ? 1 : 0,
+            data.is_customizable ? 1 : 0,
             data.care_instructions || null,
             data.shipping_info || null,
             data.specifications || null,
@@ -570,7 +695,7 @@ router.put('/admin/:id', requireAdmin, (req, res) => {
                 category_id = ?, collection_id = ?, type_id = ?, section_id = ?,
                 material = ?, color = ?, dimensions = ?, weight = ?,
                 inventory_qty = ?, is_in_stock = ?, status = ?,
-                is_featured = ?, is_best_seller = ?, is_new_arrival = ?, is_on_sale = ?,
+                is_featured = ?, is_best_seller = ?, is_new_arrival = ?, is_on_sale = ?, is_customizable = ?,
                 care_instructions = ?, shipping_info = ?, specifications = ?,
                 seo_title = ?, seo_description = ?, seo_keywords = ?,
                 button_text = ?, custom_link = ?,
@@ -600,6 +725,7 @@ router.put('/admin/:id', requireAdmin, (req, res) => {
             data.is_best_seller !== undefined ? (data.is_best_seller ? 1 : 0) : existing.is_best_seller,
             data.is_new_arrival !== undefined ? (data.is_new_arrival ? 1 : 0) : existing.is_new_arrival,
             data.is_on_sale !== undefined ? (data.is_on_sale ? 1 : 0) : existing.is_on_sale,
+            data.is_customizable !== undefined ? (data.is_customizable ? 1 : 0) : existing.is_customizable,
             data.care_instructions !== undefined ? data.care_instructions : existing.care_instructions,
             data.shipping_info !== undefined ? data.shipping_info : existing.shipping_info,
             data.specifications !== undefined ? data.specifications : existing.specifications,

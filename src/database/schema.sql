@@ -343,6 +343,24 @@ CREATE TABLE IF NOT EXISTS testimonials (
 );
 
 -- ============================================================
+-- CUSTOMER REVIEWS (WHY YADAWY & MODERATION)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS customer_reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_name TEXT NOT NULL,
+    customer_email TEXT NOT NULL,
+    rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+    review_text TEXT NOT NULL,
+    language TEXT NOT NULL DEFAULT 'ar',
+    status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'hidden', 'rejected')),
+    is_demo INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_customer_reviews_status ON customer_reviews(status);
+CREATE INDEX IF NOT EXISTS idx_customer_reviews_created ON customer_reviews(created_at);
+
+-- ============================================================
 -- NAVIGATION ITEMS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS navigation_items (

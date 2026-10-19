@@ -13,6 +13,13 @@ router.get('/', requireAdmin, (req, res) => {
         const disabledProducts = db.prepare("SELECT COUNT(*) as c FROM products WHERE status = 'disabled'").get().c;
         const draftProducts = db.prepare("SELECT COUNT(*) as c FROM products WHERE status = 'draft'").get().c;
 
+        // 5 Product sections counts
+        const carpetsProducts = db.prepare('SELECT COUNT(*) as c FROM products WHERE section_id = 1').get().c;
+        const kilimsProducts = db.prepare('SELECT COUNT(*) as c FROM products WHERE section_id = 2').get().c;
+        const newArrivalsProducts = db.prepare('SELECT COUNT(*) as c FROM products WHERE is_new_arrival = 1').get().c;
+        const bestSellersProducts = db.prepare('SELECT COUNT(*) as c FROM products WHERE is_best_seller = 1').get().c;
+        const customizeProducts = db.prepare('SELECT COUNT(*) as c FROM products WHERE is_customizable = 1').get().c;
+
         const totalOrders = db.prepare('SELECT COUNT(*) as c FROM orders').get().c;
         const pendingOrders = db.prepare("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'").get().c;
         const confirmedOrders = db.prepare("SELECT COUNT(*) as c FROM orders WHERE status = 'confirmed'").get().c;
@@ -51,7 +58,17 @@ router.get('/', requireAdmin, (req, res) => {
 
         res.json({
             stats: {
-                products: { total: totalProducts, active: activeProducts, disabled: disabledProducts, draft: draftProducts },
+                products: {
+                    total: totalProducts,
+                    active: activeProducts,
+                    disabled: disabledProducts,
+                    draft: draftProducts,
+                    carpets: carpetsProducts,
+                    kilims: kilimsProducts,
+                    new_arrivals: newArrivalsProducts,
+                    best_sellers: bestSellersProducts,
+                    customize: customizeProducts
+                },
                 orders: { total: totalOrders, pending: pendingOrders, confirmed: confirmedOrders, processing: processingOrders,
                     shipped: shippedOrders, delivered: deliveredOrders, cancelled: cancelledOrders },
                 customers: { total: totalCustomers },

@@ -154,6 +154,13 @@ const AdminApp = {
                             <span>Shipping Settings</span>
                         </a>
 
+                        <!-- 7. Customer Reviews -->
+                        <a href="#/reviews" class="admin-nav-item ${['reviews', 'customer-reviews'].includes(activeNav) ? 'active' : ''}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <span>Customer Reviews</span>
+                            <span class="admin-pending-badge" id="admin-reviews-pending-badge" style="display:none; margin-left:auto; background:var(--adm-gold); color:var(--adm-maroon); font-size:10.5px; font-weight:700; padding:1px 6px; border-radius:10px;">0</span>
+                        </a>
+
                         <div class="admin-nav-group-title" style="margin-top:16px;">ADMINISTRATION</div>
 
                         <!-- 5. Contact Leads -->
@@ -277,6 +284,18 @@ const AdminApp = {
                 }
                 break;
 
+            case 'new-arrivals':
+                window.location.hash = '#/products?collection=new-arrivals';
+                break;
+
+            case 'best-sellers':
+                window.location.hash = '#/products?collection=best-sellers';
+                break;
+
+            case 'customize':
+                window.location.hash = '#/products?collection=customize';
+                break;
+
             case 'orders':
                 if (param) {
                     await this.renderOrderDetailView(param);
@@ -311,6 +330,11 @@ const AdminApp = {
             case 'admins':
             case 'admin-users':
                 await this.renderContactLeadsView(queryParams);
+                break;
+
+            case 'reviews':
+            case 'customer-reviews':
+                await this.renderReviewsView(queryParams);
                 break;
 
             default:
@@ -511,28 +535,79 @@ const AdminApp = {
                 search: queryParams.search || '',
                 section: queryParams.section || '',
                 category: queryParams.category || '',
+                collection: queryParams.collection || '',
                 status: queryParams.status || '',
                 sort: queryParams.sort || 'newest'
             };
 
-            const [prodRes, catRes] = await Promise.all([
+            const [prodRes, catRes, countRes] = await Promise.all([
                 AdminAPI.getProducts(params),
-                AdminAPI.getCategories()
+                AdminAPI.getCategories(),
+                AdminAPI.getSectionCounts().catch(() => ({ counts: {} }))
             ]);
 
             this.cachedCategories = catRes.categories || [];
             const products = prodRes.products || [];
             const pagination = prodRes.pagination || { page, limit, total: products.length, totalPages: 1 };
+            const sectionCounts = countRes.counts || { total: products.length };
 
             const sections = [
                 { id: 1, name: 'Carpets', slug: 'carpets' },
                 { id: 2, name: 'Kilims', slug: 'kilims' }
             ];
 
-            const html = AdminPages.products(products, pagination, queryParams, sections, this.cachedCategories);
+            const html = AdminPages.products(products, pagination, queryParams, sections, this.cachedCategories, sectionCounts);
             this.renderLayout(html, 'products');
         } catch (err) {
             this.renderLayout(`<div style="color:var(--adm-error); padding:20px;">Failed to load products: ${this.escapeHtml(err.message)}</div>`, 'products');
+        }
+    },
+
+    switchProductSection(sectionSlug) {
+        const hash = window.location.hash || '#/products';
+        const [base, qs] = hash.split('?');
+        const params = new URLSearchParams(qs || '');
+        params.delete('page');
+        params.delete('collection');
+        if (sectionSlug) {
+            params.set('section', sectionSlug);
+        } else {
+            params.delete('section');
+        }
+        const newQs = params.toString();
+        window.location.hash = `#/products${newQs ? '?' + newQs : ''}`;
+    },
+
+    switchProductCollection(collectionSlug) {
+        const hash = window.location.hash || '#/products';
+        const [base, qs] = hash.split('?');
+        const params = new URLSearchParams(qs || '');
+        params.delete('page');
+        params.delete('section');
+        params.delete('category');
+        if (collectionSlug) {
+            params.set('collection', collectionSlug);
+        } else {
+            params.delete('collection');
+        }
+        const newQs = params.toString();
+        window.location.hash = `#/products${newQs ? '?' + newQs : ''}`;
+    },
+
+    async quickToggleProductFlag(id, flag, newValue) {
+        try {
+            await AdminAPI.toggleProductFlag(id, flag, newValue);
+            adminToast(`Product collection status updated!`, 'success');
+            // Re-render current view preserving filter and pagination
+            const hash = window.location.hash || '#/products';
+            const qs = hash.includes('?') ? hash.split('?')[1] : '';
+            const queryParams = {};
+            if (qs) {
+                new URLSearchParams(qs).forEach((v, k) => { queryParams[k] = v; });
+            }
+            await this.renderProductsView(queryParams);
+        } catch (err) {
+            adminToast(err.message || 'Failed to update collection status', 'error');
         }
     },
 
@@ -559,6 +634,7 @@ const AdminApp = {
         const search = document.getElementById('prod-search-input')?.value?.trim() || '';
         const section = document.getElementById('prod-section-filter')?.value || '';
         const category = document.getElementById('prod-category-filter')?.value || '';
+        const collection = document.getElementById('prod-collection-filter')?.value || '';
         const stock_status = document.getElementById('prod-stock-filter')?.value || '';
         const status = document.getElementById('prod-status-filter')?.value || '';
         const sort = document.getElementById('prod-sort-filter')?.value || 'newest';
@@ -567,6 +643,7 @@ const AdminApp = {
         if (search) params.set('search', search);
         if (section) params.set('section', section);
         if (category) params.set('category', category);
+        if (collection) params.set('collection', collection);
         if (stock_status) params.set('stock_status', stock_status);
         if (status) params.set('status', status);
         if (sort && sort !== 'newest') params.set('sort', sort);
@@ -771,6 +848,9 @@ const AdminApp = {
         const videoUrl = document.getElementById('prod-video-url')?.value?.trim();
         const buttonText = document.getElementById('prod-button-text')?.value?.trim() || 'VIEW PIECE';
         const customLink = document.getElementById('prod-custom-link')?.value?.trim() || null;
+        const isNewArrival = document.getElementById('prod-is-new-arrival')?.checked ? 1 : 0;
+        const isBestSeller = document.getElementById('prod-is-best-seller')?.checked ? 1 : 0;
+        const isCustomizable = document.getElementById('prod-is-customizable')?.checked ? 1 : 0;
 
         if (!name) {
             adminToast('Product Name is required', 'error');
@@ -814,6 +894,9 @@ const AdminApp = {
             shipping_info: shippingInfo || null,
             section_id: sectionId ? Number(sectionId) : 1,
             category_id: categoryId ? Number(categoryId) : null,
+            is_new_arrival: isNewArrival,
+            is_best_seller: isBestSeller,
+            is_customizable: isCustomizable,
             status,
             material: material || null,
             color: color || null,
@@ -1924,6 +2007,133 @@ const AdminApp = {
             adminToast(err.message || 'Failed to save hero section', 'error');
             if (topBtn) { topBtn.disabled = false; topBtn.textContent = 'Save Hero Changes'; }
             if (botBtn) { botBtn.disabled = false; botBtn.textContent = 'Save Hero Changes'; }
+        }
+    },
+
+    // ========================================================
+    // CUSTOMER REVIEWS CONTROLLER & ACTIONS
+    // ========================================================
+    async renderReviewsView(queryParams = {}) {
+        const status = queryParams.status || 'all';
+        const search = queryParams.search || '';
+        const sort = queryParams.sort || 'newest';
+
+        try {
+            const res = await AdminAPI.getReviews({
+                status,
+                search,
+                sort
+            });
+
+            const reviews = res.reviews || [];
+            const counts = res.counts || { all: 0, pending: 0, approved: 0, hidden: 0, rejected: 0 };
+
+            const html = AdminPages.reviews(reviews, counts, status, search, sort);
+            this.renderLayout(html, 'reviews');
+            this.updateReviewsBadge();
+        } catch (err) {
+            console.error('Failed to render reviews view:', err);
+            this.renderLayout(`
+                <div class="admin-card" style="padding:36px; text-align:center;">
+                    <h3 style="color:var(--adm-error); margin-bottom:8px;">Failed to load reviews</h3>
+                    <p style="color:var(--adm-text-muted); font-size:13px;">${this.escapeHtml(err.message || 'Unknown error')}</p>
+                </div>
+            `, 'reviews');
+        }
+    },
+
+    async updateReviewsBadge() {
+        try {
+            const res = await AdminAPI.getReviews({ status: 'pending', limit: 1 });
+            const pendingCount = res.counts?.pending || 0;
+            const badge = document.getElementById('admin-reviews-pending-badge');
+            if (badge) {
+                if (pendingCount > 0) {
+                    badge.textContent = pendingCount;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        } catch (e) {}
+    },
+
+    switchReviewTab(status) {
+        const hash = window.location.hash || '#/reviews';
+        const [base, qs] = hash.split('?');
+        const params = new URLSearchParams(qs || '');
+        if (status && status !== 'all') {
+            params.set('status', status);
+        } else {
+            params.delete('status');
+        }
+        const newQs = params.toString();
+        window.location.hash = `#/reviews${newQs ? '?' + newQs : ''}`;
+    },
+
+    applyReviewFilters() {
+        const search = document.getElementById('review-search-input')?.value?.trim() || '';
+        const sort = document.getElementById('review-sort-select')?.value || 'newest';
+
+        const hash = window.location.hash || '#/reviews';
+        const [base, qs] = hash.split('?');
+        const params = new URLSearchParams(qs || '');
+
+        if (search) {
+            params.set('search', search);
+        } else {
+            params.delete('search');
+        }
+
+        if (sort && sort !== 'newest') {
+            params.set('sort', sort);
+        } else {
+            params.delete('sort');
+        }
+
+        const newQs = params.toString();
+        window.location.hash = `#/reviews${newQs ? '?' + newQs : ''}`;
+    },
+
+    resetReviewFilters() {
+        window.location.hash = '#/reviews';
+    },
+
+    async setReviewStatus(id, newStatus) {
+        const actionLabels = {
+            approved: 'approved and published',
+            rejected: 'rejected',
+            hidden: 'hidden from public view',
+            pending: 'moved to pending'
+        };
+        try {
+            await AdminAPI.updateReviewStatus(id, newStatus);
+            adminToast(`Review successfully ${actionLabels[newStatus] || newStatus}!`);
+            
+            await this.handleRoute();
+            this.updateReviewsBadge();
+        } catch (err) {
+            console.error('Failed to update review status:', err);
+            adminToast(err.message || 'Failed to update review status', 'error');
+        }
+    },
+
+    async deleteReviewPrompt(id) {
+        const confirmed = await confirmDelete(
+            'Are you sure you want to permanently delete this customer review? This action cannot be undone.',
+            'Delete Customer Review',
+            'Delete Review'
+        );
+        if (!confirmed) return;
+
+        try {
+            await AdminAPI.deleteReview(id);
+            adminToast('Review deleted permanently.');
+            await this.handleRoute();
+            this.updateReviewsBadge();
+        } catch (err) {
+            console.error('Failed to delete review:', err);
+            adminToast(err.message || 'Failed to delete review', 'error');
         }
     }
 };

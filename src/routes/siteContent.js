@@ -483,4 +483,235 @@ router.get('/admin/newsletter', requireAdmin, (req, res) => {
     } catch (err) { res.status(500).json({ error: 'Failed to fetch subscribers' }); }
 });
 
+// ============================================================
+// CUSTOMER REVIEWS (WHY YADAWY & ADMIN MODERATION)
+// ============================================================
+const reviewSubmissionRates = new Map();
+function isReviewRateLimited(ip) {
+    const now = Date.now();
+    const windowMs = 15 * 60 * 1000; // 15 minutes
+    const maxSubmissions = 5;
+    const timestamps = (reviewSubmissionRates.get(ip) || []).filter(t => now - t < windowMs);
+    if (timestamps.length >= maxSubmissions) {
+        return true;
+    }
+    timestamps.push(now);
+    reviewSubmissionRates.set(ip, timestamps);
+    return false;
+}
+
+// PUBLIC — GET approved customer reviews (customer emails are excluded!)
+router.get('/reviews', (req, res) => {
+    try {
+        const db = getDb();
+        const returnAll = req.query.all === 'true';
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.max(1, Math.min(50, parseInt(req.query.limit) || 4));
+        const offset = (page - 1) * limit;
+
+        const totalRow = db.prepare("SELECT COUNT(*) as c FROM customer_reviews WHERE status = 'approved'").get();
+        const total = totalRow ? totalRow.c : 0;
+
+        let reviews;
+        if (returnAll) {
+            reviews = db.prepare(`
+                SELECT id, customer_name, rating, review_text, language, is_demo, created_at
+                FROM customer_reviews
+                WHERE status = 'approved'
+                ORDER BY id DESC
+            `).all();
+        } else {
+            reviews = db.prepare(`
+                SELECT id, customer_name, rating, review_text, language, is_demo, created_at
+                FROM customer_reviews
+                WHERE status = 'approved'
+                ORDER BY id DESC
+                LIMIT ? OFFSET ?
+            `).all(limit, offset);
+        }
+
+        const hasMore = returnAll ? false : ((offset + reviews.length) < total);
+
+        res.json({
+            reviews,
+            total,
+            page,
+            limit,
+            hasMore
+        });
+    } catch (err) {
+        console.error('Error fetching public reviews:', err);
+        res.status(500).json({ error: 'Failed to fetch reviews' });
+    }
+});
+
+// PUBLIC — POST a new customer review (sets status to pending)
+router.post('/reviews', (req, res) => {
+    try {
+        const clientIp = req.ip || req.connection?.remoteAddress || 'unknown';
+        if (isReviewRateLimited(clientIp)) {
+            return res.status(429).json({
+                error: req.body.language === 'en'
+                    ? 'Too many review submissions. Please wait a few minutes before trying again.'
+                    : 'لقد قمت بإرسال عدة تقييمات مؤخراً. يرجى الانتظار بضع دقائق والمحاولة مرة أخرى.'
+            });
+        }
+
+        const validator = require('validator');
+        let { customer_name, customer_email, rating, review_text, language } = req.body;
+
+        // Customer Name must be First and Last Name in English
+        const nameEnglishRegex = /^[a-zA-Z]+(?:[\s'-][a-zA-Z]+)+$/;
+        if (!customer_name || typeof customer_name !== 'string' || !nameEnglishRegex.test(customer_name.trim())) {
+            return res.status(400).json({
+                error: language === 'en'
+                    ? 'Please provide your first and last name in English (e.g. Mariam Ahmed).'
+                    : 'يرجى إدخال اسمك الأول واسم العائلة باللغة الإنجليزية (مثال: Mariam Ahmed).'
+            });
+        }
+        if (!customer_email || typeof customer_email !== 'string' || !validator.isEmail(customer_email.trim())) {
+            return res.status(400).json({
+                error: language === 'en' ? 'Please provide a valid email address.' : 'يرجى إدخال بريد إلكتروني صحيح.'
+            });
+        }
+        const intRating = parseInt(rating);
+        if (isNaN(intRating) || intRating < 1 || intRating > 5) {
+            return res.status(400).json({
+                error: language === 'en' ? 'Rating must be between 1 and 5 stars.' : 'يرجى اختيار التقييم من نجمة واحدة إلى 5 نجوم.'
+            });
+        }
+        if (!review_text || typeof review_text !== 'string' || review_text.trim().length < 5) {
+            return res.status(400).json({
+                error: language === 'en' ? 'Review text must be at least 5 characters.' : 'يرجى كتابة رأيك وتجربتك بالتفصيل (5 أحرف على الأقل).'
+            });
+        }
+
+        // Clean & sanitize text
+        const cleanName = customer_name.trim().slice(0, 100);
+        const cleanEmail = customer_email.trim().toLowerCase().slice(0, 150);
+        const cleanText = review_text.trim().slice(0, 1500);
+        const cleanLang = (language === 'en') ? 'en' : 'ar';
+
+        const db = getDb();
+
+        // Prevent rapid duplicate resubmissions
+        const recentDuplicate = db.prepare(`
+            SELECT id FROM customer_reviews
+            WHERE customer_email = ? AND review_text = ? AND created_at >= datetime('now', '-1 hour')
+        `).get(cleanEmail, cleanText);
+
+        if (recentDuplicate) {
+            return res.json({
+                success: true,
+                message: cleanLang === 'en'
+                    ? 'Thank you for sharing your feedback! Your review will appear after approval.'
+                    : 'شكرًا ليك على تقييمك ❤️ رأيك مهم عندنا، وهيظهر بعد ما فريق يدوي يراجعه.'
+            });
+        }
+
+        const stmt = db.prepare(`
+            INSERT INTO customer_reviews (customer_name, customer_email, rating, review_text, language, status, is_demo)
+            VALUES (?, ?, ?, ?, ?, 'pending', 0)
+        `);
+        const result = stmt.run(cleanName, cleanEmail, intRating, cleanText, cleanLang);
+
+        res.status(201).json({
+            success: true,
+            id: result.lastInsertRowid,
+            message: cleanLang === 'en'
+                ? 'Thank you for sharing your feedback! Your review will appear after approval.'
+                : 'شكرًا ليك على تقييمك ❤️ رأيك مهم عندنا، وهيظهر بعد ما فريق يدوي يراجعه.'
+        });
+    } catch (err) {
+        console.error('Error submitting review:', err);
+        res.status(500).json({ error: 'Failed to submit review' });
+    }
+});
+
+// ADMIN — GET all customer reviews with counts, filtering & search
+router.get('/admin/reviews', requireAdmin, (req, res) => {
+    try {
+        const db = getDb();
+        const { status, search, sort } = req.query;
+
+        const counts = {
+            all: db.prepare("SELECT COUNT(*) as c FROM customer_reviews").get().c,
+            pending: db.prepare("SELECT COUNT(*) as c FROM customer_reviews WHERE status = 'pending'").get().c,
+            approved: db.prepare("SELECT COUNT(*) as c FROM customer_reviews WHERE status = 'approved'").get().c,
+            hidden: db.prepare("SELECT COUNT(*) as c FROM customer_reviews WHERE status = 'hidden'").get().c,
+            rejected: db.prepare("SELECT COUNT(*) as c FROM customer_reviews WHERE status = 'rejected'").get().c
+        };
+
+        let sql = "SELECT * FROM customer_reviews WHERE 1=1";
+        const params = [];
+
+        if (status && ['pending', 'approved', 'hidden', 'rejected'].includes(status)) {
+            sql += " AND status = ?";
+            params.push(status);
+        }
+
+        if (search && search.trim()) {
+            sql += " AND (customer_name LIKE ? OR customer_email LIKE ? OR review_text LIKE ?)";
+            const s = `%${search.trim()}%`;
+            params.push(s, s, s);
+        }
+
+        if (sort === 'oldest') {
+            sql += " ORDER BY id ASC";
+        } else if (sort === 'rating_high') {
+            sql += " ORDER BY rating DESC, id DESC";
+        } else if (sort === 'rating_low') {
+            sql += " ORDER BY rating ASC, id DESC";
+        } else {
+            sql += " ORDER BY id DESC";
+        }
+
+        const reviews = db.prepare(sql).all(...params);
+        res.json({ reviews, counts });
+    } catch (err) {
+        console.error('Error fetching admin reviews:', err);
+        res.status(500).json({ error: 'Failed to fetch customer reviews' });
+    }
+});
+
+// ADMIN — PATCH review status (approve, hide, reject, pending)
+router.patch('/admin/reviews/:id/status', requireAdmin, (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { status } = req.body;
+
+        if (!['approved', 'hidden', 'rejected', 'pending'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid review status' });
+        }
+
+        const db = getDb();
+        const review = db.prepare("SELECT * FROM customer_reviews WHERE id = ?").get(id);
+        if (!review) return res.status(404).json({ error: 'Review not found' });
+
+        db.prepare("UPDATE customer_reviews SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, id);
+        const updated = db.prepare("SELECT * FROM customer_reviews WHERE id = ?").get(id);
+
+        res.json({ success: true, review: updated, message: `Review status updated to ${status}` });
+    } catch (err) {
+        console.error('Error updating review status:', err);
+        res.status(500).json({ error: 'Failed to update review status' });
+    }
+});
+
+// ADMIN — DELETE a review permanently
+router.delete('/admin/reviews/:id', requireAdmin, (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const db = getDb();
+        const review = db.prepare("SELECT * FROM customer_reviews WHERE id = ?").get(id);
+        if (!review) return res.status(404).json({ error: 'Review not found' });
+
+        db.prepare("DELETE FROM customer_reviews WHERE id = ?").run(id);
+        res.json({ success: true, message: `Review #${id} from "${review.customer_name}" was permanently deleted` });
+    } catch (err) {
+        console.error('Error deleting review:', err);
+        res.status(500).json({ error: 'Failed to delete review' });
+    }
+});
+
 module.exports = router;

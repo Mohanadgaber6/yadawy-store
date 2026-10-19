@@ -81,6 +81,70 @@ function getDb() {
         CREATE INDEX IF NOT EXISTS idx_deletion_requests_status ON deletion_requests(status);
     `);
 
+    // Ensure customer_reviews table exists for Why Yadawy page and review moderation
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS customer_reviews (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer_name TEXT NOT NULL,
+            customer_email TEXT NOT NULL,
+            rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+            review_text TEXT NOT NULL,
+            language TEXT NOT NULL DEFAULT 'ar',
+            status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'hidden', 'rejected')),
+            is_demo INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+        CREATE INDEX IF NOT EXISTS idx_customer_reviews_status ON customer_reviews(status);
+        CREATE INDEX IF NOT EXISTS idx_customer_reviews_created ON customer_reviews(created_at);
+    `);
+
+    // Seed approved demo reviews on localhost if table is empty
+    try {
+        const count = db.prepare("SELECT COUNT(*) as c FROM customer_reviews").get().c;
+        if (count === 0) {
+            const insertDemo = db.prepare(`
+                INSERT INTO customer_reviews (customer_name, customer_email, rating, review_text, language, status, is_demo, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, 'approved', 1, ?, ?)
+            `);
+            insertDemo.run('Mariam Ahmed', 'demo-mariam@yadawy.local', 5, 'التصميمات شيك جدًا بجد 😍 والألوان جميلة أوي، تحس إن كل قطعة ليها روح مختلفة ❤️', 'ar', '2026-10-15 14:20:00', '2026-10-15 14:20:00');
+            insertDemo.run('Ahmed Hassan', 'demo-ahmed@yadawy.local', 5, 'من الحاجات اللي عجبتني التفاصيل في التصميم 👌 شكلها مميز فعلًا.', 'ar', '2026-10-16 11:15:00', '2026-10-16 11:15:00');
+            insertDemo.run('Nada Mohamed', 'demo-nada@yadawy.local', 5, 'بحب الحاجات الهاند ميد، والتصميمات هنا مختلفة وجميلة أوي ✨', 'ar', '2026-10-16 19:40:00', '2026-10-16 19:40:00');
+            insertDemo.run('Mona Khaled', 'demo-mona@yadawy.local', 5, 'الألوان والتفاصيل تحفة ❤️ ومناسبة جدًا لذوقي.', 'ar', '2026-10-17 09:30:00', '2026-10-17 09:30:00');
+        } else {
+            // Ensure existing localhost demo records have English first and last names
+            db.prepare("UPDATE customer_reviews SET customer_name = 'Mariam Ahmed' WHERE id = 1 AND is_demo = 1").run();
+            db.prepare("UPDATE customer_reviews SET customer_name = 'Ahmed Hassan' WHERE id = 2 AND is_demo = 1").run();
+            db.prepare("UPDATE customer_reviews SET customer_name = 'Nada Mohamed' WHERE id = 3 AND is_demo = 1").run();
+            db.prepare("UPDATE customer_reviews SET customer_name = 'Mona Khaled' WHERE id = 4 AND is_demo = 1").run();
+        }
+    } catch (e) {
+        console.warn('Note on customer_reviews demo seed:', e.message);
+    }
+
+    // Ensure is_customizable column and 5-section indexing on products
+    try {
+        const prodCols = db.prepare("PRAGMA table_info(products)").all().map(c => c.name);
+        if (!prodCols.includes('is_customizable')) {
+            db.prepare("ALTER TABLE products ADD COLUMN is_customizable INTEGER NOT NULL DEFAULT 0").run();
+        }
+        db.prepare("CREATE INDEX IF NOT EXISTS idx_products_customizable ON products(is_customizable)").run();
+        db.prepare("CREATE INDEX IF NOT EXISTS idx_products_new_arrival ON products(is_new_arrival)").run();
+        db.prepare("CREATE INDEX IF NOT EXISTS idx_products_best_seller ON products(is_best_seller)").run();
+        db.prepare("CREATE INDEX IF NOT EXISTS idx_products_section_id ON products(section_id)").run();
+
+        const customCount = db.prepare("SELECT COUNT(*) as c FROM products WHERE is_customizable = 1").get().c;
+        if (customCount === 0) {
+            db.prepare(`
+                UPDATE products 
+                SET is_customizable = 1 
+                WHERE id IN (8, 9, 28, 29, 31, 33, 34, 35, 36, 40, 53)
+            `).run();
+        }
+    } catch (e) {
+        console.warn('Note on products is_customizable migration:', e.message);
+    }
+
     return db;
 }
 

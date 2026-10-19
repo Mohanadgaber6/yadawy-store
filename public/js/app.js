@@ -21,29 +21,10 @@ async function initApp() {
         Store.shippingCost = (shippingData && shippingData.cost !== undefined) ? shippingData.cost : 100;
 
         // Set page title
-        if (Store.settings.site_title) {
-            document.title = Store.settings.site_title;
-        }
+        document.title = I18N.t('site_title');
 
         // Render shell with Header, Page Content, White Luxury Footer, and Floating WhatsApp
-        const app = document.getElementById('app');
-        app.innerHTML = `
-            ${renderHeader(Store.navigation)}
-            <main id="page-content"></main>
-            ${renderFooter()}
-            ${renderFloatingWhatsApp()}
-        `;
-
-        // Update announcement bar if customized in settings
-        const announcement = document.getElementById('announcement-bar');
-        if (announcement) {
-            if (Store.settings.announcement_active === '0') {
-                announcement.style.display = 'none';
-            } else if (Store.settings.announcement_text) {
-                announcement.innerHTML = `<span>${Store.settings.announcement_text}</span>`;
-                announcement.style.display = 'block';
-            }
-        }
+        initAppShell();
 
         // Hide loading screen
         const loading = document.getElementById('loading-screen');
@@ -59,13 +40,27 @@ async function initApp() {
         console.error('App initialization error:', err);
         document.getElementById('app').innerHTML = `
             <div style="text-align:center;padding:100px 20px;font-family:var(--font-brand)">
-                <img src="/images/logo.png?v=14" alt="YADAWY" style="height:64px;width:auto;margin:0 auto 20px;display:block;">
-                <h1 style="color:var(--color-maroon);letter-spacing:4px;">YADAWY</h1>
-                <p style="margin-top:16px;color:var(--color-text-secondary);font-family:var(--font-sans)">Unable to load store. Please check your connection and refresh.</p>
+                <img src="/images/logo.png?v=52" alt="يدوي — YADAWY" style="height:52px;width:auto;margin:0 auto 20px;display:block;">
+                <h1 style="color:var(--color-maroon);letter-spacing:4px;">${I18N.t('brand_name')}</h1>
+                <p style="margin-top:16px;color:var(--color-text-secondary);font-family:var(--font-sans)">${I18N.getLang() === 'ar' ? 'تعذر تحميل المتجر. يرجى التحقق من الاتصال وإعادة المحاولة.' : 'Unable to load store. Please check your connection and refresh.'}</p>
             </div>
         `;
     }
 }
+
+function initAppShell() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    app.innerHTML = `
+        ${renderAnnouncementBar()}
+        ${renderHeader(Store.navigation)}
+        <main id="page-content"></main>
+        ${renderFooter()}
+        ${renderFloatingWhatsApp()}
+    `;
+    Store.updateCartUI();
+}
+window.initAppShell = initAppShell;
 
 async function handleRoute() {
     const hash = window.location.hash.replace('#', '') || '/';
@@ -77,9 +72,33 @@ async function handleRoute() {
     window.scrollTo(0, 0);
 
     // Update active nav indicators
-    const isCatalog = path === '/shop' || path === '/catalog' || path === '/carpets' || path === '/kilims' || path.startsWith('/section/') || path.startsWith('/shop') || path.startsWith('/catalog');
+    const isCatalog = path === '/shop' || path === '/catalog' || path === '/carpets' || path === '/kilims' || path === '/new-arrivals' || path === '/best-sellers' || path.startsWith('/section/') || path.startsWith('/shop') || path.startsWith('/catalog');
+    const isCustomize = path === '/customize';
     const isContact = path === '/contact';
     const isAbout = path === '/about' || path === '/story' || path === '/our-story';
+    const isWhy = path === '/why-yadawy' || path === '/why-us';
+
+    // Close mobile menu and unlock scrolling if open
+    if (typeof toggleMobileMenu === 'function') {
+        toggleMobileMenu(true);
+    }
+    document.body.classList.remove('menu-open');
+
+    // Manage Announcement Bar: Homepage ONLY, absent on all internal pages
+    const isHome = path === '/' || path === '' || path === '/home';
+    const existingBar = document.getElementById('announcement-bar');
+    if (isHome) {
+        if (!existingBar) {
+            const header = document.querySelector('.site-header');
+            if (header) {
+                header.insertAdjacentHTML('beforebegin', renderAnnouncementBar());
+            }
+        }
+    } else {
+        if (existingBar) {
+            existingBar.remove();
+        }
+    }
 
     document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {
         trigger.classList.toggle('active', isCatalog);
@@ -88,8 +107,10 @@ async function handleRoute() {
     document.querySelectorAll('.nav-link').forEach(link => {
         const href = link.getAttribute('href')?.replace('#', '') || '';
         let isActive = false;
+        if (href === '/customize' && isCustomize) isActive = true;
         if (href === '/contact' && isContact) isActive = true;
         if ((href === '/about' || href === '/story') && isAbout) isActive = true;
+        if ((href === '/why-yadawy' || href === '/why-us') && isWhy) isActive = true;
         link.classList.toggle('active', isActive);
     });
 
@@ -101,6 +122,12 @@ async function handleRoute() {
 
         if (path === '/' || path === '') {
             html = await renderHomePage();
+        } else if (path === '/customize') {
+            html = await renderCustomizePage();
+        } else if (path === '/new-arrivals') {
+            html = await renderShopPage({ defaultCollection: 'new-arrivals' });
+        } else if (path === '/best-sellers') {
+            html = await renderShopPage({ defaultCollection: 'best-sellers' });
         } else if (path === '/carpets' || path === '/section/carpets' || path.startsWith('/carpets') || path.startsWith('/section/carpets')) {
             html = await renderShopPage({ defaultSection: 'carpets' });
         } else if (path === '/kilims' || path === '/section/kilims' || path.startsWith('/kilims') || path.startsWith('/section/kilims')) {
@@ -124,6 +151,8 @@ async function handleRoute() {
             html = renderCheckoutPage();
         } else if (path === '/about' || path === '/story' || path === '/our-story') {
             html = renderAboutPage();
+        } else if (path === '/why-yadawy' || path === '/why-us') {
+            html = await renderWhyYadawyPage();
         } else if (path === '/contact') {
             html = renderContactPage();
         } else if (path === '/collections') {

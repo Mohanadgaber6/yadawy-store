@@ -22,6 +22,9 @@ async function renderHomePage() {
                     const overlayOpacity = heroMeta.overlay_opacity !== undefined ? Number(heroMeta.overlay_opacity) : 0.8;
                     const showVideo = Boolean(heroMeta.show_video && section.video);
                     const linkTarget = section.link_url ? (section.link_url.startsWith('#') || section.link_url.startsWith('http') ? section.link_url : `#${section.link_url}`) : '#/shop';
+                    const heroTitle = I18N.getLang() === 'ar' ? I18N.t('hero_title') : (section.title || I18N.t('hero_title'));
+                    const heroSubtitle = I18N.getLang() === 'ar' ? I18N.t('hero_subtitle') : (section.subtitle || I18N.t('hero_subtitle'));
+                    const heroCta = I18N.getLang() === 'ar' ? I18N.t('hero_cta') : (section.link_text || I18N.t('hero_cta'));
 
                     html += `
                         <section class="hero">
@@ -32,21 +35,30 @@ async function renderHomePage() {
                                     : '<div class="hero-image" style="background:linear-gradient(135deg,var(--color-maroon),var(--color-maroon-dark))"></div>')}
                             <div class="hero-overlay" style="opacity: ${overlayOpacity};"></div>
                             <div class="hero-content">
-                                <h1 class="hero-title">${section.title || ''}</h1>
-                                <p class="hero-subtitle">${section.subtitle || ''}</p>
-                                ${section.link_text ? `<a href="${linkTarget}" class="hero-cta">${section.link_text}</a>` : ''}
+                                <h1 class="hero-title">${heroTitle}</h1>
+                                <p class="hero-subtitle">${heroSubtitle}</p>
+                                <a href="${linkTarget}" class="hero-cta">${heroCta}</a>
                             </div>
                         </section>
+                        <div class="hero-iranian-statement">
+                            <div class="hero-iranian-inner">
+                                <span class="hero-iranian-diamond">✦</span>
+                                <span class="hero-iranian-text" dir="rtl" lang="ar">${I18N.t('iranian_statement')}</span>
+                                <span class="hero-iranian-diamond">✦</span>
+                            </div>
+                        </div>
                     `;
                     break;
 
                 case 'collections':
                     if (section.collections && section.collections.length > 0) {
+                        const collTitle = I18N.getLang() === 'ar' ? I18N.t('collections_title') : (section.title || I18N.t('collections_title'));
+                        const collSubtitle = I18N.getLang() === 'ar' ? I18N.t('collections_subtitle') : (section.subtitle || I18N.t('collections_subtitle'));
                         html += `
                             <section class="section">
                                 <div class="section-header">
-                                    <h2 class="section-title">${section.title || 'Our Collections'}</h2>
-                                    ${section.subtitle ? `<p class="section-subtitle">${section.subtitle}</p>` : ''}
+                                    <h2 class="section-title">${collTitle}</h2>
+                                    ${collSubtitle ? `<p class="section-subtitle">${collSubtitle}</p>` : ''}
                                 </div>
                                 <div class="collections-grid">
                                     ${section.collections.map(c => renderCollectionCard(c)).join('')}
@@ -61,6 +73,10 @@ async function renderHomePage() {
                     break;
 
                 case 'story':
+                    const storyBadge = I18N.getLang() === 'ar' ? I18N.t('story_badge') : (section.subtitle || I18N.t('story_badge'));
+                    const storyTitle = I18N.getLang() === 'ar' ? I18N.t('story_title') : (section.title || I18N.t('story_title'));
+                    const storyContent = I18N.getLang() === 'ar' ? I18N.t('story_content') : (section.content || I18N.t('story_content'));
+                    const storyCta = I18N.getLang() === 'ar' ? I18N.t('story_cta') : (section.link_text || I18N.t('story_cta'));
                     html += `
                         <section class="story-section">
                             <div class="story-image-wrap">
@@ -69,27 +85,17 @@ async function renderHomePage() {
                                     : '<div style="width:100%;height:100%;background:var(--color-cream-dark);display:flex;align-items:center;justify-content:center;font-size:48px;color:var(--color-beige)">✦</div>'}
                             </div>
                             <div class="story-content-wrap">
-                                <div class="story-badge">${section.subtitle || 'HANDWOVEN ARTISTRY'}</div>
-                                <h2 class="story-title">${section.title || 'Our Heritage'}</h2>
-                                <p class="story-text">${section.content || ''}</p>
-                                ${section.link_text ? `<a href="#${section.link_url || '/about'}" class="story-cta">${section.link_text}</a>` : ''}
+                                <div class="story-badge">${storyBadge}</div>
+                                <h2 class="story-title">${storyTitle}</h2>
+                                <p class="story-text">${storyContent}</p>
+                                <a href="#${section.link_url || '/about'}" class="story-cta">${storyCta}</a>
                             </div>
                         </section>
                     `;
                     break;
 
                 case 'newsletter':
-                    html += `
-                        <section class="newsletter-section">
-                            <h2 class="newsletter-title">${section.title || 'Stay Connected'}</h2>
-                            <p class="newsletter-subtitle">${section.subtitle || ''}</p>
-                            <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
-                                <input type="email" name="email" placeholder="Enter your email address" required>
-                                <button type="submit">SUBSCRIBE</button>
-                            </form>
-                            <div id="newsletter-msg" style="margin-top:12px;font-size:13px;color:var(--color-gold-light)"></div>
-                        </section>
-                    `;
+                    html += renderStoreLocationSection();
                     break;
 
                 case 'testimonials':
@@ -123,6 +129,44 @@ async function renderHomePage() {
     }
 }
 
+// ============================================================
+// STORE LOCATION & ADDRESS SECTION (REPLACES NEWSLETTER)
+// ============================================================
+function renderStoreLocationSection() {
+    const mapsUrl = 'https://maps.app.goo.gl/Aqsd6NxtfEf8TX7W6?g_st=iwb';
+    const title = I18N.t('store_location_title');
+    const address = I18N.t('store_location_address');
+    const btnText = I18N.t('store_location_btn');
+
+    return `
+        <section class="store-location-section" id="store-location">
+            <div class="store-location-container">
+                <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="store-location-icon-link" aria-label="${title}">
+                    <div class="store-location-pin-wrap">
+                        <svg class="store-location-pin-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                </a>
+                <h2 class="store-location-title">${title}</h2>
+                <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="store-location-address-link" title="${title}">
+                    <p class="store-location-address">${address}</p>
+                </a>
+                <div class="store-location-actions">
+                    <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="store-location-btn">
+                        <span>${btnText}</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="store-location-btn-arrow">
+                            <path d="M7 17l9.2-9.2M17 17V8H8"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+    `;
+}
+window.renderStoreLocationSection = renderStoreLocationSection;
+
 async function handleNewsletterSubmit(e) {
     e.preventDefault();
     const email = e.target.email.value;
@@ -144,10 +188,14 @@ async function renderShopPage(options = {}) {
     const hashPath = rawHash.split('?')[0].replace('#', '') || '/shop';
     const urlParams = new URLSearchParams(rawHash.split('?')[1] || '');
     
-    // Determine active section from URL path or param
+    // Determine active section and collection from URL path or param
     let currentSection = options.defaultSection || urlParams.get('section') || '';
     if (hashPath === '/carpets' || hashPath === 'carpets') currentSection = 'carpets';
     if (hashPath === '/kilims' || hashPath === 'kilims') currentSection = 'kilims';
+
+    let currentCollection = options.defaultCollection || urlParams.get('collection') || '';
+    if (hashPath === '/new-arrivals' || hashPath === 'new-arrivals') currentCollection = 'new-arrivals';
+    if (hashPath === '/best-sellers' || hashPath === 'best-sellers') currentCollection = 'best-sellers';
 
     const queryParams = {
         page: urlParams.get('page') || 1,
@@ -155,7 +203,7 @@ async function renderShopPage(options = {}) {
         sort: urlParams.get('sort') || 'newest',
         section: currentSection,
         category: urlParams.get('category') || '',
-        collection: urlParams.get('collection') || '',
+        collection: currentCollection,
         type: urlParams.get('type') || '',
         search: urlParams.get('search') || '',
         min_price: urlParams.get('min_price') || '',
@@ -179,20 +227,33 @@ async function renderShopPage(options = {}) {
         const categories = catData.categories || [];
 
         // Dynamic Section Title & Subtitles
-        let sectionTitle = 'All Handwoven Pieces';
-        let sectionSubtitle = 'Curated Egyptian Carpets & Authentic Kilims';
+        const isAr = I18N.getLang() === 'ar';
+        let sectionTitle = isAr ? 'جميع القطع المنسوجة يدوياً' : 'All Handwoven Pieces';
+        let sectionSubtitle = isAr ? 'تشكيلة مختارة من السجاد المصري والكليم الأصيل' : 'Curated Egyptian Carpets & Authentic Kilims';
+        let sectionBadge = isAr ? I18N.t('all_pieces_badge') : 'AUTHENTIC CATALOG';
         
-        if (currentSection === 'carpets') {
-            sectionTitle = 'Carpets & Rugs';
-            sectionSubtitle = 'Authentic Antique Masterpieces & Artisanal New Handwoven Rugs';
+        if (currentCollection === 'new-arrivals') {
+            sectionTitle = isAr ? 'وصل حديثًا' : 'New Arrivals';
+            sectionSubtitle = isAr ? 'أحدث القطع المنسوجة يدويًا المنضمة لمجموعتنا الأصيلة' : 'The latest handwoven rugs and kilims added to our authentic collection';
+            sectionBadge = isAr ? 'أحدث الإضافات' : 'NEW ARRIVALS';
+        } else if (currentCollection === 'best-sellers') {
+            sectionTitle = isAr ? 'الأكثر مبيعًا' : 'Best Sellers';
+            sectionSubtitle = isAr ? 'القطع الأكثر طلبًا وإعجابًا بين عشاق السجاد اليدوي والكليم' : 'Our most celebrated and sought-after rugs and kilims';
+            sectionBadge = isAr ? 'الأعلى طلبًا' : 'TOP PICKS';
+        } else if (currentSection === 'carpets') {
+            sectionTitle = isAr ? 'سجاد وبسط يدوية' : 'Carpets & Rugs';
+            sectionSubtitle = isAr ? 'قطع أنتيك نادرة وسجاد يدوي أصيل من الصوف الخالص' : 'Authentic Antique Masterpieces & Artisanal New Handwoven Rugs';
+            sectionBadge = isAr ? I18N.t('carpets_section_badge') : 'CARPETS SECTION';
         } else if (currentSection === 'kilims') {
-            sectionTitle = 'Authentic Kilims & Flatweaves';
-            sectionSubtitle = 'Historic Antique Kilims, Fine Wool, New Zealand Wool & Artistic Tableaux';
+            sectionTitle = isAr ? 'كليم ومنسوجات مسطحة' : 'Authentic Kilims & Flatweaves';
+            sectionSubtitle = isAr ? 'كليم أنتيك، صوف ناعم، صوف نيوزيلندي، وتابلوهات فنية' : 'Historic Antique Kilims, Fine Wool, New Zealand Wool & Artistic Tableaux';
+            sectionBadge = isAr ? I18N.t('kilims_section_badge') : 'KILIMS SECTION';
         }
 
         const activeCategory = categories.find(c => c.slug === queryParams.category);
         if (activeCategory) {
-            sectionSubtitle = `${activeCategory.name} • ${sectionTitle}`;
+            const catName = isAr ? I18N.translateCategory(activeCategory.name) : activeCategory.name;
+            sectionSubtitle = `${catName} • ${sectionTitle}`;
         }
 
         return `
@@ -200,22 +261,21 @@ async function renderShopPage(options = {}) {
                 <!-- Section Header Banner -->
                 <div class="shop-header">
                     <div>
-                        <div class="shop-section-badge">${currentSection ? currentSection.toUpperCase() + ' SECTION' : 'AUTHENTIC CATALOG'}</div>
+                        <div class="shop-section-badge">${sectionBadge}</div>
                         <h1 class="shop-title">${sectionTitle}</h1>
                         <p class="shop-section-desc">${sectionSubtitle}</p>
-                        <span class="shop-count">${pagination.total} authentic piece${pagination.total !== 1 ? 's' : ''} available</span>
+                        <span class="shop-count">${pagination.total} ${I18N.t('pieces_count_text')}</span>
                     </div>
                     <div class="shop-controls">
                         <div class="shop-sort">
-                            <label style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--color-text-muted);margin-right:8px">SORT BY:</label>
+                            <label style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--color-text-muted);margin-right:8px;margin-left:8px">${I18N.t('sort_label')}</label>
                             <select onchange="updateShopFilter('sort', this.value)">
-                                <option value="newest" ${queryParams.sort === 'newest' ? 'selected' : ''}>Newest Additions</option>
-                                <option value="oldest" ${queryParams.sort === 'oldest' ? 'selected' : ''}>Oldest First</option>
-                                <option value="price_asc" ${queryParams.sort === 'price_asc' ? 'selected' : ''}>Price: Low to High</option>
-                                <option value="price_desc" ${queryParams.sort === 'price_desc' ? 'selected' : ''}>Price: High to Low</option>
-                                <option value="name_asc" ${queryParams.sort === 'name_asc' ? 'selected' : ''}>Name: A to Z</option>
-                                <option value="name_desc" ${queryParams.sort === 'name_desc' ? 'selected' : ''}>Name: Z to A</option>
-                                <option value="best_seller" ${queryParams.sort === 'best_seller' ? 'selected' : ''}>Best Sellers</option>
+                                <option value="newest" ${queryParams.sort === 'newest' ? 'selected' : ''}>${I18N.t('sort_newest')}</option>
+                                <option value="oldest" ${queryParams.sort === 'oldest' ? 'selected' : ''}>${I18N.t('sort_oldest')}</option>
+                                <option value="price_asc" ${queryParams.sort === 'price_asc' ? 'selected' : ''}>${I18N.t('sort_price_asc')}</option>
+                                <option value="price_desc" ${queryParams.sort === 'price_desc' ? 'selected' : ''}>${I18N.t('sort_price_desc')}</option>
+                                <option value="name_asc" ${queryParams.sort === 'name_asc' ? 'selected' : ''}>${I18N.t('sort_name_asc')}</option>
+                                <option value="name_desc" ${queryParams.sort === 'name_desc' ? 'selected' : ''}>${I18N.t('sort_name_desc')}</option>
                             </select>
                         </div>
                     </div>
@@ -226,13 +286,13 @@ async function renderShopPage(options = {}) {
                     <div class="category-pills-container">
                         <button class="category-pill ${!queryParams.category ? 'active' : ''}"
                                 onclick="selectShopCategory('')">
-                            <span>ALL ${currentSection ? currentSection.toUpperCase() : 'PIECES'}</span>
+                            <span>${isAr ? 'جميع القطع' : (currentSection ? 'ALL ' + currentSection.toUpperCase() : 'ALL PIECES')}</span>
                             ${!queryParams.category ? `<span class="pill-count">${pagination.total}</span>` : ''}
                         </button>
                         ${categories.map(c => `
                             <button class="category-pill ${queryParams.category === c.slug ? 'active' : ''}"
                                     onclick="selectShopCategory('${c.slug}')">
-                                <span>${c.name.toUpperCase()}</span>
+                                <span>${isAr ? I18N.translateCategory(c.name) : c.name.toUpperCase()}</span>
                             </button>
                         `).join('')}
                     </div>
@@ -241,22 +301,22 @@ async function renderShopPage(options = {}) {
                 <!-- Secondary Search & Filter Attributes -->
                 <div class="shop-filters">
                     <div class="filter-group">
-                        <label>Availability</label>
+                        <label>${I18N.t('availability')}</label>
                         <select onchange="updateShopFilter('in_stock', this.value)">
-                            <option value="">All Items</option>
-                            <option value="1" ${queryParams.in_stock === '1' ? 'selected' : ''}>In Stock</option>
+                            <option value="">${I18N.t('all_items')}</option>
+                            <option value="1" ${queryParams.in_stock === '1' ? 'selected' : ''}>${I18N.t('in_stock')}</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Price Min</label>
-                        <input type="number" placeholder="Min LE" value="${queryParams.min_price || ''}" onchange="updateShopFilter('min_price', this.value)" style="width:110px">
+                        <label>${I18N.t('min_price')}</label>
+                        <input type="number" placeholder="${isAr ? 'أقل سعر' : 'Min LE'}" value="${queryParams.min_price || ''}" onchange="updateShopFilter('min_price', this.value)" style="width:110px">
                     </div>
                     <div class="filter-group">
-                        <label>Price Max</label>
-                        <input type="number" placeholder="Max LE" value="${queryParams.max_price || ''}" onchange="updateShopFilter('max_price', this.value)" style="width:110px">
+                        <label>${I18N.t('max_price')}</label>
+                        <input type="number" placeholder="${isAr ? 'أعلى سعر' : 'Max LE'}" value="${queryParams.max_price || ''}" onchange="updateShopFilter('max_price', this.value)" style="width:110px">
                     </div>
                     ${queryParams.category || queryParams.min_price || queryParams.max_price || queryParams.in_stock ? `
-                        <button class="clear-filters-btn" onclick="clearShopFilters()">✕ Clear Filters</button>
+                        <button class="clear-filters-btn" onclick="clearShopFilters()">${I18N.t('clear_filters')}</button>
                     ` : ''}
                 </div>
 
@@ -276,9 +336,9 @@ async function renderShopPage(options = {}) {
                 ` : `
                     <div class="empty-state">
                         <div class="empty-state-icon">⌕</div>
-                        <h2 class="empty-state-title">No products found in this category</h2>
-                        <p class="empty-state-text">Try selecting "All" or adjusting your search criteria</p>
-                        <button onclick="clearShopFilters()" class="section-link">SHOW ALL PIECES</button>
+                        <h2 class="empty-state-title">${isAr ? 'لم نتمكن من العثور على قطع في هذا القسم' : 'No products found in this category'}</h2>
+                        <p class="empty-state-text">${isAr ? 'يرجى اختيار "جميع القطع" أو تعديل معايير التصفية' : 'Try selecting "All" or adjusting your search criteria'}</p>
+                        <button onclick="clearShopFilters()" class="section-link">${isAr ? 'عرض جميع القطع' : 'SHOW ALL PIECES'}</button>
                     </div>
                 `}
             </div>
@@ -339,8 +399,13 @@ async function renderProductDetailPage(slug) {
     try {
         const data = await API.getProduct(slug);
         const product = data.product;
-        if (!product) return '<div class="not-found-page"><div class="not-found-title">404</div><p>Product not found</p></div>';
+        if (!product) return `<div class="not-found-page"><div class="not-found-title">404</div><p>${I18N.t('product_not_found')}</p><a href="#/shop" class="section-link">${I18N.t('back_to_shop')}</a></div>`;
 
+        // Store active product for WhatsApp sharing & actions
+        window._currentProduct = product;
+
+        const isAr = I18N.getLang() === 'ar';
+        const localizedName = I18N.translateProductName(product.name);
         const images = product.images || [];
         const mainImage = images.find(img => img.is_primary) || images[0];
         const sizes = product.sizes || [];
@@ -354,12 +419,24 @@ async function renderProductDetailPage(slug) {
         // Videos filter: only render if valid video path/URL exists
         const validVideos = (product.videos || []).filter(v => (v.video_path || v.video_url) && (v.video_path || v.video_url).trim().length > 0);
 
+        // Localized Accordion Content Helpers
+        const descriptionContent = isAr
+            ? (product.full_description_ar || product.short_description_ar || I18N.t('desc_fallback'))
+            : (product.full_description || product.short_description || I18N.t('desc_fallback'));
+
+        const specContent = isAr
+            ? `• ${I18N.t('spec_material')}\n• ${I18N.t('dimensions')}: ${product.dimensions || (sizes.length ? sizes.map(s => s.size_name).join('، ') : 'مقاسات متعددة متوفرة')}\n• ${I18N.t('color')}: ${product.color || 'ألوان وأصباغ طبيعية مستخرجة من الطبيعة'}\n• ${I18N.t('spec_origin')}\n• ${I18N.t('spec_warranty')}\n• ${I18N.t('spec_delivery')}`
+            : (product.specifications || `Material: ${product.material || '100% Fine Handspun Wool'}\nDimensions: ${product.dimensions || (sizes.length ? sizes.map(s => s.size_name).join(', ') : 'Custom sizes available')}\nColors: ${product.color || 'Natural vegetable and mineral dyes'}\nOrigin: Handwoven in Egypt`);
+
+        const careContent = isAr ? I18N.t('care_fallback') : (product.care_instructions || I18N.t('care_fallback'));
+        const shippingContent = isAr ? I18N.t('shipping_fallback') : (product.shipping_info || I18N.t('shipping_fallback'));
+
         return `
             <div class="product-detail">
                 <div class="product-gallery">
                     <div class="product-gallery-main" id="gallery-main">
                         ${mainImage
-                            ? `<img src="${imgSrc(mainImage.image_path)}" alt="${product.name}" id="gallery-main-img">`
+                            ? `<img src="${imgSrc(mainImage.image_path)}" alt="${escapeHtml(localizedName)}" id="gallery-main-img">`
                             : renderPlaceholder()}
                     </div>
                     ${images.length > 1 ? `
@@ -367,14 +444,14 @@ async function renderProductDetailPage(slug) {
                             ${images.map((img, i) => `
                                 <div class="product-gallery-thumb ${i === 0 ? 'active' : ''}"
                                      onclick="changeGalleryImage('${imgSrc(img.image_path)}', this)">
-                                    <img src="${imgSrc(img.thumbnail_path || img.image_path)}" alt="${product.name}" loading="lazy">
+                                    <img src="${imgSrc(img.thumbnail_path || img.image_path)}" alt="${escapeHtml(localizedName)}" loading="lazy">
                                 </div>
                             `).join('')}
                         </div>
                     ` : ''}
                     ${validVideos.length > 0 ? `
                         <div style="margin-top:24px">
-                            <h4 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:12px">VIDEO SHOWCASE</h4>
+                            <h4 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:12px">${I18N.t('video_showcase')}</h4>
                             ${validVideos.map(v => `
                                 <div style="margin-bottom:12px;border-radius:4px;overflow:hidden;background:#000">
                                     <video controls playsinline style="width:100%;max-height:360px;display:block">
@@ -388,32 +465,32 @@ async function renderProductDetailPage(slug) {
 
                 <div class="product-info">
                     <div class="product-breadcrumb">
-                        <a href="#/">Home</a>
+                        <a href="#/">${I18N.t('home_breadcrumb')}</a>
                         <span class="separator">/</span>
-                        ${product.section_name ? `<a href="#/shop?section=${product.section_slug}">${product.section_name}</a><span class="separator">/</span>` : ''}
-                        ${product.category_name ? `<a href="#/shop?section=${product.section_slug || ''}&category=${product.category_slug}">${product.category_name}</a><span class="separator">/</span>` : ''}
-                        <span>${product.name}</span>
+                        ${product.section_name ? `<a href="#/shop?section=${product.section_slug}">${I18N.translateCategory(product.section_name)}</a><span class="separator">/</span>` : ''}
+                        ${product.category_name ? `<a href="#/shop?section=${product.section_slug || ''}&category=${product.category_slug}">${I18N.translateCategory(product.category_name)}</a><span class="separator">/</span>` : ''}
+                        <span>${escapeHtml(localizedName)}</span>
                     </div>
 
-                    ${product.type_name ? `<div class="product-detail-type">${product.type_name}</div>` : ''}
-                    <h1 class="product-detail-name">${product.name}</h1>
+                    ${product.type_name ? `<div class="product-detail-type">${I18N.translateCategory(product.type_name)}</div>` : ''}
+                    <h1 class="product-detail-name">${escapeHtml(localizedName)}</h1>
 
                     <div class="product-detail-price" id="product-detail-price-display">
                         ${isOnSale
                             ? `<span class="original">${Store.formatPrice(product.price)}</span>
                                <span class="sale">${Store.formatPrice(product.sale_price)}</span>
-                               <span class="badge">SALE</span>`
+                               <span class="badge">${I18N.t('badge_sale')}</span>`
                             : `<span>${Store.formatPrice(product.price)}</span>`}
                     </div>
 
                     <div class="product-meta">
-                        ${product.material ? `<div class="product-meta-item"><span class="product-meta-label">Material</span><span>${product.material}</span></div>` : ''}
-                        ${product.dimensions && sizes.length === 0 ? `<div class="product-meta-item"><span class="product-meta-label">Dimensions</span><span>${product.dimensions}</span></div>` : ''}
-                        ${product.color ? `<div class="product-meta-item"><span class="product-meta-label">Color</span><span>${product.color}</span></div>` : ''}
+                        ${product.material ? `<div class="product-meta-item"><span class="product-meta-label">${I18N.t('material')}</span><span>${isAr && product.material.toLowerCase().includes('wool') ? 'صوف طبيعي 100% مغزول يدوياً' : product.material}</span></div>` : ''}
+                        ${product.dimensions && sizes.length === 0 ? `<div class="product-meta-item"><span class="product-meta-label">${I18N.t('dimensions')}</span><span>${product.dimensions}</span></div>` : ''}
+                        ${product.color ? `<div class="product-meta-item"><span class="product-meta-label">${I18N.t('color')}</span><span>${product.color}</span></div>` : ''}
                         <div class="product-meta-item">
-                            <span class="product-meta-label">Availability</span>
+                            <span class="product-meta-label">${I18N.t('availability')}</span>
                             <span style="font-weight:600; color:${isProductInStock ? 'var(--color-success, #2e7d32)' : 'var(--color-error, #c62828)'}">
-                                ${isProductInStock ? 'In Stock' : 'Out of Stock'}
+                                ${isProductInStock ? I18N.t('in_stock') : I18N.t('out_of_stock')}
                             </span>
                         </div>
                     </div>
@@ -421,14 +498,14 @@ async function renderProductDetailPage(slug) {
                     ${(product.handwoven_details || product.where_to_place) ? `
                         <div class="product-editorial-highlights" style="margin:20px 0; display:flex; flex-direction:column; gap:12px;">
                             ${product.handwoven_details ? `
-                                <div class="product-highlight-card" style="background:#FAF7F2; border-left:3px solid var(--color-gold, #C5A880); padding:14px 18px; border-radius:0 4px 4px 0;">
-                                    <div style="font-size:11px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; color:var(--color-primary, #4A1E23); margin-bottom:4px;">Handwoven Details</div>
+                                <div class="product-highlight-card" style="background:#FAF7F2; border-left:3px solid var(--color-gold, #C5A880); border-right:3px solid var(--color-gold, #C5A880); padding:14px 18px; border-radius:4px;">
+                                    <div style="font-size:11px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; color:var(--color-primary, #4A1E23); margin-bottom:4px;">${I18N.t('handwoven_details')}</div>
                                     <div style="font-size:13.5px; line-height:1.6; color:var(--color-text, #333);">${product.handwoven_details}</div>
                                 </div>
                             ` : ''}
                             ${product.where_to_place ? `
-                                <div class="product-highlight-card" style="background:#FAF7F2; border-left:3px solid var(--color-gold, #C5A880); padding:14px 18px; border-radius:0 4px 4px 0;">
-                                    <div style="font-size:11px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; color:var(--color-primary, #4A1E23); margin-bottom:4px;">Where to Place It</div>
+                                <div class="product-highlight-card" style="background:#FAF7F2; border-left:3px solid var(--color-gold, #C5A880); border-right:3px solid var(--color-gold, #C5A880); padding:14px 18px; border-radius:4px;">
+                                    <div style="font-size:11px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; color:var(--color-primary, #4A1E23); margin-bottom:4px;">${I18N.t('where_to_place')}</div>
                                     <div style="font-size:13.5px; line-height:1.6; color:var(--color-text, #333);">${product.where_to_place}</div>
                                 </div>
                             ` : ''}
@@ -438,7 +515,7 @@ async function renderProductDetailPage(slug) {
                     ${sizes.length > 0 ? `
                         <div class="size-selector">
                             <div class="size-selector-label" style="display:flex; justify-content:space-between; align-items:center;">
-                                <span>Size Options</span>
+                                <span>${I18N.t('size_options')}</span>
                                 <span id="size-availability-status" style="font-size:11.5px; font-weight:600; color:var(--color-text-muted);"></span>
                             </div>
                             <div class="size-options" id="size-options">
@@ -453,7 +530,7 @@ async function renderProductDetailPage(slug) {
                                             onclick="selectProductSizeVariant(this, ${product.price})"
                                             ${!isAvailable ? 'disabled title="This size is currently Out of Stock"' : ''}>
                                             <span>${s.size_name}</span>
-                                            ${!isAvailable ? `<span class="size-out-tag" style="font-size:10px; color:var(--color-error, #C5221F); margin-left:4px; font-weight:700;">(Out of Stock)</span>` : (s.price ? `<small style="font-size:11px; opacity:0.85;"> • ${Store.formatPrice(s.price)}</small>` : '')}
+                                            ${!isAvailable ? `<span class="size-out-tag" style="font-size:10px; color:var(--color-error, #C5221F); margin-left:4px; margin-right:4px; font-weight:700;">${I18N.t('size_out_of_stock')}</span>` : (s.price ? `<small style="font-size:11px; opacity:0.85;"> • ${Store.formatPrice(s.price)}</small>` : '')}
                                         </button>
                                     `;
                                 }).join('')}
@@ -462,7 +539,7 @@ async function renderProductDetailPage(slug) {
                     ` : ''}
 
                     <div class="quantity-selector">
-                        <span class="quantity-selector-label">Quantity</span>
+                        <span class="quantity-selector-label">${I18N.t('quantity')}</span>
                         <div class="quantity-controls">
                             <button class="quantity-btn" onclick="changeQty(-1)">−</button>
                             <input type="number" class="quantity-value" id="product-qty" value="1" min="1" max="${product.inventory_qty || 99}" readonly>
@@ -471,53 +548,59 @@ async function renderProductDetailPage(slug) {
                     </div>
 
                     <button class="add-to-cart-btn" onclick="addProductToCart()" ${!isProductInStock ? 'disabled' : ''} id="add-to-cart-btn">
-                        ${isProductInStock ? 'ADD TO CART' : 'OUT OF STOCK'}
+                        ${isProductInStock ? I18N.t('add_to_cart') : I18N.t('out_of_stock')}
                     </button>
                     <button class="buy-now-btn" onclick="buyNow()" ${!isProductInStock ? 'disabled' : ''} id="buy-now-btn">
-                        BUY NOW
+                        ${I18N.t('buy_now')}
+                    </button>
+
+                    <!-- Requirement 4: WhatsApp Product Enquiry & Sharing Button -->
+                    <button type="button" class="whatsapp-enquiry-btn" onclick="shareProductToWhatsApp()" id="whatsapp-enquiry-btn" aria-label="${I18N.t('inquire_whatsapp') || 'Contact us on WhatsApp'}">
+                        ${SVG_ICONS.whatsappWhite || SVG_ICONS.whatsapp}
+                        <span id="wa-btn-label">${I18N.t('inquire_whatsapp')}</span>
                     </button>
 
                     <!-- Four Fixed Product Information Accordions -->
                     <div class="product-accordion">
                         <!-- 1. DESCRIPTION -->
                         <div class="accordion-header open" onclick="toggleAccordion(this)">
-                            <span>DESCRIPTION</span><span class="accordion-icon">−</span>
+                            <span>${I18N.t('acc_description')}</span><span class="accordion-icon">−</span>
                         </div>
                         <div class="accordion-content open">
                             <div class="accordion-body">
                                 <div style="line-height:1.7; font-size:14px; color:var(--color-text);">
-                                    ${formatAccordionText(product.full_description || product.short_description || 'Masterfully crafted by Egyptian artisans using centuries-old traditional weaving techniques. Each piece carries unique character, cultural narrative, and enduring natural textures.')}
+                                    ${formatAccordionText(descriptionContent)}
                                 </div>
                             </div>
                         </div>
 
                         <!-- 2. SPECIFICATIONS -->
                         <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>SPECIFICATIONS</span><span class="accordion-icon">+</span>
+                            <span>${I18N.t('acc_specifications')}</span><span class="accordion-icon">+</span>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                ${formatAccordionText(product.specifications || `Material: ${product.material || '100% Fine Handspun Wool'}\nDimensions: ${product.dimensions || (sizes.length ? sizes.map(s => s.size_name).join(', ') : 'Custom sizes available')}\nColors: ${product.color || 'Natural vegetable and mineral dyes'}\nOrigin: Handwoven in Egypt`)}
+                                ${formatAccordionText(specContent)}
                             </div>
                         </div>
 
                         <!-- 3. CARE INSTRUCTIONS -->
                         <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>CARE INSTRUCTIONS</span><span class="accordion-icon">+</span>
+                            <span>${I18N.t('acc_care')}</span><span class="accordion-icon">+</span>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                ${formatAccordionText(product.care_instructions || `• Vacuum regularly on low suction without a rotating brush.\n• Blot spills immediately with a clean, dry, un-dyed cloth.\n• Spot clean with mild wool detergent and lukewarm water if necessary.\n• Professional dry cleaning or specialized rug cleaning recommended once a year.\n• Rotate rug periodically to ensure even wear across all sections.`)}
+                                ${formatAccordionText(careContent)}
                             </div>
                         </div>
 
                         <!-- 4. SHIPPING -->
                         <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>SHIPPING</span><span class="accordion-icon">+</span>
+                            <span>${I18N.t('acc_shipping')}</span><span class="accordion-icon">+</span>
                         </div>
                         <div class="accordion-content">
                             <div class="accordion-body">
-                                ${formatAccordionText(product.shipping_info || `• Doorstep delivery within 3-5 business days across Egypt.\n• Each rug is carefully rolled and sealed in protective, water-resistant packaging.\n• 14-day return and exchange policy for complete peace of mind.\n• Tracking information sent via SMS and email upon order dispatch.`)}
+                                ${formatAccordionText(shippingContent)}
                             </div>
                         </div>
                     </div>
@@ -527,7 +610,7 @@ async function renderProductDetailPage(slug) {
             ${related.length > 0 ? `
                 <section class="section section-alt">
                     <div class="section-header">
-                        <h2 class="section-title">You May Also Like</h2>
+                        <h2 class="section-title">${I18N.t('you_may_also_like')}</h2>
                     </div>
                     <div class="products-scroll">
                         ${related.map(p => renderProductCard(p)).join('')}
@@ -537,12 +620,22 @@ async function renderProductDetailPage(slug) {
         `;
     } catch (err) {
         console.error('Product detail error:', err);
-        return '<div class="not-found-page"><div class="not-found-title">404</div><p>Product not found</p><a href="#/shop" class="section-link">Back to Shop</a></div>';
+        return `<div class="not-found-page"><div class="not-found-title">404</div><p>${I18N.t('product_not_found')}</p><a href="#/shop" class="section-link">${I18N.t('back_to_shop')}</a></div>`;
     }
 }
 
 // Product detail helpers
 window._currentProduct = null;
+
+// Requirement 6: WhatsApp Product Sharing & Enquiry Component Integration
+async function shareProductToWhatsApp() {
+    const p = window._currentProduct;
+    if (!p) return;
+    if (window.ProductWhatsAppShare && typeof window.ProductWhatsAppShare.shareFromProductPage === 'function') {
+        await window.ProductWhatsAppShare.shareFromProductPage(p);
+    }
+}
+window.shareProductToWhatsApp = shareProductToWhatsApp;
 
 function changeGalleryImage(src, thumb) {
     const mainImg = document.getElementById('gallery-main-img');
@@ -624,9 +717,9 @@ function renderCartPage() {
         return `
             <div class="empty-state">
                 <div class="empty-state-icon">♦</div>
-                <h2 class="empty-state-title">Your cart is empty</h2>
-                <p class="empty-state-text">Discover our collection of handwoven masterpieces</p>
-                <a href="#/shop" class="section-link">CONTINUE SHOPPING →</a>
+                <h2 class="empty-state-title">${I18N.t('cart_empty_title')}</h2>
+                <p class="empty-state-text">${I18N.t('cart_empty_text')}</p>
+                <a href="#/shop" class="section-link">${I18N.t('continue_shopping')}</a>
             </div>
         `;
     }
@@ -636,70 +729,74 @@ function renderCartPage() {
     return `
         <div class="cart-page">
             <div class="page-header-centered">
-                <span class="page-header-badge">SHOPPING BAG</span>
-                <h1 class="page-main-title">Shopping Cart</h1>
-                <p class="page-main-subtitle">Review your selected authentic handwoven pieces</p>
+                <span class="page-header-badge">${I18N.t('cart_badge')}</span>
+                <h1 class="page-main-title">${I18N.t('cart_title')}</h1>
+                <p class="page-main-subtitle">${I18N.t('cart_subtitle')}</p>
             </div>
             <div class="cart-layout">
                 <div class="cart-items-column">
                     <div class="cart-items-header">
-                        <span>Product</span><span>Size</span><span>Quantity</span><span>Total</span><span></span>
+                        <span>${I18N.t('cart_col_product')}</span><span>${I18N.t('cart_col_size')}</span><span>${I18N.t('cart_col_quantity')}</span><span>${I18N.t('cart_col_total')}</span><span></span>
                     </div>
-                    ${items.map((item, i) => `
-                        <div class="cart-item">
-                            <div class="cart-item-info">
-                                ${item.image
-                                    ? `<img src="${imgSrc(item.image)}" class="cart-item-image" alt="${escapeHtml(item.name)}">`
-                                    : `<div class="cart-item-image" style="background:var(--color-cream-dark)"></div>`}
-                                <div class="cart-item-details">
-                                    <div class="cart-item-name">${escapeHtml(item.name)}</div>
-                                    <div class="cart-item-meta">${escapeHtml(item.type_name || '')}</div>
-                                    <div class="cart-item-price-unit">${Store.formatPrice(item.price)}</div>
+                    ${items.map((item, i) => {
+                        const localizedItemName = I18N.translateProductName(item.name);
+                        const localizedItemType = I18N.translateCategory(item.type_name || '');
+                        return `
+                            <div class="cart-item">
+                                <div class="cart-item-info">
+                                    ${item.image
+                                        ? `<img src="${imgSrc(item.image)}" class="cart-item-image" alt="${escapeHtml(localizedItemName)}">`
+                                        : `<div class="cart-item-image" style="background:var(--color-cream-dark)"></div>`}
+                                    <div class="cart-item-details">
+                                        <div class="cart-item-name">${escapeHtml(localizedItemName)}</div>
+                                        <div class="cart-item-meta">${escapeHtml(localizedItemType)}</div>
+                                        <div class="cart-item-price-unit">${Store.formatPrice(item.price)}</div>
+                                    </div>
+                                </div>
+                                <div class="cart-cell cart-cell-size"><span class="cart-cell-label">${I18N.t('cart_col_size')}:</span><span>${escapeHtml(item.size || 'Standard')}</span></div>
+                                <div class="cart-cell cart-cell-qty">
+                                    <span class="cart-cell-label">${I18N.t('cart_col_quantity')}:</span>
+                                    <div class="quantity-controls" style="display:inline-flex">
+                                        <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity - 1})" aria-label="Decrease quantity">−</button>
+                                        <div class="quantity-value" style="display:flex;align-items:center;justify-content:center">${item.quantity}</div>
+                                        <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity + 1})" aria-label="Increase quantity">+</button>
+                                    </div>
+                                </div>
+                                <div class="cart-cell cart-cell-total"><span class="cart-cell-label">${I18N.t('cart_col_total')}:</span><span class="cart-item-total-price">${Store.formatPrice(item.price * item.quantity)}</span></div>
+                                <div class="cart-cell cart-cell-remove">
+                                    <button class="cart-item-remove" onclick="removeCartItem(${i})" aria-label="${I18N.t('remove_item')}">✕</button>
                                 </div>
                             </div>
-                            <div class="cart-cell cart-cell-size"><span class="cart-cell-label">Size:</span><span>${escapeHtml(item.size || 'Standard')}</span></div>
-                            <div class="cart-cell cart-cell-qty">
-                                <span class="cart-cell-label">Quantity:</span>
-                                <div class="quantity-controls" style="display:inline-flex">
-                                    <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity - 1})" aria-label="Decrease quantity">−</button>
-                                    <div class="quantity-value" style="display:flex;align-items:center;justify-content:center">${item.quantity}</div>
-                                    <button class="quantity-btn" onclick="updateCartItem(${i}, ${item.quantity + 1})" aria-label="Increase quantity">+</button>
-                                </div>
-                            </div>
-                            <div class="cart-cell cart-cell-total"><span class="cart-cell-label">Total:</span><span class="cart-item-total-price">${Store.formatPrice(item.price * item.quantity)}</span></div>
-                            <div class="cart-cell cart-cell-remove">
-                                <button class="cart-item-remove" onclick="removeCartItem(${i})" aria-label="Remove item">✕</button>
-                            </div>
-                        </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </div>
 
                 <div class="cart-summary">
-                    <h3 class="cart-summary-title">Order Summary</h3>
+                    <h3 class="cart-summary-title">${I18N.t('cart_summary_title')}</h3>
                     <div class="cart-summary-row">
-                        <span>Subtotal</span>
+                        <span>${I18N.t('cart_subtotal')}</span>
                         <span>${Store.formatPrice(subtotal)}</span>
                     </div>
                     <div class="cart-summary-row" id="discount-row" style="display:none">
-                        <span>Discount</span>
+                        <span>${I18N.t('discount_label')}</span>
                         <span id="discount-amount" style="color:var(--color-success)">-0</span>
                     </div>
                     <div class="cart-summary-row">
-                        <span>Shipping</span>
-                        <span style="color:var(--color-text-muted)">Calculated at checkout</span>
+                        <span>${I18N.t('cart_shipping')}</span>
+                        <span style="color:var(--color-text-muted)">${I18N.t('shipping_calculated')}</span>
                     </div>
                     <div class="cart-summary-total">
-                        <span>Total</span>
+                        <span>${I18N.t('cart_total')}</span>
                         <span id="cart-total">${Store.formatPrice(subtotal)}</span>
                     </div>
 
                     <div class="coupon-field">
-                        <input type="text" id="coupon-code" placeholder="Promo code">
-                        <button onclick="applyCoupon()">APPLY</button>
+                        <input type="text" id="coupon-code" placeholder="${I18N.t('coupon_placeholder')}">
+                        <button onclick="applyCoupon()">${I18N.t('apply_coupon')}</button>
                     </div>
                     <div id="coupon-msg" style="font-size:12px;margin-bottom:16px"></div>
 
-                    <a href="#/checkout" class="checkout-btn" style="display:block;text-align:center">PROCEED TO CHECKOUT</a>
+                    <a href="#/checkout" class="checkout-btn" style="display:block;text-align:center">${I18N.t('proceed_checkout')}</a>
                 </div>
             </div>
         </div>
@@ -794,7 +891,7 @@ function removeAppliedCoupon() {
 // ============================================================
 function renderCheckoutPage() {
     if (Store.cart.length === 0) {
-        return '<div class="empty-state"><h2 class="empty-state-title">Nothing to checkout</h2><a href="#/shop" class="section-link">Continue Shopping</a></div>';
+        return `<div class="empty-state"><h2 class="empty-state-title">${I18N.t('cart_empty_title')}</h2><a href="#/shop" class="section-link">${I18N.t('continue_shopping')}</a></div>`;
     }
 
     const subtotal = Store.getSubtotal();
@@ -812,122 +909,132 @@ function renderCheckoutPage() {
     }
 
     const total = Math.max(0, Math.round((subtotal + shippingCost - discount) * 100) / 100);
+    const isAr = I18N.getLang() === 'ar';
 
     return `
         <div class="checkout-page">
             <div class="page-header-centered">
-                <span class="page-header-badge">SECURE ORDER</span>
-                <h1 class="page-main-title">Checkout</h1>
-                <p class="page-main-subtitle">Complete your details for cash on delivery across Egypt</p>
+                <span class="page-header-badge">${I18N.t('checkout_badge')}</span>
+                <h1 class="page-main-title">${I18N.t('checkout_title')}</h1>
+                <p class="page-main-subtitle">${I18N.t('checkout_subtitle')}</p>
             </div>
             <div class="checkout-layout">
                 <div>
                     <form id="checkout-form" onsubmit="handleCheckout(event)">
                         <div class="checkout-form-section">
-                            <h3 class="checkout-form-title">Contact Information</h3>
+                            <h3 class="checkout-form-title">${I18N.t('customer_info')}</h3>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Full Name *</label>
-                                    <input type="text" class="form-input" name="customer_name" required minlength="2">
+                                    <label class="form-label">${I18N.t('full_name')} *</label>
+                                    <input type="text" class="form-input" name="customer_name" required minlength="2" placeholder="${I18N.t('full_name_placeholder')}">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Email *</label>
-                                    <input type="email" class="form-input" name="customer_email" required>
+                                    <label class="form-label">${I18N.t('email_label')} *</label>
+                                    <input type="email" class="form-input" name="customer_email" required placeholder="name@example.com">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Phone *</label>
-                                <input type="tel" class="form-input" name="customer_phone" required placeholder="01XXXXXXXXX">
+                                <label class="form-label">${I18N.t('phone_label')} *</label>
+                                <input type="tel" class="form-input" name="customer_phone" required placeholder="${I18N.t('mobile_placeholder')}">
                             </div>
                         </div>
 
                         <div class="checkout-form-section">
-                            <h3 class="checkout-form-title">Shipping Address</h3>
+                            <h3 class="checkout-form-title">${I18N.t('shipping_address')}</h3>
                             <div class="form-group">
-                                <label class="form-label">Address *</label>
-                                <input type="text" class="form-input" name="address_line1" required minlength="5" placeholder="Street address, building, apartment">
+                                <label class="form-label">${I18N.t('address_label')}</label>
+                                <input type="text" class="form-input" name="address_line1" required minlength="5" placeholder="${I18N.t('address_placeholder')}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Apartment, Suite, Landmark</label>
-                                <input type="text" class="form-input" name="address_line2" placeholder="Optional landmark or apartment number">
+                                <label class="form-label">${I18N.t('landmark_label')}</label>
+                                <input type="text" class="form-input" name="address_line2" placeholder="${isAr ? 'علامة مميزة، رقم الشقة، الدور' : 'Optional landmark or apartment number'}">
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">City / Area *</label>
-                                    <input type="text" class="form-input" name="city" required placeholder="e.g. Cairo / Alexandria">
+                                    <label class="form-label">${I18N.t('city_label')}</label>
+                                    <input type="text" class="form-input" name="city" required placeholder="${I18N.t('city_placeholder')}">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">State / Governorate</label>
-                                    <input type="text" class="form-input" name="state" placeholder="e.g. Giza">
+                                    <label class="form-label">${I18N.t('gov_label')}</label>
+                                    <input type="text" class="form-input" name="state" placeholder="${isAr ? 'مثال: الجيزة / القاهرة / الإسكندرية' : 'e.g. Cairo / Giza'}">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Postal Code</label>
+                                    <label class="form-label">${isAr ? 'الرمز البريدي (اختياري)' : 'Postal Code'}</label>
                                     <input type="text" class="form-input" name="postal_code">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Country *</label>
-                                    <input type="text" class="form-input" name="country" required value="Egypt" readonly style="background:#FAF7F2;">
+                                    <label class="form-label">${I18N.t('country_label')}</label>
+                                    <input type="text" class="form-input" name="country" required value="${I18N.t('country_val')}" readonly style="background:#FAF7F2;">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Order Notes</label>
-                            <textarea class="form-textarea" name="notes" placeholder="Special requests or delivery instructions..."></textarea>
+                        <!-- COD Payment Assurance Box -->
+                        <div class="checkout-form-section" style="background:#FAF7F2; border:1px solid var(--color-gold); border-radius:6px; padding:18px;">
+                            <h3 class="checkout-form-title" style="margin-bottom:6px; color:var(--color-maroon);">💳 ${I18N.t('payment_method')}: ${I18N.t('cod_title')}</h3>
+                            <p style="font-size:13px; line-height:1.6; color:var(--color-text-secondary); margin:0;">${I18N.t('cod_desc')}</p>
                         </div>
 
-                        <button type="submit" class="checkout-btn" id="place-order-btn" style="margin-top:24px">PLACE ORDER</button>
+                        <div class="form-group" style="margin-top:20px;">
+                            <label class="form-label">${I18N.t('order_notes_label')}</label>
+                            <textarea class="form-textarea" name="notes" placeholder="${I18N.t('order_notes_placeholder')}"></textarea>
+                        </div>
+
+                        <button type="submit" class="checkout-btn" id="place-order-btn" style="margin-top:24px">${I18N.t('confirm_order_btn')}</button>
                     </form>
                 </div>
 
                 <div class="cart-summary">
-                    <h3 class="cart-summary-title">Order Summary</h3>
-                    ${Store.cart.map(item => `
-                        <div style="display:flex;gap:12px;margin-bottom:16px;align-items:center">
-                            ${item.image
-                                ? `<img src="${imgSrc(item.image)}" style="width:50px;height:65px;object-fit:cover;flex-shrink:0;border-radius:4px;" alt="${item.name}">`
-                                : '<div style="width:50px;height:65px;background:var(--color-cream);flex-shrink:0;border-radius:4px;"></div>'}
-                            <div style="flex:1">
-                                <div style="font-size:13px;font-weight:600">${item.name}</div>
-                                <div style="font-size:11.5px;color:var(--color-text-muted)">${item.size ? `Size: ${item.size}` : ''} • Qty: ${item.quantity}</div>
+                    <h3 class="cart-summary-title">${I18N.t('cart_summary_title')}</h3>
+                    ${Store.cart.map(item => {
+                        const localizedItemName = I18N.translateProductName(item.name);
+                        return `
+                            <div style="display:flex;gap:12px;margin-bottom:16px;align-items:center">
+                                ${item.image
+                                    ? `<img src="${imgSrc(item.image)}" style="width:50px;height:65px;object-fit:cover;flex-shrink:0;border-radius:4px;" alt="${escapeHtml(localizedItemName)}">`
+                                    : '<div style="width:50px;height:65px;background:var(--color-cream);flex-shrink:0;border-radius:4px;"></div>'}
+                                <div style="flex:1">
+                                    <div style="font-size:13px;font-weight:600">${escapeHtml(localizedItemName)}</div>
+                                    <div style="font-size:11.5px;color:var(--color-text-muted)">${item.size ? `${I18N.t('cart_col_size')}: ${item.size} • ` : ''}${I18N.t('cart_col_quantity')}: ${item.quantity}</div>
+                                </div>
+                                <div style="font-weight:700;font-size:13.5px">${Store.formatPrice(item.price * item.quantity)}</div>
                             </div>
-                            <div style="font-weight:700;font-size:13.5px">${Store.formatPrice(item.price * item.quantity)}</div>
-                        </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
 
                     <!-- Coupon Input Section in Checkout -->
                     <div style="margin:20px 0 16px; padding:14px; background:#FAF7F2; border:1px dashed var(--color-gold); border-radius:6px;">
                         <label for="checkout-coupon-code" style="display:block; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--color-maroon); margin-bottom:8px;">
-                            🏷️ Enter Coupon Code
+                            🏷️ ${I18N.t('coupon_placeholder')}
                         </label>
                         <div style="display:flex; gap:8px;">
-                            <input type="text" id="checkout-coupon-code" value="${window._appliedCoupon ? window._appliedCoupon.code : ''}" placeholder="Enter Coupon Code" style="flex:1; padding:9px 12px; border:1px solid #D1D5DB; border-radius:4px; font-size:13px; font-family:'Courier New', monospace; font-weight:700; text-transform:uppercase; background:#FFFFFF;">
-                            <button type="button" onclick="applyCheckoutCoupon()" class="btn-primary" style="padding:9px 18px; font-size:12px; font-weight:700; letter-spacing:1px; cursor:pointer;">APPLY</button>
+                            <input type="text" id="checkout-coupon-code" value="${window._appliedCoupon ? window._appliedCoupon.code : ''}" placeholder="${I18N.t('coupon_placeholder')}" style="flex:1; padding:9px 12px; border:1px solid #D1D5DB; border-radius:4px; font-size:13px; font-family:'Courier New', monospace; font-weight:700; text-transform:uppercase; background:#FFFFFF;">
+                            <button type="button" onclick="applyCheckoutCoupon()" class="btn-primary" style="padding:9px 18px; font-size:12px; font-weight:700; letter-spacing:1px; cursor:pointer;">${I18N.t('apply_coupon')}</button>
                         </div>
                         <div id="checkout-coupon-msg" style="font-size:12px; margin-top:8px; font-weight:600;">
-                            ${window._appliedCoupon ? `<span style="color:var(--color-success);">✓ Coupon applied successfully: -${Store.formatPrice(discount)} <a href="javascript:void(0)" onclick="removeAppliedCoupon()" style="color:var(--color-error); margin-left:8px; text-decoration:underline; font-size:11px;">[Remove]</a></span>` : ''}
+                            ${window._appliedCoupon ? `<span style="color:var(--color-success);">✓ ${isAr ? 'تم تطبيق كود الخصم بنجاح:' : 'Coupon applied successfully:'} -${Store.formatPrice(discount)} <a href="javascript:void(0)" onclick="removeAppliedCoupon()" style="color:var(--color-error); margin-left:8px; margin-right:8px; text-decoration:underline; font-size:11px;">[${isAr ? 'إلغاء' : 'Remove'}]</a></span>` : ''}
                         </div>
                     </div>
 
                     <!-- Invoice Breakdown -->
                     <div class="cart-summary-row" style="border-top:1px solid var(--color-border);padding-top:16px">
-                        <span>Subtotal</span>
+                        <span>${I18N.t('cart_subtotal')}</span>
                         <span>${Store.formatPrice(subtotal)}</span>
                     </div>
                     <div class="cart-summary-row">
-                        <span>Shipping Cost</span>
-                        <span style="font-weight:700; color:var(--color-maroon);">${shippingCost > 0 ? Store.formatPrice(shippingCost) : '<span style="color:var(--color-success);">FREE</span>'}</span>
+                        <span>${I18N.t('shipping_cost_label')}</span>
+                        <span style="font-weight:700; color:var(--color-maroon);">${shippingCost > 0 ? Store.formatPrice(shippingCost) : `<span style="color:var(--color-success);">${I18N.t('free_shipping')}</span>`}</span>
                     </div>
                     ${discount > 0 ? `
                         <div class="cart-summary-row" style="color:var(--color-success);">
-                            <span>Coupon Discount (${window._appliedCoupon?.code}${window._appliedCoupon?.percentage ? ` - ${window._appliedCoupon.percentage}%` : ''})</span>
+                            <span>${I18N.t('discount_label')} (${window._appliedCoupon?.code}${window._appliedCoupon?.percentage ? ` - ${window._appliedCoupon.percentage}%` : ''})</span>
                             <span style="font-weight:700;">-${Store.formatPrice(discount)}</span>
                         </div>
                     ` : ''}
                     <div class="cart-summary-total" style="border-top:2px solid var(--color-maroon); margin-top:12px; padding-top:14px;">
-                        <span style="font-weight:700; font-size:16px;">Final Total</span>
+                        <span style="font-weight:700; font-size:16px;">${I18N.t('final_total')}</span>
                         <span id="checkout-final-total" style="font-weight:800; font-size:19px; color:var(--color-maroon);">${Store.formatPrice(total)}</span>
                     </div>
                 </div>
@@ -941,7 +1048,7 @@ async function handleCheckout(e) {
     const form = e.target;
     const btn = document.getElementById('place-order-btn');
     btn.disabled = true;
-    btn.textContent = 'PROCESSING...';
+    btn.textContent = I18N.t('processing_order');
 
     const formData = new FormData(form);
     const orderData = {
@@ -972,24 +1079,23 @@ async function handleCheckout(e) {
         content.innerHTML = `
             <div class="order-success">
                 <div class="order-success-icon">✓</div>
-                <h2 class="order-success-title">Thank You for Your Order!</h2>
-                <p class="order-success-number">Order #${result.order.order_number}</p>
-                <p style="color:var(--color-text-secondary);margin-bottom:24px">
-                    We've received your order and will begin processing it shortly.
-                    A confirmation has been sent to your email.
+                <h2 class="order-success-title">${I18N.t('thank_you_order')}</h2>
+                <p class="order-success-number">${I18N.t('order_id_label')} #${result.order.order_number}</p>
+                <p style="color:var(--color-text-secondary);margin-bottom:24px;line-height:1.7;">
+                    ${I18N.t('order_confirmation_email')}
                 </p>
-                <div style="text-align:left;max-width:300px;margin:0 auto;padding:20px;background:var(--color-cream-dark)">
-                    <div class="cart-summary-row"><span>Subtotal</span><span>${Store.formatPrice(result.order.subtotal)}</span></div>
-                    ${result.order.discount > 0 ? `<div class="cart-summary-row"><span>Discount</span><span style="color:var(--color-success)">-${Store.formatPrice(result.order.discount)}</span></div>` : ''}
-                    <div class="cart-summary-total"><span>Total</span><span>${Store.formatPrice(result.order.total)}</span></div>
+                <div style="text-align:inherit;max-width:320px;margin:0 auto;padding:20px;background:var(--color-cream-dark);border-radius:6px;">
+                    <div class="cart-summary-row"><span>${I18N.t('cart_subtotal')}</span><span>${Store.formatPrice(result.order.subtotal)}</span></div>
+                    ${result.order.discount > 0 ? `<div class="cart-summary-row"><span>${I18N.t('discount_label')}</span><span style="color:var(--color-success)">-${Store.formatPrice(result.order.discount)}</span></div>` : ''}
+                    <div class="cart-summary-total"><span>${I18N.t('final_total')}</span><span>${Store.formatPrice(result.order.total)}</span></div>
                 </div>
-                <a href="#/" class="section-link" style="margin-top:32px">CONTINUE SHOPPING</a>
+                <a href="#/" class="section-link" style="margin-top:32px">${I18N.t('continue_shopping')}</a>
             </div>
         `;
     } catch (err) {
-        showToast(err.message || 'Failed to place order', 'error');
+        showToast(err.message || (I18N.getLang() === 'ar' ? 'تعذر إتمام الطلب، يرجى المحاولة مرة أخرى' : 'Failed to place order'), 'error');
         btn.disabled = false;
-        btn.textContent = 'PLACE ORDER';
+        btn.textContent = I18N.t('confirm_order_btn');
     }
 }
 
@@ -1001,6 +1107,10 @@ async function handleCheckout(e) {
 // ============================================================
 function renderAboutPage() {
     const config = window.YADAWY_CONFIG || {};
+
+    if (I18N.getLang() === 'ar' && typeof renderAboutPageArabic === 'function') {
+        return renderAboutPageArabic(config);
+    }
 
     // Schedule video autoplay initializer after DOM update
     setTimeout(() => {
@@ -1531,6 +1641,10 @@ window.handleStoryVideoFrameClick = function(e) {
 function renderContactPage() {
     const config = window.YADAWY_CONFIG || {};
 
+    if (I18N.getLang() === 'ar' && typeof renderContactPageArabic === 'function') {
+        return renderContactPageArabic(config);
+    }
+
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">WE ARE HERE TO ASSIST YOU</div>
@@ -1749,6 +1863,9 @@ async function handleContactSubmit(e) {
 // RETURN & REFUND POLICY PAGE (OFFICIAL DOCUMENT CONTENT)
 // ============================================================
 function renderReturnPolicyPage() {
+    if (I18N.getLang() === 'ar' && typeof renderReturnPolicyPageArabic === 'function') {
+        return renderReturnPolicyPageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">CLIENT CARE &amp; ASSURANCE</div>
@@ -1796,7 +1913,7 @@ function renderReturnPolicyPage() {
                     <h3 class="policy-contact-title">Need Help with a Return?</h3>
                     <p class="policy-contact-desc">Our client care team is ready to assist you:</p>
                     <div class="policy-contact-numbers">
-                        <a href="tel:+201069005565" style="font-weight:700; color:var(--color-maroon);">+20 10 69005565</a>
+                        <a href="tel:+201039555155" style="font-weight:700; color:var(--color-maroon);">01039555155</a>
                     </div>
                     <div class="policy-contact-landline">Landline: <a href="tel:035427565">03 542 7565</a></div>
                     <p class="policy-tagline">Yadawy.. A Piece That Tells a Story.</p>
@@ -1810,6 +1927,9 @@ function renderReturnPolicyPage() {
 // SHIPPING POLICY PAGE (OFFICIAL DOCUMENT CONTENT)
 // ============================================================
 function renderShippingPolicyPage() {
+    if (I18N.getLang() === 'ar' && typeof renderShippingPolicyPageArabic === 'function') {
+        return renderShippingPolicyPageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">DELIVERY &amp; FULFILLMENT</div>
@@ -1871,6 +1991,9 @@ function renderShippingPolicyPage() {
 // FREQUENTLY ASKED QUESTIONS (FAQS) PAGE
 // ============================================================
 function renderFaqPage() {
+    if (I18N.getLang() === 'ar' && typeof renderFaqPageArabic === 'function') {
+        return renderFaqPageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">HELP &amp; INQUIRIES</div>
@@ -2053,6 +2176,9 @@ function toggleFaq(btn) {
 // KILIM GUIDE PAGE ("WHAT IS A KILIM RUG?")
 // ============================================================
 function renderKilimGuidePage() {
+    if (I18N.getLang() === 'ar' && typeof renderKilimGuidePageArabic === 'function') {
+        return renderKilimGuidePageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">THE KILIM GUIDE</div>
@@ -2137,6 +2263,9 @@ function renderKilimGuidePage() {
 // SIZE GUIDE PAGE ("WHY DOES KILIM SIZE MATTER?")
 // ============================================================
 function renderSizeGuidePage() {
+    if (I18N.getLang() === 'ar' && typeof renderSizeGuidePageArabic === 'function') {
+        return renderSizeGuidePageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">MEASURE &amp; FIT</div>
@@ -2216,7 +2345,7 @@ function renderSizeGuidePage() {
                         Not sure which size works best for your space? Send us your space measurements and a photo on WhatsApp, and we'll help you choose the right kilim for your space.
                     </p>
                     <div class="consultation-actions">
-                        <a href="https://wa.me/2+20 10 39555155" target="_blank" rel="noopener" class="editorial-btn-whatsapp">
+                        <a href="https://wa.me/201039555155" target="_blank" rel="noopener" class="editorial-btn-whatsapp">
                             Send Photos on WhatsApp (+20 10 39555155)
                         </a>
                     </div>
@@ -2234,6 +2363,9 @@ function renderSizeGuidePage() {
 // KILIM CARE GUIDE PAGE
 // ============================================================
 function renderCareGuidePage() {
+    if (I18N.getLang() === 'ar' && typeof renderCareGuidePageArabic === 'function') {
+        return renderCareGuidePageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">PRESERVATION &amp; CARE</div>
@@ -2314,6 +2446,9 @@ function renderCareGuidePage() {
 // PRIVACY POLICY PAGE (OFFICIAL DOCUMENT CONTENT)
 // ============================================================
 function renderPrivacyPolicyPage() {
+    if (I18N.getLang() === 'ar' && typeof renderPrivacyPolicyPageArabic === 'function') {
+        return renderPrivacyPolicyPageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">LEGAL &amp; PRIVACY</div>
@@ -2415,6 +2550,9 @@ function renderPrivacyPolicyPage() {
 // TERMS OF SERVICE PAGE (OFFICIAL DOCUMENT CONTENT)
 // ============================================================
 function renderTermsPage() {
+    if (I18N.getLang() === 'ar' && typeof renderTermsPageArabic === 'function') {
+        return renderTermsPageArabic();
+    }
     return `
         <div class="editorial-page-hero">
             <div class="editorial-hero-badge">TERMS &amp; CONDITIONS</div>
@@ -2514,6 +2652,9 @@ function renderTermsPage() {
 // COLLECTIONS PAGE
 // ============================================================
 async function renderCollectionsPage() {
+    if (I18N.getLang() === 'ar' && typeof renderCollectionsPageArabic === 'function') {
+        return renderCollectionsPageArabic();
+    }
     try {
         const data = await API.getCollections();
         const collections = data.collections || [];
@@ -2544,3 +2685,651 @@ async function renderCollectionsPage() {
         return '<div class="empty-state"><h2 class="empty-state-title">No collections found</h2></div>';
     }
 }
+
+// ============================================================
+// WHY YADAWY? PAGE (CRAFTSMANSHIP, HERITAGE, WARRANTY & REVIEWS)
+// ============================================================
+async function renderWhyYadawyPage() {
+    if (I18N.getLang() === 'ar' && typeof renderWhyYadawyPageArabic === 'function') {
+        return renderWhyYadawyPageArabic();
+    }
+
+    let reviews = [];
+    let hasMore = false;
+    let total = 0;
+    try {
+        const res = await API.getReviews({ page: 1, limit: 4 });
+        reviews = res.reviews || [];
+        hasMore = Boolean(res.hasMore);
+        total = res.total || 0;
+    } catch (e) {
+        console.warn('Failed to load reviews:', e);
+    }
+
+    window.whyReviewsState = {
+        page: 1,
+        limit: 4,
+        hasMore: hasMore,
+        total: total,
+        isLoading: false,
+        displayedIds: new Set(reviews.map(r => r.id))
+    };
+
+    const reviewsHtml = reviews.length > 0
+        ? `
+            <div class="why-reviews-grid" id="why-reviews-grid">
+                ${reviews.map(r => renderReviewCard(r, false)).join('')}
+            </div>
+            ${hasMore ? `
+                <div class="why-reviews-loadmore-wrap" id="why-reviews-loadmore-wrap">
+                    <button type="button" class="why-reviews-loadmore-btn" id="why-reviews-loadmore-btn" onclick="handleLoadMoreReviews(event)">
+                        <span>${I18N.t('reviews_see_more', 'See More Reviews')}</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                </div>
+            ` : ''}
+        `
+        : `
+            <div class="why-reviews-empty">
+                <span class="why-empty-icon">✦</span>
+                <h3 class="why-empty-title">${I18N.t('reviews_empty_title')}</h3>
+                <p class="why-empty-desc">${I18N.t('reviews_empty_desc')}</p>
+            </div>
+        `;
+
+    return `
+        <!-- Hero Section -->
+        <div class="editorial-page-hero">
+            <div class="editorial-hero-badge">${I18N.t('why_hero_badge')}</div>
+            <h1 class="editorial-hero-title">${I18N.t('why_hero_title')}</h1>
+            <p class="editorial-hero-subtitle">${I18N.t('why_hero_subtitle')}</p>
+        </div>
+
+        <div class="editorial-content-container">
+            <!-- 3 Main Selling Point Cards -->
+            <div class="why-features-grid">
+                <!-- Card 1: 100% Handmade -->
+                <div class="why-feature-card">
+                    <div class="why-card-icon-wrap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            <circle cx="12" cy="12" r="9"/>
+                        </svg>
+                    </div>
+                    <span class="why-card-badge">${I18N.t('why_card1_badge')}</span>
+                    <h2 class="why-card-title">${I18N.t('why_card1_title')}</h2>
+                    <p class="why-card-desc">${I18N.t('why_card1_desc')}</p>
+                    <ul class="why-card-list">
+                        <li><span>✦</span> ${I18N.t('why_card1_point1')}</li>
+                        <li><span>✦</span> ${I18N.t('why_card1_point2')}</li>
+                        <li><span>✦</span> ${I18N.t('why_card1_point3')}</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Experience & Craftsmanship -->
+                <div class="why-feature-card why-feature-card-featured">
+                    <div class="why-card-icon-wrap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                    </div>
+                    <span class="why-card-badge">${I18N.t('why_card2_badge')}</span>
+                    <h2 class="why-card-title">${I18N.t('why_card2_title')}</h2>
+                    <p class="why-card-desc">${I18N.t('why_card2_desc')}</p>
+                    <ul class="why-card-list">
+                        <li><span>✦</span> ${I18N.t('why_card2_point1')}</li>
+                        <li><span>✦</span> ${I18N.t('why_card2_point2')}</li>
+                        <li><span>✦</span> ${I18N.t('why_card2_point3')}</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Quality & Warranty -->
+                <div class="why-feature-card">
+                    <div class="why-card-icon-wrap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <span class="why-card-badge">${I18N.t('why_card3_badge')}</span>
+                    <h2 class="why-card-title">${I18N.t('why_card3_title')}</h2>
+                    <p class="why-card-desc">${I18N.t('why_card3_desc')}</p>
+                    <ul class="why-card-list">
+                        <li><span>✦</span> ${I18N.t('why_card3_point1')}</li>
+                        <li><span>✦</span> ${I18N.t('why_card3_point2')}</li>
+                        <li><span>✦</span> ${I18N.t('why_card3_point3')}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Customer Reviews Section -->
+            <section class="why-reviews-section" id="customer-reviews">
+                <div class="why-reviews-header">
+                    <span class="why-reviews-badge">TESTIMONIALS</span>
+                    <h2 class="why-reviews-title">${I18N.t('reviews_section_title')}</h2>
+                    <p class="why-reviews-subtitle">${I18N.t('reviews_section_subtitle')}</p>
+                </div>
+
+                ${reviewsHtml}
+            </section>
+
+            <!-- Customer Review Submission Form -->
+            <section class="why-form-section" id="submit-review">
+                <div class="why-form-card">
+                    <div class="why-form-header">
+                        <span class="why-form-badge">YOUR OPINION</span>
+                        <h2 class="why-form-title">${I18N.t('review_form_title')}</h2>
+                        <p class="why-form-subtitle">${I18N.t('review_form_subtitle')}</p>
+                    </div>
+
+                    <div id="review-form-alert" class="review-alert" style="display:none;"></div>
+
+                    <form class="why-review-form" onsubmit="handleReviewSubmit(event)">
+                        <div class="why-form-row">
+                            <div class="why-form-group">
+                                <label class="why-form-label" for="review-customer-name">${I18N.t('review_field_name')}</label>
+                                <input type="text" id="review-customer-name" name="customer_name" class="why-form-input" placeholder="${I18N.t('review_field_name_placeholder')}" dir="ltr" required minlength="3" maxlength="100">
+                            </div>
+                            <div class="why-form-group">
+                                <label class="why-form-label" for="review-customer-email">${I18N.t('review_field_email')}</label>
+                                <input type="email" id="review-customer-email" name="customer_email" class="why-form-input" placeholder="${I18N.t('review_field_email_placeholder')}" required maxlength="150">
+                            </div>
+                        </div>
+
+                        <!-- Star Rating Selection -->
+                        <div class="why-form-group">
+                            <label class="why-form-label">${I18N.t('review_field_rating')}</label>
+                            <input type="hidden" name="rating" id="review-rating-input" value="5">
+                            <div class="review-stars-selector">
+                                <div class="review-stars-btns">
+                                    <button type="button" class="review-star-btn active" onclick="setReviewRating(1)" aria-label="1 Star">★</button>
+                                    <button type="button" class="review-star-btn active" onclick="setReviewRating(2)" aria-label="2 Stars">★</button>
+                                    <button type="button" class="review-star-btn active" onclick="setReviewRating(3)" aria-label="3 Stars">★</button>
+                                    <button type="button" class="review-star-btn active" onclick="setReviewRating(4)" aria-label="4 Stars">★</button>
+                                    <button type="button" class="review-star-btn active" onclick="setReviewRating(5)" aria-label="5 Stars">★</button>
+                                </div>
+                                <span class="review-rating-label" id="review-rating-label">Excellent (5/5)</span>
+                            </div>
+                        </div>
+
+                        <div class="why-form-group">
+                            <label class="why-form-label" for="review-text">${I18N.t('review_field_text')}</label>
+                            <textarea id="review-text" name="review_text" class="why-form-textarea" rows="4" placeholder="${I18N.t('review_field_text_placeholder')}" required minlength="5" maxlength="1000"></textarea>
+                        </div>
+
+                        <div class="why-form-actions">
+                            <button type="submit" class="why-form-submit-btn">
+                                <span>${I18N.t('review_submit_btn')}</span>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    `;
+}
+
+function renderReviewCard(r, isAr) {
+    const ratingVal = Math.max(1, Math.min(5, parseInt(r.rating) || 5));
+    const stars = '★'.repeat(ratingVal) + '☆'.repeat(5 - ratingVal);
+    const initial = (r.customer_name || 'Y').trim().charAt(0).toUpperCase();
+    const dateFormatted = formatReviewDate(r.created_at, isAr);
+
+    return `
+        <div class="why-review-card" id="review-card-${r.id}">
+            <div class="why-review-header">
+                <div class="why-review-author-wrap">
+                    <div class="why-review-avatar" dir="ltr">${initial}</div>
+                    <div class="why-review-meta">
+                        <div class="why-review-author-name" dir="ltr">
+                            <span>${escapeHtml(r.customer_name)}</span>
+                        </div>
+                        <div class="why-review-stars" aria-label="${ratingVal} of 5 stars">${stars}</div>
+                    </div>
+                </div>
+                ${dateFormatted ? `<div class="why-review-date">${dateFormatted}</div>` : ''}
+            </div>
+            <p class="why-review-text">${escapeHtml(r.review_text)}</p>
+        </div>
+    `;
+}
+
+function formatReviewDate(dateStr, isAr) {
+    if (!dateStr) return '';
+    try {
+        const d = new Date(dateStr.replace(' ', 'T'));
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    } catch (e) {
+        return dateStr;
+    }
+}
+
+window.handleLoadMoreReviews = async function(e) {
+    if (e) e.preventDefault();
+    const state = window.whyReviewsState;
+    if (!state || state.isLoading || !state.hasMore) return;
+
+    const btn = document.getElementById('why-reviews-loadmore-btn');
+    const wrap = document.getElementById('why-reviews-loadmore-wrap');
+    const grid = document.getElementById('why-reviews-grid');
+    if (!grid) return;
+
+    const isAr = I18N.getLang() === 'ar';
+    state.isLoading = true;
+
+    if (btn) {
+        btn.disabled = true;
+        btn.classList.add('loading');
+        btn.innerHTML = `
+            <span class="why-reviews-spinner"></span>
+            <span>${I18N.t('reviews_loading_more', 'Loading more reviews...')}</span>
+        `;
+    }
+
+    try {
+        const nextPage = state.page + 1;
+        const res = await API.getReviews({ page: nextPage, limit: state.limit });
+        const newReviews = res.reviews || [];
+
+        const uniqueNew = newReviews.filter(r => !state.displayedIds.has(r.id));
+        uniqueNew.forEach(r => state.displayedIds.add(r.id));
+
+        if (uniqueNew.length > 0) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = uniqueNew.map(r => renderReviewCard(r, isAr)).join('');
+            while (tempDiv.firstChild) {
+                grid.appendChild(tempDiv.firstChild);
+            }
+        }
+
+        state.page = nextPage;
+        state.hasMore = Boolean(res.hasMore);
+
+        if (!state.hasMore && wrap) {
+            wrap.style.display = 'none';
+        } else if (btn) {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            btn.innerHTML = `
+                <span>${I18N.t('reviews_see_more', 'See More Reviews')}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            `;
+        }
+    } catch (err) {
+        console.error('Failed to load more reviews:', err);
+        if (btn) {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            btn.innerHTML = `
+                <span>${I18N.t('reviews_see_more', 'See More Reviews')}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            `;
+        }
+    } finally {
+        state.isLoading = false;
+    }
+};
+
+window.handleReviewSubmit = async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const alertBox = document.getElementById('review-form-alert');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const isAr = I18N.getLang() === 'ar';
+
+    const customer_name = form.customer_name.value.trim();
+    const customer_email = form.customer_email.value.trim();
+    const rating = parseInt(form.rating.value) || 5;
+    const review_text = form.review_text.value.trim();
+
+    // Validate English First and Last Name (at least two Latin words)
+    const nameEnglishRegex = /^[a-zA-Z]+(?:[\s'-][a-zA-Z]+)+$/;
+    if (!customer_name || !nameEnglishRegex.test(customer_name)) {
+        if (alertBox) {
+            alertBox.className = 'review-alert review-alert-error';
+            alertBox.textContent = isAr
+                ? 'يرجى إدخال اسمك الأول واسم العائلة باللغة الإنجليزية (مثال: Mariam Ahmed).'
+                : 'Please enter your first and last name in English (e.g. Mariam Ahmed).';
+            alertBox.style.display = 'block';
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        return;
+    }
+
+    if (!customer_email || !customer_email.includes('@')) {
+        if (alertBox) {
+            alertBox.className = 'review-alert review-alert-error';
+            alertBox.textContent = isAr ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.';
+            alertBox.style.display = 'block';
+        }
+        return;
+    }
+
+    if (!review_text || review_text.length < 5) {
+        if (alertBox) {
+            alertBox.className = 'review-alert review-alert-error';
+            alertBox.textContent = isAr ? 'يرجى كتابة رأيك وتجربتك بالتفصيل (5 أحرف على الأقل).' : 'Please write your review (at least 5 characters).';
+            alertBox.style.display = 'block';
+        }
+        return;
+    }
+
+    try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span>${I18N.t('review_submitting_btn', 'Submitting...')}</span>`;
+        }
+
+        const res = await API.submitReview({
+            customer_name,
+            customer_email,
+            rating,
+            review_text,
+            language: isAr ? 'ar' : 'en'
+        });
+
+        if (alertBox) {
+            alertBox.className = 'review-alert review-alert-success';
+            alertBox.textContent = res.message || I18N.t('review_success_msg');
+            alertBox.style.display = 'block';
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        form.reset();
+        window.setReviewRating(5);
+    } catch (err) {
+        if (alertBox) {
+            alertBox.className = 'review-alert review-alert-error';
+            alertBox.textContent = err.message || (isAr ? 'تعذر إرسال التقييم. يرجى المحاولة مرة أخرى.' : 'Failed to submit review. Please try again.');
+            alertBox.style.display = 'block';
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `
+                <span>${I18N.t('review_submit_btn')}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            `;
+        }
+    }
+};
+
+window.setReviewRating = function(rating) {
+    const hiddenInput = document.getElementById('review-rating-input');
+    if (hiddenInput) hiddenInput.value = rating;
+
+    const stars = document.querySelectorAll('.review-star-btn');
+    stars.forEach((star, idx) => {
+        if (idx < rating) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+
+    const isAr = I18N.getLang() === 'ar';
+    const ratingLabel = document.getElementById('review-rating-label');
+    if (ratingLabel) {
+        const labels = isAr
+            ? ['', 'مقبول (1/5)', 'جيد (2/5)', 'جيد جداً (3/5)', 'رائع (4/5)', 'ممتاز (5/5)']
+            : ['', 'Fair (1/5)', 'Good (2/5)', 'Very Good (3/5)', 'Great (4/5)', 'Excellent (5/5)'];
+        ratingLabel.textContent = labels[rating] || `${rating}/5`;
+    }
+};
+
+window.renderWhyYadawyPage = renderWhyYadawyPage;
+window.renderReviewCard = renderReviewCard;
+window.formatReviewDate = formatReviewDate;
+
+// ============================================================
+// CUSTOMIZE PAGE — BESPOKE HANDWOVEN PIECES & WHATSAPP CUSTOM INQUIRY
+// ============================================================
+async function renderCustomizePage() {
+    const isAr = I18N.getLang() === 'ar';
+    let products = [];
+    try {
+        const res = await API.getProducts({ collection: 'customize', limit: 50 });
+        products = res.products || [];
+    } catch (e) {
+        console.error('Failed to load customizable products:', e);
+    }
+
+    const title = isAr ? 'تفصيل حسب الطلب' : 'Bespoke Custom Orders';
+    const subtitle = isAr
+        ? 'حوّل مساحتك بقطعة منسوجة خصيصاً لك، بأبعاد وألوان وتصميم يناسب ذوقك الفريد من أنامل نساجينا الحرفيين.'
+        : 'Transform your space with a handwoven rug or kilim tailored to your exact measurements, color palette, and bespoke design preferences.';
+
+    return `
+        <div class="customize-page">
+            <!-- Hero Header -->
+            <section class="customize-hero">
+                <div class="customize-hero-inner">
+                    <div class="customize-badge">
+                        <span>✦</span>
+                        <span>${isAr ? 'حرفة يدوية حسب الطلب' : 'BESPOKE ARTISAN WEAVING'}</span>
+                        <span>✦</span>
+                    </div>
+                    <h1 class="customize-hero-title">${title}</h1>
+                    <p class="customize-hero-desc">${subtitle}</p>
+                    <div class="customize-hero-actions">
+                        <button class="customize-cta-primary" onclick="openCustomizationModal()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <span>${isAr ? 'ابدأ طلب تفصيل خاص' : 'Start a Custom Commission'}</span>
+                        </button>
+                        <a href="https://wa.me/201069005565" target="_blank" rel="noopener" class="customize-cta-secondary">
+                            ${SVG_ICONS.whatsapp}
+                            <span>${isAr ? 'استشارة مباشرة عبر واتساب' : 'WhatsApp Consultation'}</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Three Bespoke Process Pillars -->
+            <section class="customize-pillars-section">
+                <div class="customize-pillars-grid">
+                    <div class="customize-pillar-card">
+                        <div class="customize-pillar-step">1</div>
+                        <h3 class="customize-pillar-title">${isAr ? 'اختر الموديل أو الفكرة' : '1. Choose Model or Concept'}</h3>
+                        <p class="customize-pillar-text">${isAr ? 'اختر تصميماً من القطع القابلة للتفصيل أدناه أو شاركنا فكرتك وصورة لغرفتك.' : 'Select one of our customizable designs below or share your room photo and inspiration.'}</p>
+                    </div>
+                    <div class="customize-pillar-card">
+                        <div class="customize-pillar-step">2</div>
+                        <h3 class="customize-pillar-title">${isAr ? 'حدد المقاس والألوان' : '2. Specify Dimensions & Colors'}</h3>
+                        <p class="customize-pillar-text">${isAr ? 'نساعدك في اختيار المقاس المناسب بالسنتيمتر ودرجات الألوان الطبيعية الملائمة لأثاثك.' : 'Define your exact dimensions in centimeters and select natural wool shades tailored to your space.'}</p>
+                    </div>
+                    <div class="customize-pillar-card">
+                        <div class="customize-pillar-step">3</div>
+                        <h3 class="customize-pillar-title">${isAr ? 'النول اليدوي والاستلام' : '3. Artisan Loom & Delivery'}</h3>
+                        <p class="customize-pillar-text">${isAr ? 'يتم نسج قطعتك بعناية فائقة على النول التقليدي بأيدي أمهر النساجين وتوصيلها لباب بيتك.' : 'Woven stitch by stitch on traditional wooden looms by master artisans and delivered to your doorstep.'}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Catalog of Customizable Products -->
+            <section class="customize-catalog-section">
+                <div class="customize-section-header">
+                    <h2 class="customize-section-title">${isAr ? 'القطع والتصاميم المتاحة للتفصيل' : 'Available Customizable Designs'}</h2>
+                    <p class="customize-section-subtitle">${isAr ? 'جميع القطع أدناه مؤهلة للتفصيل بمقاسات وتعديلات لونية خاصة. اضغط على أي قطعة لطلب تخصيصها عبر واتساب.' : 'All models below are eligible for custom sizing and color adaptations. Click on any piece to request customization via WhatsApp.'}</p>
+                </div>
+
+                ${products.length > 0 ? `
+                    <div class="products-grid">
+                        ${products.map(p => `
+                            <div class="product-card" onclick="openCustomizationModal(${p.id})">
+                                <div class="product-card-image-wrap">
+                                    ${p.primary_image ? `<img src="${imgSrc(p.primary_image)}" class="product-card-image" alt="${escapeHtml(I18N.translateProductName(p.name))}" loading="lazy">` : renderPlaceholder()}
+                                    <div class="product-badges-wrap">
+                                        <div class="product-card-badge customizable">${I18N.t('nav_customize')}</div>
+                                    </div>
+                                    <div class="product-card-actions">
+                                        <button class="product-card-add-btn" onclick="event.stopPropagation(); openCustomizationModal(${p.id})">
+                                            ${isAr ? 'طلب تفصيل هذه القطعة' : 'Request Customization'}
+                                        </button>
+                                        <button class="product-card-wa-btn" onclick="event.stopPropagation(); ProductWhatsAppShare.share(window._productDataMap[${p.id}])" title="${I18N.t('inquire_whatsapp') || 'Contact us on WhatsApp'}" aria-label="Contact us on WhatsApp">
+                                            ${SVG_ICONS.whatsappWhite || SVG_ICONS.whatsapp}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="product-card-info">
+                                    <div class="product-card-type">${isAr ? 'تفصيل يدوي حسب الطلب' : 'BESPOKE HANDWOVEN'}</div>
+                                    <h4 class="product-card-name">${escapeHtml(I18N.translateProductName(p.name))}</h4>
+                                    <div class="product-card-price" style="color:var(--color-gold-dark, #A27B2C); font-weight:700;">
+                                        ${isAr ? 'حسب المقاس المطلوب' : 'Priced upon custom size'}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : `
+                    <div style="text-align:center; padding:60px 20px; background:#fff; border-radius:8px; border:1px solid var(--color-border-light);">
+                        <p style="color:var(--color-text-muted); font-size:15px; margin-bottom:18px;">${isAr ? 'جاري تجهيز نماذج التفصيل. يمكنك التواصل معنا مباشرة لطلب مقاس خاص.' : 'Customizable models are being updated. You can contact us directly for bespoke orders.'}</p>
+                        <button class="customize-cta-primary" onclick="openCustomizationModal()">
+                            ${isAr ? 'طلب تفصيل مخصص الآن' : 'Inquire for Custom Rug'}
+                        </button>
+                    </div>
+                `}
+            </section>
+        </div>
+    `;
+}
+
+// Modal handling for customization
+window.openCustomizationModal = function(productId = null) {
+    const isAr = I18N.getLang() === 'ar';
+    let product = null;
+    if (productId && window._productDataMap && window._productDataMap[productId]) {
+        product = window._productDataMap[productId];
+    }
+
+    const existing = document.getElementById('customize-inquiry-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'customize-modal-overlay';
+    overlay.id = 'customize-inquiry-modal-overlay';
+    overlay.innerHTML = `
+        <div class="customize-modal" onclick="event.stopPropagation()">
+            <div class="customize-modal-header">
+                <h3 class="customize-modal-title">${isAr ? 'طلب تفصيل سجادة أو كليم' : 'Bespoke Rug Inquiry'}</h3>
+                <button type="button" class="customize-modal-close" onclick="document.getElementById('customize-inquiry-modal-overlay').remove()">✕</button>
+            </div>
+            <div class="customize-modal-body">
+                ${product ? `
+                    <div class="customize-modal-product-preview">
+                        ${product.primary_image ? `<img src="${imgSrc(product.primary_image)}" class="customize-preview-img" alt="${escapeHtml(product.name)}">` : ''}
+                        <div>
+                            <div class="customize-preview-name">${escapeHtml(I18N.translateProductName(product.name))}</div>
+                            <div class="customize-preview-meta">${isAr ? 'النموذج المختار للتفصيل' : 'Selected Model for Custom Sizing'}</div>
+                        </div>
+                    </div>
+                ` : ''}
+                <form id="customize-inquiry-form" onsubmit="window.submitCustomizationRequest(event, ${productId || 'null'})">
+                    <div class="customize-form-row">
+                        <div class="customize-form-group">
+                            <label class="customize-form-label">${isAr ? 'الاسم الكامل *' : 'Full Name *'}</label>
+                            <input type="text" id="cust-client-name" class="customize-form-input" required placeholder="${isAr ? 'مثال: ندى محمد' : 'e.g. Nada Mohamed'}">
+                        </div>
+                        <div class="customize-form-group">
+                            <label class="customize-form-label">${isAr ? 'رقم الهاتف / واتساب *' : 'Phone / WhatsApp *'}</label>
+                            <input type="tel" id="cust-client-phone" class="customize-form-input" required placeholder="01xxxxxxxxx">
+                        </div>
+                    </div>
+
+                    <div class="customize-form-row">
+                        <div class="customize-form-group">
+                            <label class="customize-form-label">${isAr ? 'المقاس المطلوب (عرض × طول بالسنتيمتر) *' : 'Desired Dimensions (W × L cm) *'}</label>
+                            <input type="text" id="cust-dimensions" class="customize-form-input" required placeholder="${isAr ? 'مثال: 200 × 300 سم' : 'e.g. 200 × 300 cm'}">
+                        </div>
+                        <div class="customize-form-group">
+                            <label class="customize-form-label">${isAr ? 'المكان أو الاستخدام' : 'Room / Space'}</label>
+                            <select id="cust-room" class="customize-form-select">
+                                <option value="">${isAr ? 'اختر المساحة (اختياري)' : 'Select Room (Optional)'}</option>
+                                <option value="${isAr ? 'غرفة معيشة' : 'Living Room'}">${isAr ? 'غرفة معيشة' : 'Living Room'}</option>
+                                <option value="${isAr ? 'غرفة نوم' : 'Bedroom'}">${isAr ? 'غرفة نوم' : 'Bedroom'}</option>
+                                <option value="${isAr ? 'غرفة طعام' : 'Dining Room'}">${isAr ? 'غرفة طعام' : 'Dining Room'}</option>
+                                <option value="${isAr ? 'طرقات وممرات' : 'Hallway / Runner'}">${isAr ? 'طرقات وممرات' : 'Hallway / Runner'}</option>
+                                <option value="${isAr ? 'مجلس / صالون' : 'Majlis / Salon'}">${isAr ? 'مجلس / صالون' : 'Majlis / Salon'}</option>
+                                <option value="${isAr ? 'أخرى' : 'Other'}">${isAr ? 'أخرى' : 'Other'}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="customize-form-group">
+                        <label class="customize-form-label">${isAr ? 'درجات الألوان المفضلة' : 'Preferred Color Palette'}</label>
+                        <input type="text" id="cust-colors" class="customize-form-input" placeholder="${isAr ? 'مثال: درجات البيج مع الكحلي، أو أحمر قرمزي' : 'e.g. Ivory & Indigo, or Terracotta tones'}">
+                    </div>
+
+                    <div class="customize-form-group">
+                        <label class="customize-form-label">${isAr ? 'ملاحظات أو تفاصيل إضافية' : 'Additional Notes / Preferences'}</label>
+                        <textarea id="cust-notes" class="customize-form-textarea" rows="3" placeholder="${isAr ? 'أي مواصفات خاصة عن كثافة الصوف، الشراشيب، أو سمك القطعة...' : 'Any special notes about fringe, thickness, wool density...'}"></textarea>
+                    </div>
+
+                    <button type="submit" class="customize-modal-submit-btn">
+                        ${SVG_ICONS.whatsapp}
+                        <span>${isAr ? 'إرسال تفاصيل التفصيل عبر واتساب' : 'Send Customization Request on WhatsApp'}</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    overlay.onclick = () => overlay.remove();
+    document.body.appendChild(overlay);
+};
+
+window.submitCustomizationRequest = function(e, productId) {
+    e.preventDefault();
+    const isAr = I18N.getLang() === 'ar';
+    const name = document.getElementById('cust-client-name')?.value?.trim();
+    const phone = document.getElementById('cust-client-phone')?.value?.trim();
+    const dimensions = document.getElementById('cust-dimensions')?.value?.trim();
+    const room = document.getElementById('cust-room')?.value;
+    const colors = document.getElementById('cust-colors')?.value?.trim();
+    const notes = document.getElementById('cust-notes')?.value?.trim();
+
+    let product = null;
+    if (productId && window._productDataMap && window._productDataMap[productId]) {
+        product = window._productDataMap[productId];
+    }
+
+    const customDetails = [
+        `اسم العميل: ${name}`,
+        `رقم الهاتف: ${phone}`,
+        `المقاس المطلوب: ${dimensions}`,
+        room ? `المكان: ${room}` : '',
+        colors ? `الألوان المفضلة: ${colors}` : '',
+        notes ? `ملاحظات إضافية: ${notes}` : ''
+    ].filter(Boolean).join('\n');
+
+    if (product) {
+        ProductWhatsAppShare.share(product, {
+            size: dimensions,
+            customDetails: customDetails,
+            onComplete: () => {
+                document.getElementById('customize-inquiry-modal-overlay')?.remove();
+            }
+        });
+    } else {
+        const dummyProduct = {
+            name: isAr ? 'طلب تفصيل خاص - سجادة / كليم يدوي' : 'Custom Bespoke Rug Commission',
+            slug: 'customize',
+            dimensions: dimensions
+        };
+        ProductWhatsAppShare.share(dummyProduct, {
+            size: dimensions,
+            customDetails: customDetails,
+            productUrl: `${window.location.origin}/#/customize`,
+            onComplete: () => {
+                document.getElementById('customize-inquiry-modal-overlay')?.remove();
+            }
+        });
+    }
+};
+
+window.renderCustomizePage = renderCustomizePage;
+

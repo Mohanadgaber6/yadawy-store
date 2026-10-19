@@ -116,8 +116,10 @@ const Store = {
     },
 
     formatPrice(price) {
-        const symbol = this.settings.currency_symbol || 'LE';
-        return `${Number(price).toLocaleString()} ${symbol}`;
+        const isAr = typeof I18N !== 'undefined' && I18N.getLang() === 'ar';
+        const symbol = isAr ? 'ج.م' : (this.settings.currency_symbol || 'EGP');
+        const formattedNum = Number(price || 0).toLocaleString(isAr ? 'ar-EG' : 'en-US');
+        return isAr ? `${formattedNum} ${symbol}` : `${formattedNum} ${symbol}`;
     }
 };
 
@@ -137,7 +139,7 @@ function showToast(message, type = 'info') {
 
     setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100px)';
+        toast.style.transform = (typeof I18N !== 'undefined' && I18N.getLang() === 'ar') ? 'translateX(-100px)' : 'translateX(100px)';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }

@@ -163,21 +163,27 @@ const AdminPages = {
     },
 
     // ========================================================
-    // 2. PRODUCTS LIST
+    // 2. PRODUCTS LIST (5 SECTIONS INTEGRATION)
     // ========================================================
-    products(products = [], pagination = {}, filters = {}, sections = [], categories = []) {
-        const { search = '', section = '', category = '', status = '', stock_status = '', sort = 'newest' } = filters;
+    products(products = [], pagination = {}, filters = {}, sections = [], categories = [], sectionCounts = {}) {
+        const { search = '', section = '', category = '', status = '', stock_status = '', sort = 'newest', collection = '' } = filters;
         const total = pagination.total ?? products.length;
 
         // Active breadcrumb label
         let filterBreadcrumb = '';
-        if (section || category) {
+        if (section || category || collection) {
             const secObj = sections.find(s => s.slug === section || String(s.id) === section);
             const catObj = categories.find(c => c.slug === category || String(c.id) === category);
+            let colLabel = '';
+            if (collection === 'new-arrivals') colLabel = 'وصل حديثًا (New Arrivals)';
+            if (collection === 'best-sellers') colLabel = 'الأكثر مبيعًا (Best Sellers)';
+            if (collection === 'customize') colLabel = 'تفصيل حسب الطلب (Customize)';
+
             filterBreadcrumb = `
                 <div style="background:#FAF7F2; padding:8px 16px; border:1px solid var(--adm-border); border-radius:4px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between;">
                     <div style="font-size:13px; font-weight:600; color:var(--adm-maroon);">
                         <span>Filtering: </span>
+                        ${colLabel ? `<strong style="color:var(--adm-maroon);">${colLabel}</strong>` : ''}
                         ${secObj ? `<strong>${this.escapeHtml(secObj.name)}</strong>` : ''}
                         ${secObj && catObj ? ` ➔ ` : ''}
                         ${catObj ? `<strong style="color:var(--adm-gold-dark);">${this.escapeHtml(catObj.name)}</strong>` : ''}
@@ -189,16 +195,44 @@ const AdminPages = {
         }
 
         return `
-            <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+            <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
                 <div>
                     <h1 class="admin-page-title" style="font-size:22px; font-weight:700; color:var(--adm-maroon); font-family:var(--adm-font-brand); letter-spacing:1px; margin-bottom:6px;">Products Management</h1>
                     <p class="admin-page-subtitle" style="color:var(--adm-text-secondary); font-size:13px;">
-                        Complete control over all products displayed on the public website. Add, edit, delete, and manage device image uploads.
+                        Manage all 5 product sections on the website: Carpets, Kilims, New Arrivals, Best Sellers, and Customizable pieces.
                     </p>
                 </div>
                 <div>
                     <a href="#/products/new" class="btn btn-primary" style="padding:10px 20px; font-size:13px; font-weight:700;">+ Add New Product</a>
                 </div>
+            </div>
+
+            <!-- 5-Section Product Tabs with Dynamic Counts -->
+            <div class="admin-section-tabs">
+                <button class="section-tab-btn ${!section && !collection ? 'active' : ''}" onclick="AdminApp.switchProductSection('')">
+                    <span>All Products</span>
+                    <span class="tab-count-badge">${sectionCounts.total || 0}</span>
+                </button>
+                <button class="section-tab-btn ${section === 'carpets' ? 'active' : ''}" onclick="AdminApp.switchProductSection('carpets')">
+                    <span>Carpets &amp; Rugs</span>
+                    <span class="tab-count-badge">${sectionCounts.carpets || 0}</span>
+                </button>
+                <button class="section-tab-btn ${section === 'kilims' ? 'active' : ''}" onclick="AdminApp.switchProductSection('kilims')">
+                    <span>Kilims &amp; Flatweaves</span>
+                    <span class="tab-count-badge">${sectionCounts.kilims || 0}</span>
+                </button>
+                <button class="section-tab-btn ${collection === 'new-arrivals' ? 'active' : ''}" onclick="AdminApp.switchProductCollection('new-arrivals')">
+                    <span>وصل حديثًا / New Arrivals</span>
+                    <span class="tab-count-badge">${sectionCounts.new_arrivals || 0}</span>
+                </button>
+                <button class="section-tab-btn ${collection === 'best-sellers' ? 'active' : ''}" onclick="AdminApp.switchProductCollection('best-sellers')">
+                    <span>الأكثر مبيعًا / Best Sellers</span>
+                    <span class="tab-count-badge">${sectionCounts.best_sellers || 0}</span>
+                </button>
+                <button class="section-tab-btn ${collection === 'customize' ? 'active' : ''}" onclick="AdminApp.switchProductCollection('customize')">
+                    <span>تفصيل حسب الطلب / Customize</span>
+                    <span class="tab-count-badge">${sectionCounts.customize || 0}</span>
+                </button>
             </div>
 
             ${filterBreadcrumb}
@@ -214,7 +248,7 @@ const AdminPages = {
                     <!-- Section Filter (Fixed 2 Sections) -->
                     <div style="min-width:140px;">
                         <select id="prod-section-filter" style="width:100%; padding:9px 12px; border:1px solid var(--adm-border); border-radius:4px; font-size:13px;" onchange="AdminApp.onProductSectionFilterChange()">
-                            <option value="">All Sections</option>
+                            <option value="">All Primary Sections</option>
                             <option value="carpets" ${section === 'carpets' ? 'selected' : ''}>Carpets</option>
                             <option value="kilims" ${section === 'kilims' ? 'selected' : ''}>Kilims</option>
                         </select>
@@ -225,6 +259,16 @@ const AdminPages = {
                         <select id="prod-category-filter" style="width:100%; padding:9px 12px; border:1px solid var(--adm-border); border-radius:4px; font-size:13px;" onchange="AdminApp.applyProductFilters()">
                             <option value="">All Categories</option>
                             ${categories.map(c => `<option value="${c.slug}" ${category === c.slug ? 'selected' : ''}>${this.escapeHtml(c.name)}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <!-- Collection Filter Dropdown -->
+                    <div style="min-width:160px;">
+                        <select id="prod-collection-filter" style="width:100%; padding:9px 12px; border:1px solid var(--adm-border); border-radius:4px; font-size:13px; font-weight:600;" onchange="AdminApp.applyProductFilters()">
+                            <option value="">All Collections</option>
+                            <option value="new-arrivals" ${collection === 'new-arrivals' ? 'selected' : ''}>New Arrivals (وصل حديثًا)</option>
+                            <option value="best-sellers" ${collection === 'best-sellers' ? 'selected' : ''}>Best Sellers (الأكثر مبيعًا)</option>
+                            <option value="customize" ${collection === 'customize' ? 'selected' : ''}>Customize (تفصيل حسب الطلب)</option>
                         </select>
                     </div>
 
@@ -256,12 +300,11 @@ const AdminPages = {
                             <option value="price_desc" ${sort === 'price_desc' ? 'selected' : ''}>Price: High → Low</option>
                             <option value="name_asc" ${sort === 'name_asc' ? 'selected' : ''}>Name: A → Z</option>
                             <option value="name_desc" ${sort === 'name_desc' ? 'selected' : ''}>Name: Z → A</option>
-                            <option value="best_seller" ${sort === 'best_seller' ? 'selected' : ''}>Best Sellers</option>
                         </select>
                     </div>
 
                     <button class="btn btn-secondary" onclick="AdminApp.applyProductFilters()" style="padding:9px 16px;">Filter</button>
-                    ${(search || section || category || status || stock_status || (sort && sort !== 'newest')) ? `<button class="btn btn-outline" onclick="AdminApp.resetProductFilters()" style="padding:9px 14px;">Reset</button>` : ''}
+                    ${(search || section || category || collection || status || stock_status || (sort && sort !== 'newest')) ? `<button class="btn btn-outline" onclick="AdminApp.resetProductFilters()" style="padding:9px 14px;">Reset</button>` : ''}
                 </div>
             </div>
 
@@ -289,6 +332,7 @@ const AdminPages = {
                                     </th>
                                     <th>Section</th>
                                     <th>Category</th>
+                                    <th>Collections (1-Click Toggle)</th>
                                     <th>
                                         <button onclick="AdminApp.toggleProductSort('price')" style="background:none;border:none;font-weight:700;font-size:12px;color:var(--adm-maroon);cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:0;">
                                             Price ${sort === 'price_asc' ? '▲' : sort === 'price_desc' ? '▼' : '↕'}
@@ -333,6 +377,19 @@ const AdminPages = {
                                             </td>
                                             <td>
                                                 <span class="category-meta-badge" style="background:#FAF7F2;">${this.escapeHtml(catName)}</span>
+                                            </td>
+                                            <td>
+                                                <div class="flag-toggles-container">
+                                                    <button type="button" class="flag-toggle-btn new-arrival ${p.is_new_arrival ? 'active' : ''}" onclick="AdminApp.quickToggleProductFlag(${p.id}, 'is_new_arrival', ${p.is_new_arrival ? 0 : 1})" title="Toggle New Arrivals">
+                                                        ${p.is_new_arrival ? '✦ New' : '+ New'}
+                                                    </button>
+                                                    <button type="button" class="flag-toggle-btn best-seller ${p.is_best_seller ? 'active' : ''}" onclick="AdminApp.quickToggleProductFlag(${p.id}, 'is_best_seller', ${p.is_best_seller ? 0 : 1})" title="Toggle Best Sellers">
+                                                        ${p.is_best_seller ? '★ Best' : '+ Best'}
+                                                    </button>
+                                                    <button type="button" class="flag-toggle-btn customizable ${p.is_customizable ? 'active' : ''}" onclick="AdminApp.quickToggleProductFlag(${p.id}, 'is_customizable', ${p.is_customizable ? 0 : 1})" title="Toggle Customize">
+                                                        ${p.is_customizable ? '✂ Custom' : '+ Custom'}
+                                                    </button>
+                                                </div>
                                             </td>
                                             <td>
                                                 <div style="font-weight:600;">${priceText}</div>
@@ -406,6 +463,9 @@ const AdminPages = {
             specifications: 'Material: 100% Handspun Egyptian Wool\nWeave: Traditional Flatweave Kilim\nOrigin: Fowwa, Egypt\nKnot Density: High precision flatweave',
             section_id: 1,
             category_id: '',
+            is_new_arrival: 1,
+            is_best_seller: 0,
+            is_customizable: 0,
             images: [],
             videos: [],
             sizes: [
@@ -710,6 +770,42 @@ const AdminPages = {
                                     <option value="draft" ${p.status === 'draft' ? 'selected' : ''}>Draft (Hidden from Storefront)</option>
                                     <option value="disabled" ${p.status === 'disabled' ? 'selected' : ''}>Disabled (Archived)</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <!-- Collections & Storefront Sections Card -->
+                        <div class="admin-card" style="padding:24px; margin-bottom:24px;">
+                            <h3 style="font-size:16px; font-weight:700; color:var(--adm-maroon); margin-bottom:12px; border-bottom:1px solid var(--adm-border); padding-bottom:10px;">
+                                Additional Product Collections
+                            </h3>
+                            <p style="font-size:12px; color:var(--adm-text-secondary); margin-bottom:16px; line-height:1.5;">
+                                A product keeps its primary category (Carpets or Kilims) and can simultaneously belong to any of the 3 additional collections.
+                            </p>
+
+                            <div style="display:flex; flex-direction:column; gap:12px;">
+                                <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:10px 12px; border:1px solid var(--adm-border); border-radius:6px; background:#FAF7F2;">
+                                    <input type="checkbox" id="prod-is-new-arrival" ${p.is_new_arrival ? 'checked' : ''} style="accent-color:var(--adm-maroon); width:18px; height:18px; margin-top:2px;">
+                                    <div>
+                                        <strong style="color:var(--adm-maroon); font-size:13px;">وصل حديثًا / New Arrivals</strong>
+                                        <div style="font-size:11.5px; color:var(--adm-text-muted);">Include in the New Arrivals collection and display badge.</div>
+                                    </div>
+                                </label>
+
+                                <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:10px 12px; border:1px solid var(--adm-border); border-radius:6px; background:#FAF7F2;">
+                                    <input type="checkbox" id="prod-is-best-seller" ${p.is_best_seller ? 'checked' : ''} style="accent-color:var(--adm-maroon); width:18px; height:18px; margin-top:2px;">
+                                    <div>
+                                        <strong style="color:var(--adm-maroon); font-size:13px;">الأكثر مبيعًا / Best Sellers</strong>
+                                        <div style="font-size:11.5px; color:var(--adm-text-muted);">Feature in the Best Sellers collection with top pick highlight.</div>
+                                    </div>
+                                </label>
+
+                                <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; padding:10px 12px; border:1px solid var(--adm-border); border-radius:6px; background:#FAF7F2;">
+                                    <input type="checkbox" id="prod-is-customizable" ${p.is_customizable ? 'checked' : ''} style="accent-color:var(--adm-maroon); width:18px; height:18px; margin-top:2px;">
+                                    <div>
+                                        <strong style="color:var(--adm-maroon); font-size:13px;">تفصيل حسب الطلب / Customizable</strong>
+                                        <div style="font-size:11.5px; color:var(--adm-text-muted);">Make available in the Customize section with bespoke WhatsApp inquiry.</div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 
@@ -2356,6 +2452,239 @@ const AdminPages = {
                         </p>
                     </div>
                 </div>
+            </div>
+        `;
+    },
+
+    // ========================================================
+    // CUSTOMER REVIEWS MODERATION VIEW
+    // ========================================================
+    reviews(reviews = [], counts = {}, currentFilter = 'all', searchQuery = '', sortQuery = 'newest') {
+        const total = counts.all || 0;
+        const pendingCount = counts.pending || 0;
+
+        return `
+            <!-- Page Header -->
+            <div class="admin-page-header">
+                <div>
+                    <div class="admin-page-breadcrumbs">
+                        <span>Store Management</span>
+                        <span>/</span>
+                        <span class="current">Customer Reviews</span>
+                    </div>
+                    <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+                        <h1 class="admin-page-title">Customer Reviews</h1>
+                        <span style="font-size:16px; font-weight:700; color:var(--adm-gold-dark);" dir="rtl" lang="ar">إدارة تقييمات العملاء</span>
+                    </div>
+                    <p class="admin-page-subtitle">
+                        Moderate, approve, and manage customer reviews submitted on the "Why Yadawy?" page.
+                    </p>
+                </div>
+            </div>
+
+            ${pendingCount > 0 ? `
+                <div style="background:#FEF3C7; border:1.5px solid #FCD34D; border-radius:8px; padding:14px 20px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:20px;">⚠️</span>
+                        <div>
+                            <strong style="color:#92400E; font-size:14px;">Action Required: ${pendingCount} New Review${pendingCount > 1 ? 's' : ''} Awaiting Approval</strong>
+                            <div style="font-size:12.5px; color:#B45309;">New submissions are saved as pending and will not appear publicly until you approve them.</div>
+                        </div>
+                    </div>
+                    ${currentFilter !== 'pending' ? `
+                        <button class="btn btn-sm btn-primary" onclick="AdminApp.switchReviewTab('pending')">
+                            Review Pending (${pendingCount})
+                        </button>
+                    ` : ''}
+                </div>
+            ` : ''}
+
+            <!-- Filter Tabs -->
+            <div class="review-filter-tabs">
+                <button class="review-filter-tab ${currentFilter === 'all' ? 'active' : ''}" onclick="AdminApp.switchReviewTab('all')">
+                    <span>All Reviews</span>
+                    <span class="review-filter-badge">${counts.all || 0}</span>
+                </button>
+                <button class="review-filter-tab ${currentFilter === 'pending' ? 'active' : ''}" onclick="AdminApp.switchReviewTab('pending')">
+                    <span>Pending Approval</span>
+                    <span class="review-filter-badge" style="${pendingCount > 0 ? 'background:#F59E0B; color:#FFFFFF;' : ''}">${pendingCount}</span>
+                </button>
+                <button class="review-filter-tab ${currentFilter === 'approved' ? 'active' : ''}" onclick="AdminApp.switchReviewTab('approved')">
+                    <span>Approved (Public)</span>
+                    <span class="review-filter-badge">${counts.approved || 0}</span>
+                </button>
+                <button class="review-filter-tab ${currentFilter === 'hidden' ? 'active' : ''}" onclick="AdminApp.switchReviewTab('hidden')">
+                    <span>Hidden</span>
+                    <span class="review-filter-badge">${counts.hidden || 0}</span>
+                </button>
+                <button class="review-filter-tab ${currentFilter === 'rejected' ? 'active' : ''}" onclick="AdminApp.switchReviewTab('rejected')">
+                    <span>Rejected</span>
+                    <span class="review-filter-badge">${counts.rejected || 0}</span>
+                </button>
+            </div>
+
+            <!-- Search, Filter & Sort Toolbar -->
+            <div class="admin-card" style="padding:16px 20px; margin-bottom:20px;">
+                <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                    <div style="flex:1; min-width:240px; position:relative;">
+                        <input 
+                            type="text" 
+                            id="review-search-input" 
+                            class="form-control" 
+                            style="width:100%; padding:9px 14px; border:1px solid var(--adm-border); border-radius:4px; font-size:13px;"
+                            placeholder="Search by customer name or email..." 
+                            value="${this.escapeHtml(searchQuery)}"
+                            onkeydown="if(event.key === 'Enter') AdminApp.applyReviewFilters()"
+                        >
+                    </div>
+
+                    <select id="review-sort-select" class="form-control" style="width:auto; min-width:180px; padding:9px 12px; border:1px solid var(--adm-border); border-radius:4px; font-size:13px;" onchange="AdminApp.applyReviewFilters()">
+                        <option value="newest" ${sortQuery === 'newest' ? 'selected' : ''}>Sort: Newest First</option>
+                        <option value="oldest" ${sortQuery === 'oldest' ? 'selected' : ''}>Sort: Oldest First</option>
+                        <option value="rating_desc" ${sortQuery === 'rating_desc' ? 'selected' : ''}>Rating: High to Low (5 → 1)</option>
+                        <option value="rating_asc" ${sortQuery === 'rating_asc' ? 'selected' : ''}>Rating: Low to High (1 → 5)</option>
+                    </select>
+
+                    <button class="btn btn-primary" onclick="AdminApp.applyReviewFilters()" style="padding:9px 18px; font-size:13px;">
+                        Filter
+                    </button>
+                    ${searchQuery || sortQuery !== 'newest' ? `
+                        <button class="btn btn-outline" onclick="AdminApp.resetReviewFilters()" style="padding:9px 14px; font-size:13px;">
+                            Reset
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+
+            <!-- Reviews Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--adm-border);">
+                    <div class="admin-card-title" style="font-weight:700; color:var(--adm-maroon); font-size:15px;">
+                        <span>Review Submissions</span>
+                        <span style="font-size:13px; font-weight:400; color:var(--adm-text-muted); margin-left:8px;">
+                            (${reviews.length} shown of ${total} total)
+                        </span>
+                    </div>
+                </div>
+
+                ${reviews.length === 0 ? `
+                    <div style="padding:56px 24px; text-align:center; color:var(--adm-text-muted);">
+                        <div style="font-size:40px; margin-bottom:12px;">💬</div>
+                        <h3 style="font-size:16px; font-weight:700; color:var(--adm-maroon); margin-bottom:6px;">No Customer Reviews Found</h3>
+                        <p style="font-size:13px; max-width:440px; margin:0 auto 16px;">
+                            ${searchQuery || currentFilter !== 'all' 
+                                ? 'No reviews matched your selected filters or search query.' 
+                                : 'When customers submit reviews on the "Why Yadawy?" page, they will appear here for moderation.'}
+                        </p>
+                        ${searchQuery || currentFilter !== 'all' ? `
+                            <button class="btn btn-outline" onclick="AdminApp.resetReviewFilters()">Clear Filters</button>
+                        ` : ''}
+                    </div>
+                ` : `
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table" style="width:100%; border-collapse:collapse;">
+                            <thead>
+                                <tr style="border-bottom:1px solid var(--adm-border); background:rgba(58,8,19,0.03);">
+                                    <th style="padding:12px 16px; text-align:left; font-size:12px; font-weight:700; color:var(--adm-maroon); text-transform:uppercase;">Customer</th>
+                                    <th style="padding:12px 16px; text-align:left; font-size:12px; font-weight:700; color:var(--adm-maroon); text-transform:uppercase;">Rating</th>
+                                    <th style="padding:12px 16px; text-align:left; font-size:12px; font-weight:700; color:var(--adm-maroon); text-transform:uppercase;">Review Content</th>
+                                    <th style="padding:12px 16px; text-align:left; font-size:12px; font-weight:700; color:var(--adm-maroon); text-transform:uppercase;">Date</th>
+                                    <th style="padding:12px 16px; text-align:center; font-size:12px; font-weight:700; color:var(--adm-maroon); text-transform:uppercase;">Status</th>
+                                    <th style="padding:12px 16px; text-align:right; font-size:12px; font-weight:700; color:var(--adm-maroon); text-transform:uppercase;">Moderation Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${reviews.map(r => {
+                                    const ratingVal = Math.max(1, Math.min(5, parseInt(r.rating) || 5));
+                                    const stars = '★'.repeat(ratingVal) + '☆'.repeat(5 - ratingVal);
+                                    const createdFormatted = r.created_at ? new Date(r.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+                                    
+                                    let badgeHtml = '';
+                                    if (r.status === 'pending') {
+                                        badgeHtml = '<span class="review-badge-pending">⏳ Pending</span>';
+                                    } else if (r.status === 'approved') {
+                                        badgeHtml = '<span class="review-badge-approved">✓ Approved</span>';
+                                    } else if (r.status === 'hidden') {
+                                        badgeHtml = '<span class="review-badge-hidden">👁️ Hidden</span>';
+                                    } else if (r.status === 'rejected') {
+                                        badgeHtml = '<span class="review-badge-rejected">✕ Rejected</span>';
+                                    }
+
+                                    const demoBadge = r.is_demo ? `
+                                        <span style="font-size:10px; font-weight:700; background:rgba(202,103,2,0.1); color:#B35800; border:1px dashed #CA6702; padding:1px 5px; border-radius:3px; margin-left:6px;" title="Localhost fixture for layout testing">
+                                            DEMO PREVIEW
+                                        </span>
+                                    ` : '';
+
+                                    return `
+                                        <tr id="review-row-${r.id}" style="border-bottom:1px solid var(--adm-border); vertical-align:top;">
+                                            <td style="padding:14px 16px;">
+                                                <div style="font-weight:700; color:var(--adm-maroon); font-size:13.5px; display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+                                                    <span>${this.escapeHtml(r.customer_name)}</span>
+                                                    ${demoBadge}
+                                                </div>
+                                                <div style="font-size:12px; color:var(--adm-text-secondary); margin-top:3px; display:flex; align-items:center; gap:4px;" title="Customer Email (Admin View Only)">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                                    <span>${this.escapeHtml(r.customer_email || '—')}</span>
+                                                </div>
+                                            </td>
+                                            <td style="padding:14px 16px; white-space:nowrap;">
+                                                <div class="admin-review-stars" title="${ratingVal} of 5 stars">${stars}</div>
+                                                <span style="font-size:11px; font-weight:600; color:var(--adm-text-muted);">${ratingVal} / 5</span>
+                                            </td>
+                                            <td style="padding:14px 16px;">
+                                                <div class="admin-review-text" dir="auto">${this.escapeHtml(r.review_text)}</div>
+                                            </td>
+                                            <td style="padding:14px 16px; font-size:12px; color:var(--adm-text-muted); white-space:nowrap;">
+                                                ${createdFormatted}
+                                            </td>
+                                            <td style="padding:14px 16px; text-align:center; white-space:nowrap;">
+                                                ${badgeHtml}
+                                            </td>
+                                            <td style="padding:14px 16px; text-align:right; white-space:nowrap;">
+                                                <div style="display:inline-flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+                                                    ${r.status === 'pending' ? `
+                                                        <button type="button" class="btn-review-action btn-review-approve" onclick="AdminApp.setReviewStatus(${r.id}, 'approved')" title="Approve and publish publicly">
+                                                            ✓ Approve
+                                                        </button>
+                                                        <button type="button" class="btn-review-action btn-review-reject" onclick="AdminApp.setReviewStatus(${r.id}, 'rejected')" title="Reject review">
+                                                            ✕ Reject
+                                                        </button>
+                                                    ` : ''}
+
+                                                    ${r.status === 'approved' ? `
+                                                        <button type="button" class="btn-review-action btn-review-hide" onclick="AdminApp.setReviewStatus(${r.id}, 'hidden')" title="Temporarily hide from public website">
+                                                            👁️ Hide
+                                                        </button>
+                                                        <button type="button" class="btn-review-action btn-review-reject" onclick="AdminApp.setReviewStatus(${r.id}, 'rejected')" title="Reject review">
+                                                            ✕ Reject
+                                                        </button>
+                                                    ` : ''}
+
+                                                    ${r.status === 'hidden' ? `
+                                                        <button type="button" class="btn-review-action btn-review-restore" onclick="AdminApp.setReviewStatus(${r.id}, 'approved')" title="Restore and display publicly">
+                                                            ↺ Restore
+                                                        </button>
+                                                    ` : ''}
+
+                                                    ${r.status === 'rejected' ? `
+                                                        <button type="button" class="btn-review-action btn-review-approve" onclick="AdminApp.setReviewStatus(${r.id}, 'approved')" title="Approve and display publicly">
+                                                            ✓ Approve
+                                                        </button>
+                                                    ` : ''}
+
+                                                    <button type="button" class="btn-review-action btn-review-delete" onclick="AdminApp.deleteReviewPrompt(${r.id})" title="Permanently delete review">
+                                                        🗑️
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `}
             </div>
         `;
     }

@@ -51,6 +51,8 @@ const AdminAPI = {
     updateProduct(id, data) { return this.put(`/products/admin/${id}`, data); },
     toggleProductStatus(id, status) { return this.patch(`/products/admin/${id}/status`, { status }); },
     toggleProductStock(id, is_in_stock) { return this.patch(`/products/admin/${id}/stock`, { is_in_stock }); },
+    toggleProductFlag(id, flag, value) { return this.patch(`/products/admin/${id}/flags`, { flag, value }); },
+    getSectionCounts() { return this.get('/products/admin/section-counts'); },
     deleteProduct(id) { return this.del(`/products/admin/${id}`); },
 
     // Product images
@@ -183,6 +185,18 @@ const AdminAPI = {
     // Newsletter
     getSubscribers() { return this.get('/site/admin/newsletter'); },
     duplicateProduct(id) { return this.post(`/products/admin/${id}/duplicate`, {}); },
+
+    // Customer Reviews Moderation
+    getReviews(params = {}) {
+        const qs = new URLSearchParams(params).toString();
+        return this.get(`/site/admin/reviews${qs ? '?' + qs : ''}`);
+    },
+    updateReviewStatus(id, status) {
+        return this.patch(`/site/admin/reviews/${id}/status`, { status });
+    },
+    deleteReview(id) {
+        return this.del(`/site/admin/reviews/${id}`);
+    }
 };
 
 function adminToast(msg, type = 'success') {

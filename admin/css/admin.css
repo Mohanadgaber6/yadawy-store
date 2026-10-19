@@ -1496,4 +1496,285 @@ body {
     gap: 6px;
 }
 
+/* ============================================================
+   CUSTOMER REVIEWS MODERATION STYLES
+   ============================================================ */
+.review-filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+    border-bottom: 1.5px solid var(--adm-border);
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.review-filter-tab {
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--adm-text-secondary);
+    cursor: pointer;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--adm-transition);
+}
+
+.review-filter-tab:hover {
+    background: rgba(58, 8, 19, 0.05);
+    color: var(--adm-maroon);
+}
+
+.review-filter-tab.active {
+    background: var(--adm-maroon);
+    color: var(--adm-gold);
+    border-color: var(--adm-maroon);
+}
+
+.review-filter-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.review-filter-tab.active .review-filter-badge {
+    background: var(--adm-gold);
+    color: var(--adm-maroon);
+}
+
+.review-badge-pending {
+    background: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #FCD34D;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.review-badge-approved {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.review-badge-hidden {
+    background: #F3F4F6;
+    color: #4B5563;
+    border: 1px solid #D1D5DB;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.review-badge-rejected {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-review-action {
+    padding: 5px 11px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-review-approve {
+    background: #059669;
+    color: #FFFFFF;
+}
+.btn-review-approve:hover {
+    background: #047857;
+}
+
+.btn-review-reject {
+    background: #DC2626;
+    color: #FFFFFF;
+}
+.btn-review-reject:hover {
+    background: #B91C1C;
+}
+
+.btn-review-hide {
+    background: #4B5563;
+    color: #FFFFFF;
+}
+.btn-review-hide:hover {
+    background: #374151;
+}
+
+.btn-review-restore {
+    background: #2563EB;
+    color: #FFFFFF;
+}
+.btn-review-restore:hover {
+    background: #1D4ED8;
+}
+
+.btn-review-delete {
+    background: transparent;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+}
+.btn-review-delete:hover {
+    background: #FEE2E2;
+}
+
+.admin-review-stars {
+    color: #D4AF37;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.admin-review-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--adm-text);
+    max-width: 420px;
+    word-break: break-word;
+}
+
+/* ============================================================
+   5-SECTION PRODUCT TABS & COLLECTION TOGGLES
+   ============================================================ */
+.admin-section-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+}
+
+.section-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #FFFFFF;
+    border: 1.5px solid var(--adm-border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--adm-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.section-tab-btn:hover {
+    border-color: var(--adm-maroon);
+    color: var(--adm-maroon);
+    background: #FFFDF8;
+}
+
+.section-tab-btn.active {
+    background: var(--adm-maroon);
+    color: #FFFFFF;
+    border-color: var(--adm-maroon);
+    box-shadow: 0 4px 12px rgba(41, 5, 12, 0.15);
+}
+
+.tab-count-badge {
+    background: rgba(0, 0, 0, 0.08);
+    color: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.section-tab-btn.active .tab-count-badge {
+    background: rgba(229, 197, 131, 0.3);
+    color: var(--adm-gold);
+}
+
+.flag-toggles-container {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.flag-toggle-btn {
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid #D1D5DB;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #F9FAFB;
+    color: #6B7280;
+}
+
+.flag-toggle-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.flag-toggle-btn.active.new-arrival {
+    background: #E8F5E9;
+    color: #1B5E20;
+    border-color: #81C784;
+}
+
+.flag-toggle-btn.active.best-seller {
+    background: #FFF8E1;
+    color: #8D6E14;
+    border-color: #FFD54F;
+}
+
+.flag-toggle-btn.active.customizable {
+    background: #FCE8E6;
+    color: #5C1D24;
+    border-color: #E8A7A1;
+}
+
+
 

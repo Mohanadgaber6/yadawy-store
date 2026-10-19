@@ -88,7 +88,14 @@ const API = {
     submitContact(data) { return this.post('/site/contact', data); },
 
     // Newsletter
-    subscribe(email) { return this.post('/site/newsletter', { email }); }
+    subscribe(email) { return this.post('/site/newsletter', { email }); },
+
+    // Customer Reviews
+    getReviews(params = {}) {
+        const qs = new URLSearchParams(params).toString();
+        return this.get(`/site/reviews${qs ? '?' + qs : ''}`);
+    },
+    submitReview(data) { return this.post('/site/reviews', data); }
 };
 window.API = API;
 

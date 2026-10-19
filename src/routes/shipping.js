@@ -6,9 +6,9 @@ const router = express.Router();
 
 /**
  * PUBLIC: Get Current Shipping Cost
- * GET /api/shipping
+ * GET /api/shipping and GET /api/shipping/cost
  */
-router.get('/', (req, res) => {
+router.get(['/', '/cost'], (req, res) => {
     try {
         const db = getDb();
         const row = db.prepare('SELECT cost, currency, updated_at FROM shipping_settings WHERE id = 1').get();
